@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: db
--- Czas generowania: 14 Gru 2020, 12:38
+-- Czas generowania: 12 Gru 2020, 15:47
 -- Wersja serwera: 8.0.22
 -- Wersja PHP: 7.4.11
 
@@ -23,6 +23,7 @@ SET time_zone = "+00:00";
 
 CREATE USER 'admin'@'%' IDENTIFIED BY 'admin';
 GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%' WITH GRANT OPTION; 
+
 
 DELIMITER $$
 --
@@ -60,17 +61,8 @@ CREATE TABLE `artysta` (
   `imie` varchar(50) NOT NULL,
   `nazwisko` varchar(50) NOT NULL,
   `data_urodzenia` date NOT NULL,
-  `data_smierci` date DEFAULT NULL
+  `data_smierci` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Zrzut danych tabeli `artysta`
---
-
-INSERT INTO `artysta` (`id`, `imie`, `nazwisko`, `data_urodzenia`, `data_smierci`) VALUES
-(1, 'Jacek', 'Malczewski', '1854-07-14', '1929-10-08'),
-(2, 'Claude', 'Monet', '1840-11-14', '1926-12-05'),
-(3, 'Kazimierz', 'Adamski', '1964-07-20', NULL);
 
 -- --------------------------------------------------------
 
@@ -112,17 +104,6 @@ CREATE TABLE `dzial` (
   `oddzial_nazwa` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
---
--- Zrzut danych tabeli `dzial`
---
-
-INSERT INTO `dzial` (`nazwa`, `pietro`, `epoka`, `oddzial_nazwa`) VALUES
-('sztuka europejska XIV-XIX wieku', 1, NULL, 'muzeum narodowe w poznaniu'),
-('sztuka nowoczesna', 2, 'wspolczesnosc', 'muzeum narodowe w warszawie'),
-('sztuka polska I pol. XX wieku', 1, 'mloda polska', 'muzeum narodowe w poznaniu'),
-('sztuka sredniowieczna', 1, 'sredniowiecze', 'muzeum narodowe w poznaniu'),
-('sztuka sredniowieczna', 0, 'sredniowiecze', 'muzeum narodowe w warszawie');
-
 -- --------------------------------------------------------
 
 --
@@ -155,21 +136,10 @@ CREATE TABLE `obraz` (
   `nazwa` varchar(100) DEFAULT NULL,
   `szerokosc` float NOT NULL,
   `wysokosc` float NOT NULL,
-  `artysta_id` int DEFAULT NULL,
+  `artysta_id` int NOT NULL,
   `dzial_nazwa` varchar(100) NOT NULL,
   `dzial_oddzial_nazwa` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Zrzut danych tabeli `obraz`
---
-
-INSERT INTO `obraz` (`id`, `nazwa`, `szerokosc`, `wysokosc`, `artysta_id`, `dzial_nazwa`, `dzial_oddzial_nazwa`) VALUES
-(1, 'drzewo nad stawem', 41, 33, 1, 'sztuka polska I pol. XX wieku', 'muzeum narodowe w poznaniu'),
-(2, 'bledne kolo', 240, 174, 1, 'sztuka polska I pol. XX wieku', 'muzeum narodowe w poznaniu'),
-(3, 'melancholia', 240, 139, 1, 'sztuka polska I pol. XX wieku', 'muzeum narodowe w poznaniu'),
-(4, 'plaza w pourville', 60, 73, 2, 'sztuka europejska XIV-XIX wieku', 'muzeum narodowe w poznaniu'),
-(5, 'nawiedzenie', 40, 100, NULL, 'sztuka sredniowieczna', 'muzeum narodowe w poznaniu');
 
 -- --------------------------------------------------------
 
@@ -208,7 +178,7 @@ CREATE TABLE `pracownik` (
   `data_zatrudnienia` date NOT NULL,
   `numer_telefonu` int DEFAULT NULL,
   `oddzial_nazwa` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ;
 
 --
 -- Zrzut danych tabeli `pracownik`
@@ -258,18 +228,10 @@ CREATE TABLE `rzezba` (
   `nazwa` varchar(100) DEFAULT NULL,
   `waga` float NOT NULL,
   `material` varchar(50) NOT NULL,
-  `artysta_id` int DEFAULT NULL,
+  `artysta_id` int NOT NULL,
   `dzial_nazwa` varchar(100) NOT NULL,
   `dzial_oddzial_nazwa` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Zrzut danych tabeli `rzezba`
---
-
-INSERT INTO `rzezba` (`id`, `nazwa`, `waga`, `material`, `artysta_id`, `dzial_nazwa`, `dzial_oddzial_nazwa`) VALUES
-(1, 'popiersie adama loreta', 48, 'braz', 3, 'sztuka nowoczesna', 'muzeum narodowe w warszawie'),
-(2, 'pieta z lubiaza', 30, 'drewno lipowe', NULL, 'sztuka sredniowieczna', 'muzeum narodowe w warszawie');
 
 -- --------------------------------------------------------
 
@@ -283,15 +245,6 @@ CREATE TABLE `wydarzenie` (
   `data_zakonczenia` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
---
--- Zrzut danych tabeli `wydarzenie`
---
-
-INSERT INTO `wydarzenie` (`nazwa`, `data_rozpoczecia`, `data_zakonczenia`) VALUES
-('dzien seniora', '2021-01-30', '2021-01-30'),
-('noc w muzeum', '2021-02-19', '2021-02-19'),
-('wystawa prac studentow', '2021-06-01', '2021-06-30');
-
 -- --------------------------------------------------------
 
 --
@@ -303,16 +256,6 @@ CREATE TABLE `wydarzenie_oddzial` (
   `wydarzenie_nazwa` varchar(100) NOT NULL,
   `wydarzenie_data_rozpoczecia` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Zrzut danych tabeli `wydarzenie_oddzial`
---
-
-INSERT INTO `wydarzenie_oddzial` (`oddzial_nazwa`, `wydarzenie_nazwa`, `wydarzenie_data_rozpoczecia`) VALUES
-('muzeum narodowe w poznaniu', 'dzien seniora', '2021-01-30'),
-('muzeum narodowe w warszawie', 'dzien seniora', '2021-01-30'),
-('muzeum narodowe w poznaniu', 'noc w muzeum', '2021-02-19'),
-('muzeum narodowe w warszawie', 'wystawa prac studentow', '2021-06-01');
 
 --
 -- Indeksy dla zrzutów tabel
@@ -403,7 +346,7 @@ ALTER TABLE `wydarzenie_oddzial`
 -- AUTO_INCREMENT dla tabeli `artysta`
 --
 ALTER TABLE `artysta`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT dla tabeli `bilet`
@@ -415,13 +358,13 @@ ALTER TABLE `bilet`
 -- AUTO_INCREMENT dla tabeli `obraz`
 --
 ALTER TABLE `obraz`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT dla tabeli `rzezba`
 --
 ALTER TABLE `rzezba`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- Ograniczenia dla zrzutów tabel
@@ -479,7 +422,7 @@ ALTER TABLE `wydarzenie_oddzial`
   ADD CONSTRAINT `oddzial_FK` FOREIGN KEY (`oddzial_nazwa`) REFERENCES `oddzial` (`nazwa`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   ADD CONSTRAINT `wydarzenie_FK` FOREIGN KEY (`wydarzenie_nazwa`,`wydarzenie_data_rozpoczecia`) REFERENCES `wydarzenie` (`nazwa`, `data_rozpoczecia`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 COMMIT;
-
+ 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
