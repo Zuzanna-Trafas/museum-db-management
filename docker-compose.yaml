@@ -1,7 +1,8 @@
 version: '3'
+
 services:
   db:
-    image: mysql:latest
+    image: mysql:5.7
     restart: always
     hostname: museum-db
     container_name: museum-db
@@ -14,6 +15,8 @@ services:
       - MYSQL_PASSWORD=admin
     ports:
       - '3306:3306'
+    networks:
+      - museum
  
   phpmyadmin:
     depends_on:
@@ -26,6 +29,18 @@ services:
     environment:
       PMA_HOST: db 
 
-    
-   
-  
+  web:
+    build: .
+    container_name: django-app
+    hostname: django-app
+    volumes:
+      - .:/code/:ro
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db   
+    networks:
+      - museum
+
+networks: 
+  museum: 

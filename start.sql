@@ -61,7 +61,7 @@ CREATE TABLE `artysta` (
   `nazwisko` varchar(50) NOT NULL,
   `data_urodzenia` date NOT NULL,
   `data_smierci` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;;
 
 --
 -- Zrzut danych tabeli `artysta`
@@ -86,7 +86,7 @@ CREATE TABLE `bilet` (
   `harmonogram_zwiedzania_godzina_rozpoczecia` time DEFAULT NULL,
   `harmonogram_zwiedzania_data` date DEFAULT NULL,
   `rodzaj_biletu_czy_z_przewodnikiem` tinyint(1) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;;
 
 --
 -- Zrzut danych tabeli `bilet`
@@ -110,7 +110,7 @@ CREATE TABLE `dzial` (
   `pietro` int NOT NULL,
   `epoka` varchar(100) DEFAULT NULL,
   `oddzial_nazwa` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;;
 
 --
 -- Zrzut danych tabeli `dzial`
@@ -133,7 +133,7 @@ CREATE TABLE `harmonogram_zwiedzania` (
   `godzina_rozpoczecia` time NOT NULL,
   `data` date NOT NULL,
   `pracownik_pesel` bigint NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;;
 
 --
 -- Zrzut danych tabeli `harmonogram_zwiedzania`
@@ -158,7 +158,7 @@ CREATE TABLE `obraz` (
   `artysta_id` int DEFAULT NULL,
   `dzial_nazwa` varchar(100) NOT NULL,
   `dzial_oddzial_nazwa` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;;
 
 --
 -- Zrzut danych tabeli `obraz`
@@ -183,7 +183,7 @@ CREATE TABLE `oddzial` (
   `godzina_zamkniecia` time NOT NULL,
   `adres` varchar(100) NOT NULL,
   `numer_telefonu` int DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;;
 
 --
 -- Zrzut danych tabeli `oddzial`
@@ -208,7 +208,7 @@ CREATE TABLE `pracownik` (
   `data_zatrudnienia` date NOT NULL,
   `numer_telefonu` int DEFAULT NULL,
   `oddzial_nazwa` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;;
 
 --
 -- Zrzut danych tabeli `pracownik`
@@ -231,7 +231,7 @@ CREATE TABLE `rodzaj_biletu` (
   `czy_z_przewodnikiem` tinyint(1) NOT NULL,
   `cena` float NOT NULL,
   `oddzial_nazwa` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;;
 
 --
 -- Zrzut danych tabeli `rodzaj_biletu`
@@ -261,7 +261,7 @@ CREATE TABLE `rzezba` (
   `artysta_id` int DEFAULT NULL,
   `dzial_nazwa` varchar(100) NOT NULL,
   `dzial_oddzial_nazwa` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;;
 
 --
 -- Zrzut danych tabeli `rzezba`
@@ -281,7 +281,7 @@ CREATE TABLE `wydarzenie` (
   `nazwa` varchar(100) NOT NULL,
   `data_rozpoczecia` date NOT NULL,
   `data_zakonczenia` date NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;;
 
 --
 -- Zrzut danych tabeli `wydarzenie`
@@ -302,7 +302,7 @@ CREATE TABLE `wydarzenie_oddzial` (
   `oddzial_nazwa` varchar(100) NOT NULL,
   `wydarzenie_nazwa` varchar(100) NOT NULL,
   `wydarzenie_data_rozpoczecia` date NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;;
 
 --
 -- Zrzut danych tabeli `wydarzenie_oddzial`
