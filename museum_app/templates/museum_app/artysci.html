@@ -30,9 +30,6 @@
             <a class="nav-link active" href="#">Artyści <span class="sr-only">(current)</span></a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Rodzaje biletów</a>
-          </li>
-          <li class="nav-item">
             <a class="nav-link" href="#">Bilety</a>
           </li>
           <li class="nav-item">
@@ -44,5 +41,38 @@
         </ul>
       </div>
     </nav>
+
+    <h1 class="px-5 pt-4">Artyści</h1>
+
+    <div class="px-5">
+    <table class="table table-hover">
+      <thead class="thead text-light" style="background-color: #5f8897;">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Imię</th>
+          <th scope="col">Nazwisko</th>
+          <th scope="col">Data urodzenia</th>
+          <th scope="col">Data śmierci</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">
+              <div class="pl-3"><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"></div>
+          </th>
+          <td>imię</td>
+          <td>nazwisko</td>
+          <td>data urodzenia</td>
+          <td>data śmierci</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="d-flex px-5 pb-5">
+      <div class="p-2"><button type="button" class="btn btn-secondary">Edytuj</button></div>
+      <div class="p-2"><button type="button" class="btn btn-secondary">Usuń</button></div>
+      <div class="ml-auto p-2"><button type="button" class="btn btn-secondary">Dodaj nowego artystę</button></div>
+    </div>
 </body>
 </html>

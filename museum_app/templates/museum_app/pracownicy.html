@@ -30,9 +30,6 @@
             <a class="nav-link" href="#">Artyści</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Rodzaje biletów</a>
-          </li>
-          <li class="nav-item">
             <a class="nav-link" href="#">Bilety</a>
           </li>
           <li class="nav-item">
@@ -44,5 +41,44 @@
         </ul>
       </div>
     </nav>
+
+    <h1 class="px-5 pt-4">Pracownicy</h1>
+
+    <div class="px-5">
+    <table class="table table-hover">
+      <thead class="thead text-light" style="background-color: #5f8897;">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Pesel</th>
+          <th scope="col">Imię</th>
+          <th scope="col">Nazwisko</th>
+          <th scope="col">Płaca</th>
+          <th scope="col">Etat</th>
+          <th scope="col">Data zatrudnienia</th>
+          <th scope="col">Numer telefonu</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">
+              <div class="pl-3"><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"></div>
+          </th>
+          <td>pesel</td>
+          <td>imię</td>
+          <td>nazwisko</td>
+          <td>płaca</td>
+          <td>etat</td>
+          <td>data</td>
+          <td>numer</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="d-flex px-5 pb-5">
+      <div class="p-2"><button type="button" class="btn btn-secondary">Edytuj</button></div>
+      <div class="p-2"><button type="button" class="btn btn-secondary">Usuń</button></div>
+      <div class="ml-auto p-2"><button type="button" class="btn btn-secondary">Dodaj nowego pracownika</button></div>
+    </div>
 </body>
 </html>

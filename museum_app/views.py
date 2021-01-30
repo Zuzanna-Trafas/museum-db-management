@@ -22,10 +22,6 @@ def artysci(request):
     return render(request, 'museum_app/artysci.html')
 
 
-def rodzaje_biletow(request):
-    return render(request, 'museum_app/rodzaje_biletow.html')
-
-
 def bilety(request):
     return render(request, 'museum_app/bilety.html')
 
