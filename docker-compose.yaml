@@ -34,7 +34,7 @@ services:
     container_name: django-app
     hostname: django-app
     volumes:
-      - .:/code/:ro
+      - .:/code/
     ports:
       - "8000:8000"
     depends_on:
