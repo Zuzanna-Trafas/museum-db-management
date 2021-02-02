@@ -8,7 +8,6 @@ urlpatterns = [
             path('table/dzialy/', views.dzialy, name='dzialy'),
             path('table/dziela/', views.dziela, name='dziela'),
             path('table/artysci/', views.artysci, name='artysci'),
-            path('table/rodzaje_biletow/', views.rodzaje_biletow, name='rodzaje_biletow'),
             path('table/bilety/', views.bilety, name='bilety'),
             path('table/pracownicy/', views.pracownicy, name='pracownicy'),
             path('table/harmonogram_zwiedzania/', views.harmonogram_zwiedzania, name='harmonogram_zwiedzania'),
