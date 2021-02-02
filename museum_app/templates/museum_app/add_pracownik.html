@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+    <title>Dodaj</title>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <img src="../logo.png" alt="logo" class="img-rounded" style="width:3%">
+    <div class="collapse navbar-collapse pl-3" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="#">Strona główna</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Oddziały</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Działy</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Dzieła</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Artyści</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Bilety</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="#">Pracownicy <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Harmonogram zwiedzania</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<h1 class="px-5 pt-4">Dodaj pracownika</h1>
+
+<div class="px-5">
+    <form class="needs-validation" id="form-name" novalidate>
+        <div class="form-group">
+            <div class="col-md-4">
+                <label for="pesel">Pesel *</label>
+                <input type="text" class="form-control" id="pesel" minlength="11" maxlength="11" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-4">
+                <label for="name">Imię *</label>
+                <input type="text" class="form-control" id="name" maxlength="50" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-4">
+                <label for="surname">Nazwisko *</label>
+                <input type="text" class="form-control" id="surname" maxlength="50" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-4">
+                <label for="etat">Etat *</label>
+                <select multiple class="form-control" id="etat" required>
+                    <option>Pracownik</option>
+                    <option>Stażysta</option>
+                    <option>Kierownik</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-4">
+                <label for="wage">Płaca *</label>
+                <input type="number" class="form-control" id="wage" min="0" max="1000000" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-4">
+                <label for="join-date">Data zatrudnienia *</label>
+                <input type="date" class="form-control" id="join-date" placeholder="dd-mm-yyyy" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-4">
+                <label for="number">Numer telefonu</label>
+                <input type="tel" class="form-control" id="number" minlength="9" maxlength="9">
+            </div>
+        </div>
+        <div>
+            <div class="ml-auto p-2">
+                <button type="submit" class="btn btn-secondary">Dodaj</button>
+            </div>
+        </div>
+    </form>
+
+
+    <script>
+        // Example starter JavaScript for disabling form submissions if there are invalid fields
+        (function () {
+            'use strict';
+            window.addEventListener('load', function () {
+                console.log("start");
+                // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                var forms = document.getElementsByClassName('needs-validation');
+                // Loop over them and prevent submission
+                var validation = Array.prototype.filter.call(forms, function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (form.checkValidity() === false) {
+                            console.log("if");
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+    </script>
+</div>
+</body>
+</html>
