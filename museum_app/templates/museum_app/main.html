@@ -8,11 +8,184 @@
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
-    <title>Document</title>
+    <script>
+        $(document).ready(function(){
+            $("#table a").click(function(){
+                $("#options").text($(this).text());
+                $("#options2").text("Wybierz pole");
+                $("#options3").text("Wybierz operator");
+                cascade(this.text);
+                $('#operators').html('');
+                $('#input').html('');
+                $('#third_button').show();
+            });
+            $("#fields").on("click", "a", function(){
+                $("#options2").text($(this).text());
+                $('#third_button').show();
+                $('#input').html('');
+                changeOperators(this.text);
+                $("#options3").text("Wybierz operator");
+            });
+            $("#operators").on("click", "a", function(){
+                $("#options3").text($(this).text());
+            });
+        });
+
+        var oddzial = [
+            "Nazwa",
+            "Godzina otwarcia",
+            "Godzina zamknięcia"
+        ];
+
+        var wydarzenie = [
+            "Nazwa",
+            "Oddział",
+            "Data rozpoczęcia",
+            "Data zakończenia"
+        ];
+
+        var dzial = [
+            "Nazwa",
+            "Epoka",
+            "Oddział"
+        ];
+
+        var dzielo = [
+            "Nazwa",
+            "Nazwisko artysty",
+            "Epoka"
+        ];
+
+        var artysta = [
+            "Imię",
+            "Nazwisko",
+            "Data urodzenia",
+            "Data śmierci"
+        ];
+
+        var rodzaj = [
+            "Typ",
+            "Cena",
+            "Czy z przewodnikiem"
+        ];
+
+        var bilet = [
+            "Data zakupu",
+            "Typ",
+            "Czy z przewodnikiem"
+        ];
+
+        var pracownik = [
+            "Imię",
+            "Nazwisko",
+            "Pesel",
+            "Płaca",
+            "Etat",
+            "Data zatrudnienia"
+        ];
+
+        var wycieczka = [
+            "Data",
+            "Godzina rozpoczęcia",
+            "Nazwisko przewodnika",
+            "Ilość uczestników"
+        ];
+
+        function cascade(val) {
+            if ( val === "Oddział" ) {
+                $('#fields').html('');
+                for ( var i in oddzial ) {
+                    $('#fields').append("<a class='dropdown-item' href='#'>" + oddzial[i] + "</a>");
+                }
+            } else if ( val === "Wydarzenie" ) {
+                $('#fields').html('');
+                for ( var i in wydarzenie ) {
+                    $('#fields').append("<a class='dropdown-item' href='#'>" + wydarzenie[i] + "</a>");
+                }
+            } else if ( val === "Dział" ) {
+                $('#fields').html('');
+                for ( var i in dzial ) {
+                    $('#fields').append("<a class='dropdown-item' href='#'>" + dzial[i] + "</a>");
+                }
+            } else if ( val === "Dzieło" ) {
+                $('#fields').html('');
+                for ( var i in dzielo ) {
+                    $('#fields').append("<a class='dropdown-item' href='#'>" + dzielo[i] + "</a>");
+                }
+            } else if ( val === "Artysta" ) {
+                $('#fields').html('');
+                for ( var i in artysta ) {
+                    $('#fields').append("<a class='dropdown-item' href='#'>" + artysta[i] + "</a>");
+                }
+            } else if ( val === "Rodzaj biletu" ) {
+                $('#fields').html('');
+                for ( var i in rodzaj ) {
+                    $('#fields').append("<a class='dropdown-item' href='#'>" + rodzaj[i] + "</a>");
+                }
+            } else if ( val === "Zakupiony bilet" ) {
+                $('#fields').html('');
+                for ( var i in bilet ) {
+                    $('#fields').append("<a class='dropdown-item' href='#'>" + bilet[i] + "</a>");
+                }
+            } else if ( val === "Pracownik" ) {
+                $('#fields').html('');
+                for ( var i in pracownik ) {
+                    $('#fields').append("<a class='dropdown-item' href='#'>" + pracownik[i] + "</a>");
+                }
+            } else if ( val === "Wycieczka" ) {
+                $('#fields').html('');
+                for ( var i in wycieczka ) {
+                    $('#fields').append("<a class='dropdown-item' href='#'>" + wycieczka[i] + "</a>");
+                }
+            }
+        }
+
+        function changeOperators(val) {
+            if ( val === "Cena" || val === "Płaca" || val === "Ilość uczestników" ) {
+                $('#operators').html('');
+                $('#operators').append("<a class='dropdown-item' href='#'><</a>" +
+                    "<a class='dropdown-item' href='#'><=</a>" +
+                    "<a class='dropdown-item' href='#'>=</a>" +
+                    "<a class='dropdown-item' href='#'>></a>" +
+                    "<a class='dropdown-item' href='#'>>=</a>");
+                $('#input').append("<input class='form-control' type='text' placeholder='Poszukiwana wartość'>");
+            } else if (val === "Godzina otwarcia" || val === "Godzina zamknięcia" || val ==="Godzina rozpoczęcia" ) {
+                    $('#operators').html('');
+                    $('#operators').append("<a class='dropdown-item' href='#'>Później niż</a>" +
+                    "<a class='dropdown-item' href='#'>Wcześniej niż</a>" +
+                    "<a class='dropdown-item' href='#'>Równa</a>");
+                $('#input').append("<input class='form-control' type='text' placeholder='hh:mm:ss'>");
+            } else if ( val === "Data rozpoczęcia" || val === "Data zakończenia" || val === "Data urodzenia" ||
+                val === "Data śmierci" || val === "Data zatrudnienia" || val === "Data zakupu" || val === "Data" ) {
+                    $('#operators').html('');
+                    $('#operators').append("<a class='dropdown-item' href='#'>Później niż</a>" +
+                    "<a class='dropdown-item' href='#'>Wcześniej niż</a>" +
+                    "<a class='dropdown-item' href='#'>Równa</a>");
+                $('#input').append("<input class='form-control' type='text' placeholder='dd-mm-yyyy'>");
+            } else if (val === "Czy z przewodnikiem" ) {
+                $('#third_button').hide();
+                $('#input').append("<div class='form-check form-check-inline pt-1'>" +
+                 "<input class='form-check-input' type='radio' name='name'> " +
+                  "<label class='form-check-label' for='flexRadioDefault1'>tak</label>" +
+                  "</div>" +
+                  "<div class='form-check form-check-inline pt-1'>" +
+                  "<input class='form-check-input' type='radio' name='name'> " +
+                  "<label class='form-check-label' for='flexRadioDefault1'>nie</label>" +
+                  "</div>");
+            }
+            else {
+                $('#operators').html('');
+                $('#operators').append("<a class='dropdown-item' href='#'>=</a>");
+                $('#input').append("<input class='form-control' type='text' placeholder='Poszukiwana wartość'>");
+            }
+        }
+    </script>
+    <title>Strona główna</title>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <div class="collapse navbar-collapse" id="navbarNav">
+        <img src="../logo.png" alt="logo" class="img-rounded" style="width:3%">
+      <div class="collapse navbar-collapse pl-3" id="navbarNav">
         <ul class="navbar-nav">
           <li class="nav-item">
             <a class="nav-link active" href="#">Strona główna <span class="sr-only">(current)</span></a>
@@ -41,5 +214,45 @@
         </ul>
       </div>
     </nav>
+
+    <h1 class="px-5 pt-4">Strona główna</h1>
+    <p class="px-5 pt-2">Wyszukaj:</p>
+    <div class="d-flex flex-row px-5">
+        <div class="btn-group px-2">
+          <button id="options" type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Wybierz typ<span class="caret"></span>
+          </button>
+          <div id="table" class="dropdown-menu">
+            <a class="dropdown-item" href="#">Oddział</a>
+            <a class="dropdown-item" href="#">Wydarzenie</a>
+            <a class="dropdown-item" href="#">Dział</a>
+            <a class="dropdown-item" href="#">Dzieło</a>
+            <a class="dropdown-item" href="#">Artysta</a>
+            <a class="dropdown-item" href="#">Rodzaj biletu</a>
+            <a class="dropdown-item" href="#">Zakupiony bilet</a>
+            <a class="dropdown-item" href="#">Pracownik</a>
+            <a class="dropdown-item" href="#">Wycieczka</a>
+          </div>
+        </div>
+        <div class="btn-group px-2">
+          <button id="options2" type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Wybierz pole<span class="caret"></span>
+          </button>
+          <div id="fields" class="dropdown-menu">
+          </div>
+        </div>
+        <div id="third_button" class="btn-group px-2">
+          <button id="options3" type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Wybierz operator<span class="caret"></span>
+          </button>
+          <div id="operators" class="dropdown-menu">
+          </div>
+        </div>
+        <div id="input" class="px-2">
+        </div>
+        <div>
+            <button type="button" class="btn btn-info">Wyszukaj</button>
+        </div>
+    </div>
 </body>
 </html>
