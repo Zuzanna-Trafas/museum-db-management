@@ -12,32 +12,33 @@
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <img src="../logo.png" alt="logo" class="img-rounded" style="width:3%">
+    {% load static %}
+    <img src="{% static "museum_app/logo.png" %}" alt="logo" class="img-rounded" style="width:3%">
     <div class="collapse navbar-collapse pl-3" id="navbarNav">
         <ul class="navbar-nav">
             <li class="nav-item">
-                <a class="nav-link" href="#">Strona główna</a>
+                <a class="nav-link" href="/main">Strona główna</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Oddziały</a>
+                <a class="nav-link" href="/table/oddzialy">Oddziały</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Działy</a>
+                <a class="nav-link" href="/table/dzialy">Działy</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Dzieła</a>
+                <a class="nav-link" href="/table/dziela">Dzieła</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Artyści</a>
-            </li>
-            <li class="nav-item active">
-                <a class="nav-link" href="#">Bilety <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="/table/artysci">Artyści</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Pracownicy</a>
+                <a class="nav-link active" href="/table/bilety">Bilety <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Harmonogram zwiedzania</a>
+                <a class="nav-link" href="/table/pracownicy">Pracownicy</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/table/harmonogram_zwiedzania">Harmonogram zwiedzania</a>
             </li>
         </ul>
     </div>
