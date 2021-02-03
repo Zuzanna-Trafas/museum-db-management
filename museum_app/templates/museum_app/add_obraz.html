@@ -20,19 +20,19 @@
                 <a class="nav-link" href="/main">Strona główna</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/table/oddzialy">Oddziały</a>
+                <a class="nav-link" href="/table/oddzialy">Oddziały <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/table/dzialy">Działy</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/table/dziela">Dzieła</a>
+                <a class="nav-link active" href="/table/dziela">Dzieła <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/table/artysci">Artyści</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link active" href="/table/bilety">Bilety <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="/table/bilety">Bilety</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/table/pracownicy">Pracownicy</a>
@@ -44,20 +44,14 @@
     </div>
 </nav>
 
-<h1 class="px-5 pt-4">Dodaj rodzaj biletu</h1>
+<h1 class="px-5 pt-4">Dodaj obraz</h1>
 
 <div class="px-5">
     <form class="needs-validation" id="form-name" novalidate>
         <div class="form-group">
             <div class="col-md-4">
-                <label for="purchase-date">Typ *</label>
-                <input type="text" class="form-control" id="purchase-date" maxlength="100" required>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-md-4">
-                <label for="price">Cena *</label>
-                <input type="number" class="form-control" id="price" min="0" max="1000" required>
+                <label for="name">Nazwa</label>
+                <input type="text" class="form-control" id="name" maxlength="100">
             </div>
         </div>
         <div class="form-group">
@@ -68,18 +62,32 @@
             </div>
         </div>
         <div class="form-group">
-            <div id="radios" class="col-md-4">
-                <label for="guide">Czy z przewodnikiem? *</label>
-                <div class='form-check form-check-inline pl-3 pt-1'>
-                    <input id="yes" class='form-check-input' type='radio' name='pname' required>
-                    <label class='form-check-label' for='guide'>tak</label>
-                </div>
-                <div class='form-check form-check-inline pt-1'>
-                    <input id="no" class='form-check-input' type='radio' name='pname' required>
-                    <label class='form-check-label' for='guide'>nie</label>
-                </div>
+            <div class="col-md-4">
+                <label for="department">Dział *</label>
+                <select multiple class="form-control" id="department" required>
+                </select>
             </div>
         </div>
+        <div class="form-group">
+            <div class="col-md-4">
+                <label for="department">Artysta</label>
+                <select multiple class="form-control" id="department">
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-4">
+                <label for="width">Szerokość [cm] *</label>
+                <input type="number" class="form-control" id="width" step="0.01" min="0" max="100000" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-4">
+                <label for="height">Wysokość [cm] *</label>
+                <input type="number" class="form-control" id="height" step="0.01" min="0" max="100000" required>
+            </div>
+        </div>
+
         <div>
             <div class="ml-auto p-2">
                 <button type="submit" class="btn btn-secondary">Dodaj</button>
