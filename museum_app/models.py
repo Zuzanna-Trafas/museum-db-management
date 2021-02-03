@@ -5,7 +5,6 @@ from django.db import models
 # TODO: missing verboses
 # TODO: unique? unique_for_data? Who knows, not me
 # TODO: length validators
-# TODO: primary keys fix
 
 class Oddzial(models.Model):
     nazwa = models.CharField(max_length=100, primary_key=True)
@@ -15,26 +14,33 @@ class Oddzial(models.Model):
     numer_telefonu = models.PositiveIntegerField()
 
 
+
 class Wydarzenie(models.Model):
     nazwa = models.CharField(max_length=100, primary_key=True)
     data_rozpoczecia = models.DateField(verbose_name="data rozpoczęcia")
     data_zakonczenia = models.DateField(verbose_name="data zakończenia")
 
+    class Meta:
+                unique_together = (("nazwa", "data_rozpoczecia"),)
 
 class Wydarzenie_oddzial(models.Model):
-    oddzial_nazwa = models.OneToOneField(Oddzial, on_delete=models.CASCADE, primary_key=True)
-    wydarzenie_nazwa = models.OneToOneField(Wydarzenie, on_delete=models.CASCADE,
+    oddzial_nazwa = models.ForeignKey(Oddzial, on_delete=models.CASCADE, primary_key=True)
+    wydarzenie_nazwa = models.ForeignKey(Wydarzenie, on_delete=models.CASCADE,
                                             related_name='wydarzenie_oddzial_wydarzenie_nazwa')
-    wydarzenie_data_rozpoczecia = models.OneToOneField(Wydarzenie, on_delete=models.CASCADE,
+    wydarzenie_data_rozpoczecia = models.ForeignKey(Wydarzenie, on_delete=models.CASCADE,
                                                        related_name='wydarzenie_oddzial_wydarzenie_data_rozpoczecia')
 
+    class Meta:
+                unique_together = (("oddzial_nazwa", "wydarzenie_nazwa", "wydarzenie_data_rozpoczecia"),)
 
 class Rodzaj_biletu(models.Model):
     typ = models.CharField(max_length=100, primary_key=True)
     czy_z_przewodnikiem = models.BooleanField()
     cena = models.FloatField()
-    oddzial_nazwa = models.OneToOneField(Oddzial, on_delete=models.CASCADE)
-
+    oddzial_nazwa = models.ForeignKey(Oddzial, on_delete=models.CASCADE)
+    
+    class Meta:
+        unique_together = (("typ", "czy_z_przewodnikiem","oddzial_nazwa"),)
 
 class Pracownik(models.Model):
     pesel = models.PositiveIntegerField(primary_key=True)
@@ -51,7 +57,7 @@ class Harmonogram_zwiedzania(models.Model):
     id = models.PositiveIntegerField(primary_key=True)
     godzina_rozpoczecia = models.TimeField(unique=True)
     data = models.DateField(unique=True)
-    pracownik_pesel = models.OneToOneField(Pracownik, on_delete=models.CASCADE)
+    pracownik_pesel = models.ForeignKey(Pracownik, on_delete=models.CASCADE)
 
 
 class Bilet(models.Model):
@@ -71,8 +77,10 @@ class Dzial(models.Model):
     nazwa = models.CharField(max_length=100, primary_key=True)
     pietro = models.PositiveIntegerField(verbose_name="piętro")
     epoka = models.CharField(max_length=100)
-    oddzial_nazwa = models.OneToOneField(Oddzial, on_delete=models.CASCADE)
+    oddzial_nazwa = models.ForeignKey(Oddzial, on_delete=models.CASCADE)
 
+    class Meta:
+                unique_together = (("nazwa", "oddzial_nazwa"),)
 
 class Artysta(models.Model):
     id = models.PositiveIntegerField(primary_key=True)
