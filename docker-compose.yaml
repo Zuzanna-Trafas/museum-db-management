@@ -27,7 +27,9 @@ services:
     ports:
     - '8080:80'
     environment:
-      PMA_HOST: db 
+      PMA_HOST: db
+    networks:
+      - museum
 
   web:
     build: .

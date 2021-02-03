@@ -87,7 +87,7 @@ class Artysta(models.Model):
     imie = models.CharField(max_length=50, verbose_name="imię")
     nazwisko = models.CharField(max_length=50)
     data_urodzenia = models.DateField()
-    data_śmierci = models.DateField(verbose_name="data śmierci")
+    data_smierci = models.DateField(verbose_name="data śmierci")
 
 
 class Obraz(models.Model):
