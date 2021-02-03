@@ -11,74 +11,79 @@
     <title>Bilety</title>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <img src="../logo.png" alt="logo" class="img-rounded" style="width:3%">
-      <div class="collapse navbar-collapse pl-3" id="navbarNav">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    {% load static %}
+    <img src="{% static "museum_app/logo.png" %}" alt="logo" class="img-rounded" style="width:3%">
+    <div class="collapse navbar-collapse pl-3" id="navbarNav">
         <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link" href="#">Strona główna</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Oddziały</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Działy</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Dzieła</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Artyści</a>
-          </li>
-          <li class="nav-item active">
-            <a class="nav-link" href="#">Bilety <span class="sr-only">(current)</span></a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Pracownicy</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Harmonogram zwiedzania</a>
-          </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/main">Strona główna</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/table/oddzialy">Oddziały</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/table/dzialy">Działy</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/table/dziela">Dzieła</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/table/artysci">Artyści</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="/table/bilety">Bilety <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/table/pracownicy">Pracownicy</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/table/harmonogram_zwiedzania">Harmonogram zwiedzania</a>
+            </li>
         </ul>
-      </div>
-    </nav>
+    </div>
+</nav>
 
-    <h1 class="px-5 pt-4">Bilety</h1>
+<h1 class="px-5 pt-4">Bilety</h1>
 
-    <div class="px-5">
+<div class="px-5">
     <table class="table table-hover">
-      <thead class="thead bg-info text-light">
+        <thead class="thead bg-info text-light">
         <tr>
-          <th scope="col">#</th>
-          <th scope="col">Data zakupu</th>
-          <th scope="col">Oddział</th>
-          <th scope="col">Typ biletu</th>
-          <th scope="col">Cena</th>
-          <th scope="col">Czy z przewodnikiem</th>
+            <th scope="col">#</th>
+            <th scope="col">Data zakupu</th>
+            <th scope="col">Oddział</th>
+            <th scope="col">Typ biletu</th>
+            <th scope="col">Cena</th>
+            <th scope="col">Czy z przewodnikiem</th>
         </tr>
-      </thead>
-      <tbody>
+        </thead>
+        <tbody>
         <tr>
-          <th scope="row">
-              <div class="pl-3"><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"></div>
-          </th>
-          <td>data</td>
-          <td>oddział</td>
-          <td>typ</td>
-          <td>cena</td>
-          <td>tak</td>
+            <th scope="row">
+                <div class="pl-3"><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"></div>
+            </th>
+            <td>data</td>
+            <td>oddział</td>
+            <td>typ</td>
+            <td>cena</td>
+            <td>tak</td>
         </tr>
-      </tbody>
+        </tbody>
     </table>
-    </div>
+</div>
 
-    <div class="d-flex px-5 pb-5">
-      <div class="p-2"><button type="button" class="btn btn-secondary">Edytuj</button></div>
-      <div class="p-2"><button type="button" class="btn btn-secondary">Usuń</button></div>
-      <div class="ml-auto p-2">
-              <button type="button" class="btn btn-secondary">Dodaj nowy rodzaj biletu</button>
-              <button type="button" class="btn btn-secondary">Dodaj nowy zakupiony bilet</button>
-      </div>
+<div class="d-flex px-5 pb-5">
+    <div class="p-2">
+        <button type="button" class="btn btn-secondary">Edytuj</button>
     </div>
+    <div class="p-2">
+        <button type="button" class="btn btn-secondary">Usuń</button>
+    </div>
+    <div class="ml-auto p-2">
+        <button type="button" class="btn btn-secondary">Dodaj nowy rodzaj biletu</button>
+        <button type="button" class="btn btn-secondary">Dodaj nowy zakupiony bilet</button>
+    </div>
+</div>
 </body>
 </html>
