@@ -34,9 +34,37 @@ def harmonogram_zwiedzania(request):
     return render(request, 'museum_app/harmonogram_zwiedzania.html')
 
 
-def add(request):
-    return render(request, 'museum_app/add.html')
+def add_oddzial(request):
+    return render(request, 'museum_app/add_oddzial.html')
 
 
-def edit(request):
-    return render(request, 'museum_app/edit.html')
+def add_dzial(request):
+    return render(request, 'museum_app/add_dzial.html')
+
+
+def add_obraz(request):
+    return render(request, 'museum_app/add_obraz.html')
+
+
+def add_rzezba(request):
+    return render(request, 'museum_app/add_rzezba.html')
+
+
+def add_artysta(request):
+    return render(request, 'museum_app/add_artysta.html')
+
+
+def add_bilet(request):
+    return render(request, 'museum_app/add_bilet.html')
+
+
+def add_rodzaj_biletu(request):
+    return render(request, 'museum_app/add_rodzaj_biletu.html')
+
+
+def add_pracownik(request):
+    return render(request, 'museum_app/add_pracownik.html')
+
+
+def add_harmonogram_zwiedzania(request):
+    return render(request, 'museum_app/add_harmonogram_zwiedzania.html')
