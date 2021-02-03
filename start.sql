@@ -28,21 +28,21 @@ DELIMITER $$
 --
 -- Procedury
 --
-CREATE DEFINER=`admin`@`%` PROCEDURE `podsumowanie_zwiedzania` (IN `dzien` DATE, IN `museum_app_oddzial` VARCHAR(100))  BEGIN
+CREATE DEFINER=`admin`@`%` PROCEDURE `podsumowanie_zwiedzania` (IN `dzien` DATE, IN `oddzial` VARCHAR(100))  BEGIN
 SELECT j.godzina_rozpoczecia, p.imie, p.nazwisko, j.liczba_uczestnikow FROM
    (SELECT h.godzina_rozpoczecia, h.pracownik_pesel, COUNT(b.id) AS liczba_uczestnikow FROM
-    museum_app_bilet b RIGHT JOIN museum_app_harmonogram_zwiedzania h ON (b.harmonogram_zwiedzania_godzina_rozpoczecia=h.godzina_rozpoczecia AND b.harmonogram_zwiedzania_data=h.data)
+    bilet b RIGHT JOIN harmonogram_zwiedzania h ON (b.harmonogram_zwiedzania_id=h.id)
 	WHERE h.data=dzien
-    GROUP BY h.godzina_rozpoczecia, h.pracownik_pesel) j LEFT JOIN museum_app_pracownik p ON j.pracownik_pesel=p.pesel
-    WHERE p.oddzial_nazwa=museum_app_oddzial;
+    GROUP BY h.godzina_rozpoczecia, h.pracownik_pesel) j LEFT JOIN pracownik p ON j.pracownik_pesel=p.pesel
+    WHERE p.oddzial_nazwa=oddzial;
 END$$
 
 --
 -- Funkcje
 --
 CREATE DEFINER=`admin`@`%` FUNCTION `policz_dochod` (`typ_biletu` VARCHAR(100)) RETURNS FLOAT DETERMINISTIC BEGIN
-	DECLARE suma FLOAT DEFAULT 0; 
-	SELECT SUM(r.cena) INTO suma FROM museum_app_bilet b LEFT JOIN museum_app_rodzaj_biletu r ON (b.rodzaj_biletu_typ=r.typ AND b.rodzaj_biletu_oddzial_nazwa=r.oddzial_nazwa AND b.rodzaj_biletu_czy_z_przewodnikiem=r.czy_z_przewodnikiem)
+	DECLARE suma FLOAT DEFAULT 0;
+	SELECT SUM(r.cena) INTO suma FROM bilet b LEFT JOIN rodzaj_biletu r ON (b.rodzaj_biletu_typ=r.typ AND b.rodzaj_biletu_oddzial_nazwa=r.oddzial_nazwa AND b.rodzaj_biletu_czy_z_przewodnikiem=r.czy_z_przewodnikiem)
     WHERE b.rodzaj_biletu_typ=typ_biletu; 
     RETURN suma;
 END$$
@@ -83,8 +83,7 @@ CREATE TABLE `museum_app_bilet` (
   `data_zakupu` date NOT NULL,
   `rodzaj_biletu_typ` varchar(100) NOT NULL,
   `rodzaj_biletu_oddzial_nazwa` varchar(100) NOT NULL,
-  `harmonogram_zwiedzania_godzina_rozpoczecia` time DEFAULT NULL,
-  `harmonogram_zwiedzania_data` date DEFAULT NULL,
+  `harmonogram_zwiedzania_id` int DEFAULT NULL,
   `rodzaj_biletu_czy_z_przewodnikiem` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;;
 
@@ -92,12 +91,12 @@ CREATE TABLE `museum_app_bilet` (
 -- Zrzut danych tabeli `museum_app_bilet`
 --
 
-INSERT INTO `museum_app_bilet` (`id`, `data_zakupu`, `rodzaj_biletu_typ`, `rodzaj_biletu_oddzial_nazwa`, `harmonogram_zwiedzania_godzina_rozpoczecia`, `harmonogram_zwiedzania_data`, `rodzaj_biletu_czy_z_przewodnikiem`) VALUES
-(1, '2020-12-08', 'normalny', 'muzeum narodowe w poznaniu', '12:00:00', '2020-12-09', 1),
-(2, '2020-12-10', 'ulgowy', 'muzeum narodowe w warszawie', NULL, NULL, 0),
-(3, '2020-12-06', 'ulgowy', 'muzeum narodowe w poznaniu', '12:00:00', '2020-12-09', 1),
-(4, '2020-12-03', 'normalny', 'muzeum narodowe w warszawie', '12:00:00', '2020-12-09', 1),
-(5, '2020-12-12', 'normalny', 'muzeum narodowe w poznaniu', NULL, NULL, 0);
+INSERT INTO `museum_app_bilet` (`id`, `data_zakupu`, `rodzaj_biletu_typ`, `rodzaj_biletu_oddzial_nazwa`, `harmonogram_zwiedzania_id`, `rodzaj_biletu_czy_z_przewodnikiem`) VALUES
+(1, '2020-12-08', 'normalny', 'muzeum narodowe w poznaniu', 1, 1),
+(2, '2020-12-10', 'ulgowy', 'muzeum narodowe w warszawie', NULL, 0),
+(3, '2020-12-06', 'ulgowy', 'muzeum narodowe w poznaniu', 3, 1),
+(4, '2020-12-03', 'normalny', 'muzeum narodowe w warszawie', 2, 1),
+(5, '2020-12-12', 'normalny', 'muzeum narodowe w poznaniu', NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -130,6 +129,7 @@ INSERT INTO `museum_app_dzial` (`nazwa`, `pietro`, `epoka`, `oddzial_nazwa`) VAL
 --
 
 CREATE TABLE `museum_app_harmonogram_zwiedzania` (
+  `id` int NOT NULL,
   `godzina_rozpoczecia` time NOT NULL,
   `data` date NOT NULL,
   `pracownik_pesel` bigint NOT NULL
@@ -139,10 +139,10 @@ CREATE TABLE `museum_app_harmonogram_zwiedzania` (
 -- Zrzut danych tabeli `museum_app_harmonogram_zwiedzania`
 --
 
-INSERT INTO `museum_app_harmonogram_zwiedzania` (`godzina_rozpoczecia`, `data`, `pracownik_pesel`) VALUES
-('12:00:00', '2020-12-09', 65030565926),
-('15:00:00', '2020-12-09', 65030565926),
-('12:00:00', '2020-12-09', 89123185621);
+INSERT INTO `museum_app_harmonogram_zwiedzania` (`id`, `godzina_rozpoczecia`, `data`, `pracownik_pesel`) VALUES
+(1, '12:00:00', '2020-12-09', 65030565926),
+(2, '15:00:00', '2020-12-09', 65030565926),
+(3, '12:00:00', '2020-12-09', 89123185621);
 
 -- --------------------------------------------------------
 
@@ -330,7 +330,7 @@ ALTER TABLE `museum_app_artysta`
 ALTER TABLE `museum_app_bilet`
   ADD PRIMARY KEY (`id`),
   ADD KEY `bilet_rodzaj_biletu` (`rodzaj_biletu_typ`,`rodzaj_biletu_czy_z_przewodnikiem`,`rodzaj_biletu_oddzial_nazwa`),
-  ADD KEY `bilet_harmonogram_zwiedzania_FK` (`harmonogram_zwiedzania_data`,`harmonogram_zwiedzania_godzina_rozpoczecia`) USING BTREE;
+  ADD KEY `bilet_harmonogram_zwiedzania_FK` (`harmonogram_zwiedzania_id`) USING BTREE;
 
 --
 -- Indeksy dla tabeli `museum_app_dzial`
@@ -343,7 +343,8 @@ ALTER TABLE `museum_app_dzial`
 -- Indeksy dla tabeli `museum_app_harmonogram_zwiedzania`
 --
 ALTER TABLE `museum_app_harmonogram_zwiedzania`
-  ADD PRIMARY KEY (`data`,`godzina_rozpoczecia`,`pracownik_pesel`),
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY (`data`,`godzina_rozpoczecia`,`pracownik_pesel`),
   ADD KEY `harmonogram_zwiedzania_pracownik_FK` (`pracownik_pesel`);
 
 --
@@ -431,7 +432,7 @@ ALTER TABLE `museum_app_rzezba`
 -- Ograniczenia dla tabeli `museum_app_bilet`
 --
 ALTER TABLE `museum_app_bilet`
-  ADD CONSTRAINT `bilet_harmonogram_zwiedzania_FK` FOREIGN KEY (`harmonogram_zwiedzania_data`,`harmonogram_zwiedzania_godzina_rozpoczecia`) REFERENCES `museum_app_harmonogram_zwiedzania` (`data`, `godzina_rozpoczecia`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `bilet_harmonogram_zwiedzania_FK` FOREIGN KEY (`harmonogram_zwiedzania_id`) REFERENCES `museum_app_harmonogram_zwiedzania` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   ADD CONSTRAINT `bilet_rodzaj_biletu` FOREIGN KEY (`rodzaj_biletu_typ`,`rodzaj_biletu_czy_z_przewodnikiem`,`rodzaj_biletu_oddzial_nazwa`) REFERENCES `museum_app_rodzaj_biletu` (`typ`, `czy_z_przewodnikiem`, `oddzial_nazwa`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
