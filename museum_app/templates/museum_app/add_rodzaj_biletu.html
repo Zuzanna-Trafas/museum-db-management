@@ -32,10 +32,10 @@
                 <a class="nav-link" href="/table/artysci">Artyści</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/table/bilety">Bilety</a>
+                <a class="nav-link active" href="/table/bilety">Bilety <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link active" href="/table/pracownicy">Pracownicy  <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="/table/pracownicy">Pracownicy</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/table/harmonogram_zwiedzania">Harmonogram zwiedzania</a>
@@ -44,48 +44,20 @@
     </div>
 </nav>
 
-<h1 class="px-5 pt-4">Dodaj pracownika</h1>
+<h1 class="px-5 pt-4">Dodaj rodzaj biletu</h1>
 
 <div class="px-5">
     <form class="needs-validation" id="form-name" novalidate>
         <div class="form-group">
             <div class="col-md-4">
-                <label for="pesel">Pesel *</label>
-                <input type="text" class="form-control" id="pesel" minlength="11" maxlength="11" required>
+                <label for="purchase-date">Typ *</label>
+                <input type="text" class="form-control" id="purchase-date" maxlength="100" required>
             </div>
         </div>
         <div class="form-group">
             <div class="col-md-4">
-                <label for="name">Imię *</label>
-                <input type="text" class="form-control" id="name" maxlength="50" required>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-md-4">
-                <label for="surname">Nazwisko *</label>
-                <input type="text" class="form-control" id="surname" maxlength="50" required>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-md-4">
-                <label for="etat">Etat *</label>
-                <select multiple class="form-control" id="etat" required>
-                    <option>Pracownik</option>
-                    <option>Stażysta</option>
-                    <option>Kierownik</option>
-                </select>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-md-4">
-                <label for="wage">Płaca *</label>
-                <input type="number" class="form-control" id="wage" min="0" max="1000000" required>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-md-4">
-                <label for="join-date">Data zatrudnienia *</label>
-                <input type="date" class="form-control" id="join-date" placeholder="dd-mm-yyyy" required>
+                <label for="purchase-date">Cena *</label>
+                <input type="number" class="form-control" id="purchase-date" min="0" max="1000" required>
             </div>
         </div>
         <div class="form-group">
@@ -96,9 +68,16 @@
             </div>
         </div>
         <div class="form-group">
-            <div class="col-md-4">
-                <label for="number">Numer telefonu</label>
-                <input type="tel" class="form-control" id="number" minlength="9" maxlength="9">
+            <div id="radios" class="col-md-4">
+                <label for="guide">Czy z przewodnikiem? *</label>
+                <div class='form-check form-check-inline pl-3 pt-1'>
+                    <label class='form-check-label' for='guide'><input id="yes" class='form-check-input' type='radio'
+                                                                       name='pname' required>tak</label>
+                </div>
+                <div class='form-check form-check-inline pt-1'>
+                    <label class='form-check-label' for='guide'><input id="no" class='form-check-input' type='radio'
+                                                                       name='pname' required>nie</label>
+                </div>
             </div>
         </div>
         <div>
@@ -130,5 +109,8 @@
         })();
     </script>
 </div>
+</body>
+</html>
+
 </body>
 </html>
