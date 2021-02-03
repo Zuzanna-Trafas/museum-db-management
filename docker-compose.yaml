@@ -30,7 +30,7 @@ services:
       PMA_HOST: db 
     networks:
       - museum
-      
+  
   web:
     build: .
     container_name: django-app
