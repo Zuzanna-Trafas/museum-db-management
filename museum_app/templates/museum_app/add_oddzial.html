@@ -47,35 +47,36 @@
 <h1 class="px-5 pt-4">Dodaj oddział</h1>
 
 <div class="px-5">
-    <form class="needs-validation" id="form-name" novalidate>
+    <form class="needs-validation" id="form-name" method="post">
         <div class="form-group">
             <div class="col-md-4">
                 <label for="name">Nazwa *</label>
-                <input type="text" class="form-control" id="name" maxlength="100" required>
+                  {{  form.name }}
             </div>
         </div>
         <div class="form-group">
             <div class="col-md-4">
                 <label for="opening-hour">Godzina otwarcia *</label>
-                <input type="time" class="form-control" id="opening-hour" required>
+                {{  form.opening_hour }}
+
             </div>
         </div>
         <div class="form-group">
             <div class="col-md-4">
                 <label for="closing-hour">Godzina zamknięcia *</label>
-                <input type="time" class="form-control" id="closing-hour" required>
+                {{ form.closing_hour }}
             </div>
         </div>
         <div class="form-group">
             <div class="col-md-4">
                 <label for="address">Adres *</label>
-                <input type="text" class="form-control" id="address" maxlength="100" required>
+                {{ form.address }}
             </div>
         </div>
         <div class="form-group">
             <div class="col-md-4">
                 <label for="number">Numer telefonu</label>
-                <input type="number" class="form-control" id="number" minlength="9" maxlength="9">
+                {{ form.number }}
             </div>
         </div>
 

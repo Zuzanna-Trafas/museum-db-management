@@ -1,5 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render
+from .forms import OddzialForm
 
 
 def main(request):
@@ -35,36 +36,39 @@ def harmonogram_zwiedzania(request):
 
 
 def add_oddzial(request):
-    return render(request, 'museum_app/add_oddzial.html')
+    form = OddzialForm(request.POST)
+    if form.is_valid():
+        name = form.cleaned_data['name']
+    return render(request, 'museum_app/add_oddzial.html', {'form': form})
 
 
 def add_dzial(request):
-    return render(request, 'museum_app/add_dzial.html')
+    return render(request, 'museum_app/add_dzial.html', {'form': form})
 
 
 def add_obraz(request):
-    return render(request, 'museum_app/add_obraz.html')
+    return render(request, 'museum_app/add_obraz.html', {'form': form})
 
 
 def add_rzezba(request):
-    return render(request, 'museum_app/add_rzezba.html')
+    return render(request, 'museum_app/add_rzezba.html', {'form': form})
 
 
 def add_artysta(request):
-    return render(request, 'museum_app/add_artysta.html')
+    return render(request, 'museum_app/add_artysta.html', {'form': form})
 
 
 def add_bilet(request):
-    return render(request, 'museum_app/add_bilet.html')
+    return render(request, 'museum_app/add_bilet.html', {'form': form})
 
 
 def add_rodzaj_biletu(request):
-    return render(request, 'museum_app/add_rodzaj_biletu.html')
+    return render(request, 'museum_app/add_rodzaj_biletu.html', {'form': form})
 
 
 def add_pracownik(request):
-    return render(request, 'museum_app/add_pracownik.html')
+    return render(request, 'museum_app/add_pracownik.html', {'form': form})
 
 
 def add_harmonogram_zwiedzania(request):
-    return render(request, 'museum_app/add_harmonogram_zwiedzania.html')
+    return render(request, 'museum_app/add_harmonogram_zwiedzania.html', {'form': form})
