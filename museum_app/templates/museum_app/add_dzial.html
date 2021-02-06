@@ -47,16 +47,17 @@
 <h1 class="px-5 pt-4">Dodaj dział</h1>
 
 <div class="px-5">
-    <form class="needs-validation" id="form-name">
+    <form class="needs-validation" id="form-name" method="post">
         <div class="form-group">
             <div class="col-md-4">
                 <label for="name">Nazwa *</label>
-                <input type="text" class="form-control" id="name" maxlength="100" required>
+                {{ form.name }}
             </div>
         </div>
         <div class="form-group">
             <div class="col-md-4">
                 <label for="branch">Oddział *</label>
+                {{ form.oddzial_select }}
                 <select multiple class="form-control" id="branch" required>
                 </select>
             </div>
@@ -64,13 +65,13 @@
         <div class="form-group">
             <div class="col-md-4">
                 <label for="floor">Piętro *</label>
-                <input type="number" class="form-control" id="floor" max="100" required>
+                {{ form.floor }}
             </div>
         </div>
         <div class="form-group">
             <div class="col-md-4">
                 <label for="epoch">Epoka</label>
-                <input type="text" class="form-control" id="epoch" maxlength="100">
+                {{ form.epoch }}
             </div>
         </div>
 

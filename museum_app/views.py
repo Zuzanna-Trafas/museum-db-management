@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render
-from .forms import OddzialForm
+from museum_app.forms import OddzialForm, DzialForm
 
 
 def main(request):
@@ -43,6 +43,9 @@ def add_oddzial(request):
 
 
 def add_dzial(request):
+    form = DzialForm(request.POST)
+    if form.is_valid():
+        name = form.cleaned_data['name']
     return render(request, 'museum_app/add_dzial.html', {'form': form})
 
 

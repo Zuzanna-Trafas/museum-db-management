@@ -1,5 +1,7 @@
 from django import forms
 
+OPTIONS = ["Poznan"]
+
 
 class OddzialForm(forms.Form):
     name = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "name",
@@ -16,3 +18,17 @@ class OddzialForm(forms.Form):
 
     number = forms.CharField(widget=forms.TextInput(attrs={'type': "number", "class": "form-control", "id": "number",
                                                            "min": "100000000", "max": "999999999"}))
+
+
+class DzialForm(forms.Form):
+    name = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "name",
+                                                         'maxlength': "100", 'required': 'true'}))
+
+    oddzial_select = forms.MultipleChoiceField(required=True, widget=forms.CheckboxSelectMultiple,
+                                               choices=OPTIONS)
+
+    floor = forms.CharField(widget=forms.TextInput(attrs={'type': "number", "class": "form-control", "id": "floor",
+                                                          "min": "-100", "max": "100"}))
+
+    epoch = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "epoch",
+                                                          'maxlength': "100"}))
