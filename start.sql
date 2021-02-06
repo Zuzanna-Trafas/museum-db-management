@@ -451,7 +451,7 @@ ALTER TABLE `museum_app_harmonogram_zwiedzania`
 -- Ograniczenia dla tabeli `museum_app_obraz`
 --
 ALTER TABLE `museum_app_obraz`
-  ADD CONSTRAINT `obraz_artysta_FK` FOREIGN KEY (`artysta_id_id_id`) REFERENCES `museum_app_artysta` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `obraz_artysta_FK` FOREIGN KEY (`artysta_id_id`) REFERENCES `museum_app_artysta` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   ADD CONSTRAINT `obraz_oddzial_FK` FOREIGN KEY (`dzial_nazwa_id`,`dzial_oddzial_nazwa_id`) REFERENCES `museum_app_dzial` (`nazwa`, `oddzial_nazwa_id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
