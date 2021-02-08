@@ -11,7 +11,7 @@ class Oddzial(models.Model):
     godzina_otwarcia = models.TimeField()
     godzina_zamkniecia = models.TimeField(verbose_name="godzina zamknięcia")
     adres = models.CharField(max_length=100)
-    numer_telefonu = models.PositiveIntegerField()
+    numer_telefonu = models.CharField(max_length=20)
 
 
 
@@ -49,7 +49,7 @@ class Pracownik(models.Model):
     placa = models.PositiveIntegerField(verbose_name="płaca")
     etat = models.CharField(max_length=50)
     data_zatrudnienia = models.DateField()
-    numer_telefonu = models.PositiveIntegerField()
+    numer_telefonu = models.CharField(max_length=20)
     oddzial_nazwa = models.ForeignKey(Oddzial, on_delete=models.CASCADE)
 
 

@@ -182,7 +182,7 @@ CREATE TABLE `museum_app_oddzial` (
   `godzina_otwarcia` time NOT NULL,
   `godzina_zamkniecia` time NOT NULL,
   `adres` varchar(100) NOT NULL,
-  `numer_telefonu` int DEFAULT NULL
+  `numer_telefonu` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;;
 
 --
@@ -206,7 +206,7 @@ CREATE TABLE `museum_app_pracownik` (
   `placa` int NOT NULL,
   `etat` varchar(50) NOT NULL,
   `data_zatrudnienia` date NOT NULL,
-  `numer_telefonu` int DEFAULT NULL,
+  `numer_telefonu` varchar(20) DEFAULT NULL,
   `oddzial_nazwa_id` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;;
 
