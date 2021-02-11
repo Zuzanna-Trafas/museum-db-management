@@ -140,3 +140,19 @@ class HarmonogramZwiedzaniaForm(forms.Form):
                                                          "id": "date", "required": "true"}))
 
     # TODO pesel
+
+
+class DetailedArtystaForm(forms.Form):
+    name = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "name",
+                                                         'maxlength': "50", "required": "true"}))
+
+    surname = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "surname",
+                                                            'maxlength': "50", "required": "true"}))
+
+    birth_date = forms.CharField(widget=forms.TextInput(attrs={"type": "date", "class": "form-control",
+                                                               "id": "birth-date", "required": "true"}))
+
+    death_date = forms.CharField(widget=forms.TextInput(attrs={"type": "date", "class": "form-control",
+                                                               "id": "death-date"}))
+    # TODO painitngs
+    # TODO sculptures
