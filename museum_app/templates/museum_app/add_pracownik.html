@@ -51,41 +51,37 @@
         <div class="form-group">
             <div class="col-md-4">
                 <label for="pesel">Pesel *</label>
-                <input type="text" class="form-control" id="pesel" minlength="11" maxlength="11" required>
+                {{ form.pesel }}
             </div>
         </div>
         <div class="form-group">
             <div class="col-md-4">
                 <label for="name">Imię *</label>
-                <input type="text" class="form-control" id="name" maxlength="50" required>
+                {{ form.name }}
             </div>
         </div>
         <div class="form-group">
             <div class="col-md-4">
                 <label for="surname">Nazwisko *</label>
-                <input type="text" class="form-control" id="surname" maxlength="50" required>
+                {{ form.surname }}
             </div>
         </div>
         <div class="form-group">
             <div class="col-md-4">
-                <label for="etat">Etat *</label>
-                <select multiple class="form-control" id="etat" required>
-                    <option>Pracownik</option>
-                    <option>Stażysta</option>
-                    <option>Kierownik</option>
-                </select>
+                <label for="position">Etat *</label>
+                {{ form.position }}
             </div>
         </div>
         <div class="form-group">
             <div class="col-md-4">
                 <label for="wage">Płaca *</label>
-                <input type="number" class="form-control" id="wage" min="0" max="1000000" required>
+                {{ form.wage }}
             </div>
         </div>
         <div class="form-group">
             <div class="col-md-4">
                 <label for="join-date">Data zatrudnienia *</label>
-                <input type="date" class="form-control" id="join-date" placeholder="dd-mm-yyyy" required>
+                {{ form.join_date }}
             </div>
         </div>
         <div class="form-group">
@@ -98,7 +94,7 @@
         <div class="form-group">
             <div class="col-md-4">
                 <label for="number">Numer telefonu</label>
-                <input type="number" class="form-control" id="number" minlength="9" maxlength="9">
+                {{ form.number }}
             </div>
         </div>
         <div>

@@ -51,25 +51,25 @@
         <div class="form-group">
             <div class="col-md-4">
                 <label for="name">Imię *</label>
-                <input type="text" class="form-control" id="name" maxlength="50" required>
+                {{ form.name }}
             </div>
         </div>
         <div class="form-group">
             <div class="col-md-4">
                 <label for="surname">Nazwisko *</label>
-                <input type="text" class="form-control" id="surname" maxlength="50" required>
+                {{ form.surname }}
             </div>
         </div>
         <div class="form-group">
             <div class="col-md-4">
                 <label for="birth-date">Data narodzenia *</label>
-                <input type="date" class="form-control" id="birth-date" required>
+                {{ form.birth_date }}
             </div>
         </div>
         <div class="form-group">
             <div class="col-md-4">
                 <label for="death-date">Data śmierci</label>
-                <input type="date" class="form-control" id="death-date">
+                {{ form.death_date }}
             </div>
         </div>
         <div>

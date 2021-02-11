@@ -50,14 +50,14 @@
     <form class="needs-validation" id="form-name" method="post">
         <div class="form-group">
             <div class="col-md-4">
-                <label for="purchase-date">Typ *</label>
-                <input type="text" class="form-control" id="purchase-date" maxlength="100" required>
+                <label for="type">Typ *</label>
+                {{ form.type }}
             </div>
         </div>
         <div class="form-group">
             <div class="col-md-4">
                 <label for="price">Cena *</label>
-                <input type="number" class="form-control" id="price" min="0" max="1000" required>
+                {{ form.price }}
             </div>
         </div>
         <div class="form-group">

@@ -51,7 +51,7 @@
         <div class="form-group">
             <div class="col-md-4">
                 <label for="name">Nazwa</label>
-                <input type="text" class="form-control" id="name" maxlength="100">
+                {{ form.name }}
             </div>
         </div>
         <div class="form-group">
@@ -70,21 +70,21 @@
         </div>
         <div class="form-group">
             <div class="col-md-4">
-                <label for="department">Artysta</label>
-                <select multiple class="form-control" id="department">
+                <label for="artist">Artysta</label>
+                <select multiple class="form-control" id="artist">
                 </select>
             </div>
         </div>
         <div class="form-group">
             <div class="col-md-4">
                 <label for="weight">Waga [kg] *</label>
-                <input type="number" class="form-control" id="weight" step="0.01" min="0" max="100000" required>
+                {{ form.weight }}
             </div>
         </div>
         <div class="form-group">
             <div class="col-md-4">
                 <label for="material">Materiał *</label>
-                <input type="text" class="form-control" id="material" maxlength="50" required>
+                {{ form.material }}
             </div>
         </div>
 
