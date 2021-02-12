@@ -144,15 +144,74 @@ class HarmonogramZwiedzaniaForm(forms.Form):
 
 class DetailedArtystaForm(forms.Form):
     name = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "name",
-                                                         'maxlength': "50", "required": "true"}))
+                                                         'maxlength': "50"}))
 
     surname = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "surname",
-                                                            'maxlength': "50", "required": "true"}))
+                                                            'maxlength': "50"}))
 
     birth_date = forms.CharField(widget=forms.TextInput(attrs={"type": "date", "class": "form-control",
-                                                               "id": "birth-date", "required": "true"}))
+                                                               "id": "birth-date"}))
 
     death_date = forms.CharField(widget=forms.TextInput(attrs={"type": "date", "class": "form-control",
                                                                "id": "death-date"}))
     # TODO painitngs
     # TODO sculptures
+
+
+class DetailedDzialForm(forms.Form):
+    name = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "name",
+                                                         'maxlength': "100"}))
+
+    oddzial = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "branch",
+                                                            'maxlength': "100"}))
+
+    floor = forms.CharField(widget=forms.TextInput(attrs={'type': "number", "class": "form-control", "id": "floor",
+                                                          "min": "-100", "max": "100"}))
+
+    epoch = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "epoch",
+                                                          'maxlength': "100"}))
+
+    # TODO painitngs
+    # TODO sculptures
+
+
+class DetailedDzieloForm(forms.Form):
+    name = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "name",
+                                                         'maxlength': "100"}))
+
+    branch = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "branch",
+                                                           'maxlength': "100"}))
+
+    department = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control",
+                                                               'id': "department", 'maxlength': "100"}))
+
+    artist = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "artist",
+                                                           'maxlength': "100"}))
+
+    width = forms.CharField(widget=forms.TextInput(attrs={'type': "number", "class": "form-control", "id": "width",
+                                                          "step": "0.01"}))
+
+    height = forms.CharField(widget=forms.TextInput(attrs={'type': "number", "class": "form-control", "id": "height",
+                                                           "step": "0.01"}))
+
+    weight = forms.CharField(widget=forms.TextInput(attrs={'type': "number", "class": "form-control", "id": "weight",
+                                                           "step": "0.01", "required": "true"}))
+
+    material = forms.CharField(widget=forms.TextInput(attrs={'type': "text", "class": "form-control", "id": "material",
+                                                             "maxlength": "50"}))
+
+
+class DetailedOddzialForm(forms.Form):
+    name = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "name",
+                                                         'maxlength': "100", 'required': 'true'}))
+
+    opening_hour = forms.CharField(widget=forms.TextInput(attrs={"type": "time", "class": "form-control",
+                                                                 "id": "opening-hour", "required": "true"}))
+
+    closing_hour = forms.CharField(widget=forms.TextInput(attrs={"type": "time", "class": "form-control",
+                                                                 "id": "closing-hour", "required": "true"}))
+
+    address = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "address",
+                                                            'maxlength': "100", 'required': 'true'}))
+
+    number = forms.CharField(widget=forms.TextInput(attrs={'type': "text", "class": "form-control", "id": "number"}))

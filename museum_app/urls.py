@@ -31,11 +31,6 @@ urlpatterns = [
             path('edit/harmonogram_zwiedzania', views.edit_harmonogram_zwiedzania, name='edit_harmonogram_zwiedzania'),
             path('detailed/oddzial', views.detailed_oddzial, name='detailed_oddzial'),
             path('detailed/dzial', views.detailed_dzial, name='detailed_dzial'),
-            path('detailed/obraz', views.detailed_obraz, name='detailed_obraz'),
-            path('detailed/rzezba', views.detailed_rzezba, name='detailed_rzezba'),
             path('detailed/artysta', views.detailed_artysta, name='detailed_artysta'),
-            path('detailed/bilet', views.detailed_bilet, name='detailed_bilet'),
-            path('detailed/rodzaj_biletu', views.detailed_rodzaj_biletu, name='detailed_rodzaj_biletu'),
-            path('detailed/pracownik', views.detailed_pracownik, name='detailed_pracownik'),
-            path('detailed/harmonogram_zwiedzania', views.detailed_harmonogram_zwiedzania, name='detailed_harmonogram_zwiedzania'),
+            path('detailed/dzielo', views.detailed_dzielo, name='detailed_dzielo')
             ]
