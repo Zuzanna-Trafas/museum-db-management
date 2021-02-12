@@ -20,7 +20,7 @@
                 <a class="nav-link" href="/main">Strona główna</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link active" href="/table/oddzialy">Oddziały <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="/table/oddzialy">Oddziały</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/table/dzialy">Działy</a>
@@ -29,7 +29,7 @@
                 <a class="nav-link" href="/table/dziela">Dzieła</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/table/artysci">Artyści</a>
+                <a class="nav-link active" href="/table/artysci">Artyści <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/table/bilety">Bilety</a>
@@ -48,41 +48,51 @@
 
 <div class="px-5">
     <form class="needs-validation" id="form-name" method="post">
-        <div class="form-group">
-            <div class="col-md-4">
-                <label for="name">Nazwa *</label>
-                  {{  form.name }}
+        <fieldset disabled>
+            <div class="form-group">
+                <div class="col-md-4">
+                    <label for="name">Nazwa</label>
+                    {{ form.name }}
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <div class="col-md-4">
-                <label for="opening-hour">Godzina otwarcia *</label>
-                {{  form.opening_hour }}
-
+            <div class="form-group">
+                <div class="col-md-4">
+                    <label for="branch">Oddział</label>
+                    <div>
+                        {{ form.oddzial }}
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <div class="col-md-4">
-                <label for="closing-hour">Godzina zamknięcia *</label>
-                {{ form.closing_hour }}
+            <div class="form-group">
+                <div class="col-md-4">
+                    <label for="floor">Piętro</label>
+                    {{ form.floor }}
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <div class="col-md-4">
-                <label for="address">Adres *</label>
-                {{ form.address }}
+            <div class="form-group">
+                <div class="col-md-4">
+                    <label for="epoch">Epoka</label>
+                    {{ form.epoch }}
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <div class="col-md-4">
-                <label for="number">Numer telefonu</label>
-                {{ form.number }}
+            <div class="form-group">
+                <div class="col-md-4">
+                    <label for="paintings">Obrazy</label>
+                    <select multiple class="form-control" id="paintings" required>
+                    </select>
+                </div>
             </div>
-        </div>
-
+            <div class="form-group">
+                <div class="col-md-4">
+                    <label for="sculptures">Rzeźby</label>
+                    <select multiple class="form-control" id="sculptures" required>
+                    </select>
+                </div>
+            </div>
+        </fieldset>
         <div>
             <div class="ml-auto p-2 pb-5">
-                <a type="button" class="btn btn-secondary" role="button" href="/table/oddzialy">Wróć</a>
+                <a type="button" class="btn btn-secondary" role="button" href="/table/dzialy">Wróć</a>
             </div>
         </div>
     </form>

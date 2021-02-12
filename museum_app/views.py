@@ -1,16 +1,19 @@
 from django.http import HttpResponse
 from django.shortcuts import render
 from museum_app.forms import OddzialForm, DzialForm, ObrazForm, RzezbaForm, ArtystaForm, BiletForm, RodzajBiletuForm, \
-    PracownikForm, HarmonogramZwiedzaniaForm, DetailedArtystaForm, DetailedDzialForm, DetailedDzieloForm, DetailedOddzialForm
+    PracownikForm, HarmonogramZwiedzaniaForm, WydarzenieForm, DetailedArtystaForm, DetailedDzialForm, DetailedDzieloForm, DetailedOddzialForm
 
 
 def main(request):
+    # TODO searching
     return render(request, 'museum_app/main.html')
 
 
 # TODO for all table views button ids have to include records primary key. Pass the id to detailed and edit views by url for example detailed/oddzial/10
 # TODO for dziela we have to also pass type (obraz/rzeźba) to know which model to use
-
+# TODO fill the table views with data
+# TODO somehow handle "usuń" button
+# everything done for table views has to be done also for detailed_oddzial for wydarzenia
 def oddzialy(request):
     return render(request, 'museum_app/oddzialy.html')
 
@@ -37,6 +40,10 @@ def pracownicy(request):
 
 def harmonogram_zwiedzania(request):
     return render(request, 'museum_app/harmonogram_zwiedzania.html')
+
+
+# TODO handle adding for all tables (also wydarzenia)
+# TODO redirect to table view after submit
 
 
 def add_oddzial(request):
@@ -90,6 +97,15 @@ def add_harmonogram_zwiedzania(request):
     return render(request, 'museum_app/add_harmonogram_zwiedzania.html', {'form': form})
 
 
+def add_wydarzenie(request):
+    form = WydarzenieForm(request.POST)
+    return render(request, 'museum_app/add_wydarzenie.html', {'form': form})
+
+# TODO handle editing for all tables (also wydarzenia) - fill values with initial, like for detailed
+# TODO disable primary keys after filling them for editing
+# TODO figure out how to fill date and time fields
+# TODO redirect to table view after submit
+
 def edit_oddzial(request):
     form = OddzialForm(request.POST)
     return render(request, 'museum_app/add_oddzial.html', {'form': form})
@@ -137,6 +153,13 @@ def edit_harmonogram_zwiedzania(request):
     return render(request, 'museum_app/add_harmonogram_zwiedzania.html', {'form': form})
 
 
+def edit_wydarzenie(request):
+    form = WydarzenieForm(request.POST)
+    return render(request, 'museum_app/add_wydarzenie.html', {'form': form})
+
+
+# TODO fill initial values with values from model
+
 def detailed_oddzial(request):
     initial_values = {
         "name": "Nazwa"
@@ -168,8 +191,7 @@ def detailed_artysta(request):
 
 
 def detailed_dzielo(request):
-    # TODO fill initial values with values from model
-    # for obraz pass -1 in width and height, for rzezba pass -1 for weight and material
+    # for rzeźba pass -1 in width and height, for obraz pass -1 for weight and material
     initial_values = {
         "name": "Nazwa",
         "branch": "Oddział",

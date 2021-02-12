@@ -142,6 +142,17 @@ class HarmonogramZwiedzaniaForm(forms.Form):
     # TODO pesel
 
 
+class WydarzenieForm(forms.Form):
+    name = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "name",
+                                                         'maxlength': "100", "required": "true"}))
+
+    start_date = forms.CharField(widget=forms.TextInput(attrs={"type": "date", "class": "form-control",
+                                                               "id": "start-date", "required": "true"}))
+
+    end_date = forms.CharField(widget=forms.TextInput(attrs={"type": "date", "class": "form-control",
+                                                             "id": "end-date", "required": "true"}))
+
+
 class DetailedArtystaForm(forms.Form):
     name = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "name",
                                                          'maxlength': "50"}))
