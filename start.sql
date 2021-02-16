@@ -28,22 +28,20 @@ DELIMITER $$
 --
 -- Procedury
 --
-CREATE DEFINER=`admin`@`%` PROCEDURE `podsumowanie_zwiedzania` (IN `dzien` DATE, IN `oddzial` VARCHAR(100))  BEGIN
-SELECT j.godzina_rozpoczecia, p.imie, p.nazwisko, j.liczba_uczestnikow FROM
-   (SELECT h.godzina_rozpoczecia, h.pracownik_pesel_id, COUNT(b.id) AS liczba_uczestnikow FROM
-    bilet b RIGHT JOIN harmonogram_zwiedzania h ON (b.harmonogram_zwiedzania_id_id=h.id)
-	WHERE h.data=dzien
-    GROUP BY h.godzina_rozpoczecia, h.pracownik_pesel_id) j LEFT JOIN pracownik p ON j.pracownik_pesel_id=p.pesel
-    WHERE p.oddzial_nazwa_id=oddzial;
+CREATE DEFINER=`admin`@`%` PROCEDURE `podsumowanie_zwiedzania` ()  BEGIN
+SELECT j.data, j.godzina_rozpoczecia, p.imie, p.nazwisko, j.liczba_uczestnikow FROM
+   (SELECT h.data, h.godzina_rozpoczecia, h.pracownik_pesel_id, COUNT(b.id) AS liczba_uczestnikow FROM
+    museum_app_bilet b RIGHT JOIN museum_app_harmonogram_zwiedzania h ON (b.harmonogram_zwiedzania_id_id=h.id)
+    GROUP BY h.data, h.godzina_rozpoczecia, h.pracownik_pesel_id) j LEFT JOIN museum_app_pracownik p ON j.pracownik_pesel_id=p.pesel;
 END$$
 
 --
 -- Funkcje
 --
-CREATE DEFINER=`admin`@`%` FUNCTION `policz_dochod` (`typ_biletu` VARCHAR(100)) RETURNS FLOAT DETERMINISTIC BEGIN
+CREATE DEFINER=`admin`@`%` FUNCTION `policz_dochod` (`typ_biletu` VARCHAR(100), `czy_z_przewodnikiem` TINYINT(1), `oddzial` VARCHAR(100)) RETURNS FLOAT DETERMINISTIC BEGIN
 	DECLARE suma FLOAT DEFAULT 0;
-	SELECT SUM(r.cena) INTO suma FROM bilet b LEFT JOIN rodzaj_biletu r ON (b.rodzaj_biletu_typ_id=r.typ AND b.rodzaj_biletu_oddzial_nazwa_id=r.oddzial_nazwa_id AND b.rodzaj_biletu_czy_z_przewodnikiem_id=r.czy_z_przewodnikiem)
-    WHERE b.rodzaj_biletu_typ_id=typ_biletu; 
+	SELECT SUM(r.cena) INTO suma FROM museum_app_bilet b LEFT JOIN museum_app_rodzaj_biletu r ON (b.rodzaj_biletu_typ_id=r.typ AND b.rodzaj_biletu_oddzial_nazwa_id=r.oddzial_nazwa_id AND b.rodzaj_biletu_czy_z_przewodnikiem_id=r.czy_z_przewodnikiem)
+    WHERE b.rodzaj_biletu_typ_id=typ_biletu AND b.rodzaj_biletu_czy_z_przewodnikiem_id=czy_z_przewodnikiem AND b.rodzaj_biletu_oddzial_nazwa_id=oddzial;
     RETURN suma;
 END$$
 
