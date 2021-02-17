@@ -491,7 +491,7 @@ ALTER TABLE `museum_app_rzezba`
 --
 ALTER TABLE `museum_app_wydarzenie_oddzial`
   ADD CONSTRAINT `oddzial_FK` FOREIGN KEY (`oddzial_nazwa_id`) REFERENCES `museum_app_oddzial` (`nazwa`) ON DELETE RESTRICT ON UPDATE CASCADE,
-  ADD CONSTRAINT `wydarzenie_FK` FOREIGN KEY (`wydarzenie_id_id`) REFERENCES `museum_app_wydarzenie` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+  ADD CONSTRAINT `wydarzenie_FK` FOREIGN KEY (`wydarzenie_id_id`) REFERENCES `museum_app_wydarzenie` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
