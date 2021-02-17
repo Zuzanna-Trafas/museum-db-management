@@ -27,7 +27,7 @@ class Wydarzenie(models.Model):
 class Wydarzenie_oddzial(models.Model):
     id = models.PositiveIntegerField(primary_key=True)
     oddzial_nazwa = models.ForeignKey(Oddzial, on_delete=models.PROTECT)
-    wydarzenie_id = models.ForeignKey(Wydarzenie, on_delete=models.PROTECT,
+    wydarzenie_id = models.ForeignKey(Wydarzenie, on_delete=models.CASCADE,
                                       related_name='wydarzenie_oddzial_wydarzenie_id')
 
     class Meta:
