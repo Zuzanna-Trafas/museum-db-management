@@ -1,6 +1,7 @@
 from django import forms
+import sys
 from museum_app.models import Oddzial, Wydarzenie, Wydarzenie_oddzial, Rodzaj_biletu, Pracownik, Harmonogram_zwiedzania, \
-    Bilet, Dzial, Artysta, Obraz, Rzezba
+    Bilet, Dzial, Artysta, Obraz, Rzezba, number_validator
 
 OPTIONS = [("Pracownik", "Pracownik"),
            ("Stażysta", "Stażysta"),
@@ -20,7 +21,9 @@ class OddzialForm(forms.Form):
     address = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "address",
                                                             'maxlength': "100", 'required': 'true'}))
 
-    number = forms.CharField(widget=forms.TextInput(attrs={'type': "text", "class": "form-control", "id": "number"}))
+    number = forms.CharField(widget=forms.TextInput(attrs={'type': "text", "class": "form-control", "id": "number"}), validators=[number_validator], error_messages = {
+                 'number':"Proszę wprowadzić poprawny numer"
+                 })
 
 
 class DzialForm(forms.Form):
@@ -200,6 +203,7 @@ class DetailedDzialForm(forms.Form):
     epoch = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "epoch",
                                                           'maxlength': "100"}))
 
+    paintings = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple, choices=[])
     # TODO painitngs
     # TODO sculptures
 

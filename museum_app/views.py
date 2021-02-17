@@ -1,9 +1,9 @@
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.db.models import FieldDoesNotExist
+from django.core.exceptions import ValidationError
 from django.http import Http404
 from django.db import connection
-from django.shortcuts import render
 from plotly.offline import plot
 from plotly.graph_objs import Bar
 from museum_app.forms import OddzialForm, DzialForm, ObrazForm, RzezbaForm, ArtystaForm, BiletForm, RodzajBiletuForm, \
@@ -35,7 +35,7 @@ def main(request):
             guide = "<br> bez przewodnika"
         x.append(str(bilet.typ) + "<br>" + str(bilet.oddzial_nazwa.nazwa) + guide)
 
-    plot_div = plot([Bar(x=x, y=y, marker=dict(color='rgb(108,117,125)'))], output_type='div')
+    plot_div = plot([Bar(x=x, y=y, marker=dict(color='rgb( 255, 223, 65 )'))], output_type='div')
     cursor.close()
     return render(request, 'museum_app/main.html', context={'plot_div': plot_div})
 
@@ -205,6 +205,17 @@ def add_oddzial(request):
     form = OddzialForm(request.POST)
     if form.is_valid():
         name = form.cleaned_data['name']
+        opening_hour = form.cleaned_data['opening_hour']
+        closing_hour = form.cleaned_data['closing_hour']
+        address = form.cleaned_data['address']
+        number = form.cleaned_data['number']
+
+        #if opening_hour > closing_hour:
+        #    self.add"Godzina otwarcia musi być przed godziną zamknięcia!")
+
+        #else:
+        Oddzial.objects.create(nazwa=name, godzina_otwarcia=opening_hour, godzina_zamkniecia=closing_hour, adres=address, numer_telefonu=number)
+        return redirect('/table/oddzialy')
     return render(request, 'museum_app/add_oddzial.html', {'form': form})
 
 
@@ -374,18 +385,23 @@ def detailed_oddzial(request, oddzial_nazwa):
 
 def detailed_dzial(request, dzial_id):
     dzial = get_object_or_404(Dzial, pk=dzial_id)
+    if dzial.epoka == None:
+        epoka = "Brak informacji"
+    else:
+        epoka = dzial.epoka
     initial_values = {
         "name": dzial.nazwa,
         "oddzial": dzial.oddzial_nazwa.nazwa,
         "floor": dzial.pietro,
-        "epoch": dzial.epoka
-    }
+        "epoch": epoka,
+        }
     form = DetailedDzialForm(initial=initial_values)
     return render(request, 'museum_app/detailed_dzial.html', {'form': form})
 
 
 def detailed_artysta(request, artysta_id):
     artysta = get_object_or_404(Artysta, pk=artysta_id)
+
     initial_values = {
         "name": artysta.imie,
         "surname": artysta.nazwisko,
