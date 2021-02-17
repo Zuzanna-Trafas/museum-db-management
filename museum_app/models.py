@@ -1,17 +1,27 @@
 from django.db import models
-
+from django.core.exceptions import ValidationError
 
 # TODO: on_delete
 # TODO: missing verboses
 # TODO: unique? unique_for_data? Who knows, not me
 # TODO: length validators
 
+def number_validator(number):
+    number = number.strip().replace(" ", "")
+
+    if number[0] == "+" and len(number) == 12 and number[1:].isdecimal():
+        return number
+    elif len(number) == 9 and number.isdecimal():
+        return number
+    else:
+        raise ValidationError("number")
+
 class Oddzial(models.Model):
     nazwa = models.CharField(max_length=100, primary_key=True)
     godzina_otwarcia = models.TimeField()
     godzina_zamkniecia = models.TimeField(verbose_name="godzina zamknięcia")
     adres = models.CharField(max_length=100)
-    numer_telefonu = models.CharField(max_length=20)
+    numer_telefonu = models.CharField(max_length=20, validators =[number_validator])
 
 
 class Wydarzenie(models.Model):
@@ -52,7 +62,7 @@ class Pracownik(models.Model):
     placa = models.PositiveIntegerField(verbose_name="płaca")
     etat = models.CharField(max_length=50)
     data_zatrudnienia = models.DateField()
-    numer_telefonu = models.CharField(max_length=20)
+    numer_telefonu = models.CharField(max_length=20, validators =[number_validator])
     oddzial_nazwa = models.ForeignKey(Oddzial, on_delete=models.PROTECT)
 
 
