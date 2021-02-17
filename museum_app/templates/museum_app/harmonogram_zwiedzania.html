@@ -38,7 +38,8 @@
                 <a class="nav-link" href="/table/pracownicy">Pracownicy</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link active" href="/table/harmonogram_zwiedzania">Harmonogram zwiedzania <span class="sr-only">(current)</span></a>
+                <a class="nav-link active" href="/table/harmonogram_zwiedzania">Harmonogram zwiedzania <span
+                        class="sr-only">(current)</span></a>
             </li>
         </ul>
     </div>
@@ -46,42 +47,51 @@
 
 <h1 class="px-5 pt-4">Harmonogram zwiedzania</h1>
 
-<div class="px-5">
-    <table class="table table-hover">
-        <thead class="thead bg-info text-light">
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">Data</th>
-            <th scope="col">Godzina rozpoczęcia</th>
-            <th scope="col">Przewodnik</th>
-            <th scope="col">Ilość kupionych biletów</th>
-            <th scope="col" width="6%"></th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for x in podsumowanie %}
-        <tr>
-            <th scope="row">
-                <div class="pl-3"><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"></div>
-            </th>
-            <td>{{ x.0 }}</td>
-            <td>{{ x.1|date:'H:i' }}</td>
-            <td>{{ x.2 }} {{ x.3 }}</td>
-            <td>{{ x.4 }}</td>
-            <td><a type="button" class="btn btn-secondary float-right" role="button" href="/edit/harmonogram_zwiedzania">Edytuj</a></td>
-        </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-</div>
+<form method="'post">
+    {% csrf_token %}
+    <div class="px-5">
+        {% if error != "" %}
+            <div class="alert alert-danger" role="alert" id="alert"> {{ error }}</div> {% endif %}
+        <table class="table table-hover">
+            <thead class="thead bg-info text-light">
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Data</th>
+                <th scope="col">Godzina rozpoczęcia</th>
+                <th scope="col">Przewodnik</th>
+                <th scope="col">Ilość kupionych biletów</th>
+                <th scope="col" width="6%"></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for x in podsumowanie %}
+                <tr>
+                    <th scope="row">
+                        <div class="pl-3"><input class="form-check-input" type="checkbox" name="chocies"
+                                                 value="{{ harmonogram_zwiedzania.id }}"
+                                                 id="flexCheckDefault"></div>
+                    </th>
+                    <td>{{ x.0 }}</td>
+                    <td>{{ x.1|date:'H:i' }}</td>
+                    <td>{{ x.2 }} {{ x.3 }}</td>
+                    <td>{{ x.4 }}</td>
+                    <td><a type="button" class="btn btn-secondary float-right" role="button"
+                           href="/edit/harmonogram_zwiedzania">Edytuj</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
-<div class="d-flex px-5 pb-5">
-    <div class="p-2">
-        <button type="button" class="btn btn-secondary">Usuń</button>
+    <div class="d-flex px-5 pb-5">
+        <div class="p-2">
+            <button type="submit" class="btn btn-secondary" name="delete" id="delete">Usuń</button>
+        </div>
+        <div class="ml-auto p-2">
+            <a type="button" class="btn btn-secondary" href="/add/harmonogram_zwiedzania" role="button">Dodaj nową
+                wycieczkę</a>
+        </div>
     </div>
-    <div class="ml-auto p-2">
-        <a type="button" class="btn btn-secondary" href="/add/harmonogram_zwiedzania" role="button">Dodaj nową wycieczkę</a>
-    </div>
-</div>
+</form>
 </body>
 </html>

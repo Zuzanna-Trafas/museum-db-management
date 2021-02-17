@@ -5,9 +5,11 @@ from django.shortcuts import render
 from plotly.offline import plot
 from plotly.graph_objs import Bar
 from museum_app.forms import OddzialForm, DzialForm, ObrazForm, RzezbaForm, ArtystaForm, BiletForm, RodzajBiletuForm, \
-    PracownikForm, HarmonogramZwiedzaniaForm, WydarzenieForm, DetailedArtystaForm, DetailedDzialForm, DetailedDzieloForm, DetailedOddzialForm
+    PracownikForm, HarmonogramZwiedzaniaForm, WydarzenieForm, DetailedArtystaForm, DetailedDzialForm, \
+    DetailedDzieloForm, DetailedOddzialForm, TableOddzialForm, TableDzialForm, TableArtystaForm, TableBiletyForm,\
+    TableHarmonogramZwiedzaniaForm, TableDzieloForm, TablePracownikForm
 from museum_app.models import Oddzial, Wydarzenie, Wydarzenie_oddzial, Rodzaj_biletu, Pracownik, Harmonogram_zwiedzania, Bilet, Dzial, Artysta, Obraz, Rzezba
-
+import sys
 
 def get_profit(cursor, typ, czy_z_przewodnikiem, oddzial):
     cursor.execute("SELECT policz_dochod(%s, %s, %s)", [typ, czy_z_przewodnikiem, oddzial])
@@ -39,50 +41,140 @@ def main(request):
 # TODO somehow handle "usuń" button
 # everything done for table views has to be done also for detailed_oddzial for wydarzenia
 def oddzialy(request):
+    form = TableOddzialForm(request.POST)
+    error = ""
+    if request.method == 'POST' and form.is_valid():
+        if 'delete' in request.POST:
+            for item in form.cleaned_data['choices']:
+                try:
+                    item.delete()
+                except Exception as e:
+                    error = "Nie można usunąć, gdyż oddział jest powiązany z "
+                    if "Dzial" in e.args[0]:
+                        error += "działami"
+                    elif "Pracownik" in e.args[0]:
+                        error += "pracownikami"
+                    elif "Rodzaj_biletu" in e.args[0]:
+                        error += "rodzajami biletów"
+                    elif "Wydarzenie_oddzial" in e.args[0]:
+                        error += "wydarzeniami"
+
     oddzialy = Oddzial.objects.all()
-    context = {'oddzialy': oddzialy}
+    context = {'oddzialy': oddzialy, 'error': error}
     return render(request, 'museum_app/oddzialy.html', context)
 
 
 def dzialy(request):
+    form = TableDzialForm(request.POST)
+    error = ""
+    if request.method == 'POST' and form.is_valid():
+        if 'delete' in request.POST:
+            for item in form.cleaned_data['choices']:
+                try:
+                    item.delete()
+                except Exception as e:
+                    error = "Nie można usunąć"
+                    if "Rzezba" in e.args[0] or "Obraz" in e.args[0]:
+                        error = "Nie można usunąć, gdyż dział jest powiązany z dziełami"
     dzialy = Dzial.objects.all()
     oddzialy = Oddzial.objects.all()
-    context = {'dzialy': dzialy, 'oddzialy': oddzialy}
+    context = {'dzialy': dzialy, 'oddzialy': oddzialy, 'error': error}
     return render(request, 'museum_app/dzialy.html', context)
 
 
 def dziela(request):
+    form = TableDzieloForm(request.POST)
+    error = ""
+    if request.method == 'POST' and form.is_valid():
+        print("jestem abc", file=sys.stderr)
+        if 'delete' in request.POST:
+            for item in form.cleaned_data['choices_obrazy']:
+                try:
+                    item.delete()
+                except Exception as e:
+                    error = "Nie można usunąć dzieła"
+
+            for item in form.cleaned_data['choices_rzezby']:
+                try:
+                    item.delete()
+                except Exception as e:
+                    error = "Nie można usunąć dzieła"
+
     obrazy = Obraz.objects.all()
     rzezby = Rzezba.objects.all()
-    context = {'obrazy': obrazy, 'rzezby': rzezby}
+    context = {'obrazy': obrazy, 'rzezby': rzezby, 'error': error}
     return render(request, 'museum_app/dziela.html', context)
 
 
 def artysci(request):
+    form = TableArtystaForm(request.POST)
+    error = ""
+    if request.method == 'POST' and form.is_valid():
+        if 'delete' in request.POST:
+            for item in form.cleaned_data['choices']:
+                try:
+                    item.delete()
+                except Exception as e:
+                    error = "Nie można usunąć"
+                    if "Rzezba" in e.args[0] or "Obraz" in e.args[0]:
+                        error = "Nie można usunąć, gdyż artysta jest powiązany z dziełami"
+
     artysci = Artysta.objects.all()
-    context = {'artysci': artysci}
+    context = {'artysci': artysci, 'error': error}
     return render(request, 'museum_app/artysci.html', context)
 
 
 def bilety(request):
+    form = TableBiletyForm(request.POST)
+    error = ""
+    if request.method == 'POST' and form.is_valid():
+        if 'delete' in request.POST:
+            for item in form.cleaned_data['choices']:
+                try:
+                    item.delete()
+                except Exception as e:
+                    error = "Nie można usunąć"
+
     bilety = Bilet.objects.all()
     rodzaje_biletow = Rodzaj_biletu.objects.all()
-    context = {'bilety': bilety, 'rodzaje_biletow': rodzaje_biletow}
+    context = {'bilety': bilety, 'rodzaje_biletow': rodzaje_biletow, 'error': error}
     return render(request, 'museum_app/bilety.html', context)
 
 
 def pracownicy(request):
+    form = TablePracownikForm(request.POST)
+    error = ""
+    if request.method == 'POST' and form.is_valid():
+        if 'delete' in request.POST:
+            for item in form.cleaned_data['choices']:
+                try:
+                    item.delete()
+                except Exception as e:
+                    error = "Nie można usunąć"
+                    if "Harmonogram_zwiedzania" in e.args[0]:
+                        error = "Nie można usunąć, gdyż pracownik jest powiązany z wycieczką"
+
     pracownicy = Pracownik.objects.all()
-    context = {'pracownicy': pracownicy}
+    context = {'pracownicy': pracownicy, 'error': error}
     return render(request, 'museum_app/pracownicy.html', context)
 
 
 def harmonogram_zwiedzania(request):
+    form = TableHarmonogramZwiedzaniaForm(request.POST)
+    error = ""
+    if request.method == 'POST' and form.is_valid():
+        if 'delete' in request.POST:
+            for item in form.cleaned_data['choices']:
+                try:
+                    item.delete()
+                except Exception as e:
+                    error = "Nie można usunąć"
+
     cursor = connection.cursor()
     cursor.execute('CALL podsumowanie_zwiedzania()')
     podsumowanie = cursor.fetchall()
     cursor.close()
-    context = {'podsumowanie': podsumowanie}
+    context = {'podsumowanie': podsumowanie, 'error': error}
 
     return render(request, 'museum_app/harmonogram_zwiedzania.html', context)
 
@@ -119,6 +211,7 @@ def add_rzezba(request):
 
 def add_artysta(request):
     form = ArtystaForm(request.POST)
+
     return render(request, 'museum_app/add_artysta.html', {'form': form})
 
 
