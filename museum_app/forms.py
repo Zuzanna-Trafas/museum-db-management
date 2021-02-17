@@ -24,26 +24,42 @@ class OddzialForm(forms.Form):
 
 
 class DzialForm(forms.Form):
+    def __init__(self, oddzial_choices, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['oddzial_select'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
+                                               choices=oddzial_choices)
+        self.fields['epoch'].required = False
+
+    oddzial_select = forms.MultipleChoiceField()
+
     name = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "name",
                                                          'maxlength': "100", 'required': 'true'}))
-    # TODO oddzial
-    oddzial_select = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
-                                               choices=OPTIONS)
 
     floor = forms.CharField(widget=forms.TextInput(attrs={'type': "number", "class": "form-control", "id": "floor",
-                                                          "min": "-100", "max": "100"}))
+                                                          "min": "-100", "max": "100", 'required': 'true'}))
 
     epoch = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "epoch",
                                                           'maxlength': "100"}))
 
 
 class ObrazForm(forms.Form):
+    def __init__(self, oddzial_choices, dzial_choices, artysta_choices, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['oddzial_select'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
+                                               choices=oddzial_choices)
+
+        self.fields['dzial_select'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
+                                               choices=dzial_choices)
+
+        self.fields['artysta_select'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
+                                                                choices=artysta_choices)
+
+    oddzial_select = forms.MultipleChoiceField()
+    dzial_select = forms.MultipleChoiceField()
+    artysta_select = forms.MultipleChoiceField()
+
     name = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "name",
                                                          'maxlength': "100"}))
-
-    # TODO oddzial
-    # TODO dzial
-    # TODO artysta
 
     width = forms.CharField(widget=forms.TextInput(attrs={'type': "number", "class": "form-control", "id": "width",
                                                           "step": "0.01", "min": "0", "max": "1000000",

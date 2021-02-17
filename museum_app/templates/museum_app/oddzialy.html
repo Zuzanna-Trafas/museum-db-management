@@ -82,7 +82,7 @@
                     <td><a type="button" class="btn btn-secondary float-right" role="button"
                            href="{% url 'detailed_oddzial' oddzial.nazwa %}">Widok szczegółowy</a></td>
                     <td><a type="button" class="btn btn-secondary float-right" role="button"
-                           href="/edit/oddzial">Edytuj</a></td>
+                           href="{% url 'edit_oddzial' oddzial.nazwa %}">Edytuj</a></td>
                 </tr>
             {% endfor %}
             </tbody>

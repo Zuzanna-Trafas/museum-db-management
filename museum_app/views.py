@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.db.models import FieldDoesNotExist
 from django.http import Http404
 from django.db import connection
@@ -40,11 +40,6 @@ def main(request):
     return render(request, 'museum_app/main.html', context={'plot_div': plot_div})
 
 
-# TODO for all table views button ids have to include records primary key. Pass the id to detailed and edit views by url for example detailed/oddzial/10
-# TODO for dziela we have to also pass type (obraz/rzeźba) to know which model to use
-# TODO fill the table views with data
-# TODO somehow handle "usuń" button
-# everything done for table views has to be done also for detailed_oddzial for wydarzenia
 def oddzialy(request):
     form = TableOddzialForm(request.POST)
     error = ""
@@ -90,9 +85,7 @@ def dzialy(request):
 def dziela(request):
     form = TableDzieloForm(request.POST)
     error = ""
-    print(request.POST, file=sys.stderr)
     if request.method == 'POST' and form.is_valid():
-        print("jestem abc", file=sys.stderr)
         if 'delete' in request.POST:
             for item in form.cleaned_data['choices_obrazy']:
                 try:
@@ -216,15 +209,27 @@ def add_oddzial(request):
 
 
 def add_dzial(request):
-    form = DzialForm(request.POST)
+    form = DzialForm([(x.nazwa, x.nazwa) for x in Oddzial.objects.all()], request.POST)
     if form.is_valid():
         name = form.cleaned_data['name']
+        floor = form.cleaned_data['floor']
+        epoch = form.cleaned_data['epoch']
+        oddzial_select = form.cleaned_data['oddzial_select'][0]
+        for x in Oddzial.objects.all():
+            print(x.nazwa, file=sys.stderr)
+            print(oddzial_select, file=sys.stderr)
+            if str(x.nazwa) == str(oddzial_select):
+                print("WHYYYYYY", file=sys.stderr)
+                oddzial = x
+        Dzial.objects.create(nazwa=name, pietro=floor, epoka=epoch,
+                             oddzial_nazwa=oddzial)
+        return redirect('/table/dzialy')
     return render(request, 'museum_app/add_dzial.html', {'form': form})
 
 
 def add_obraz(request):
     # TODO dynamically fill Działy depending on Oddziały or merge both to one select field
-    form = ObrazForm(request.POST)
+    form = ObrazForm([(1, 1), (2, 2)], [(1, 1), (2, 2)], [(1, 1), (2, 2)], request.POST)
     return render(request, 'museum_app/add_obraz.html', {'form': form})
 
 
@@ -270,13 +275,25 @@ def add_wydarzenie(request):
 # TODO figure out how to fill date and time fields
 # TODO redirect to table view after submit
 
-def edit_oddzial(request):
-    form = OddzialForm(request.POST)
+def edit_oddzial(request, oddzial_nazwa):
+    oddzial = get_object_or_404(Oddzial, pk=oddzial_nazwa)
+    initial_values = {'name': oddzial.nazwa,
+                      'opening_hour': oddzial.godzina_otwarcia,
+                      'closing_hour': oddzial.godzina_zamkniecia,
+                      'address': oddzial.adres,
+                      'number': oddzial.numer_telefonu}
+
+    form = OddzialForm(initial=initial_values)
+    if form.is_valid():
+        name = form.cleaned_data['name']
+        print(name, file=sys.stderr)
+        return redirect('/')
+
     return render(request, 'museum_app/add_oddzial.html', {'form': form})
 
 
 def edit_dzial(request):
-    form = DzialForm(request.POST)
+    form = DzialForm([(1, 1), (2, 2)], request.POST)
     return render(request, 'museum_app/add_dzial.html', {'form': form})
 
 
@@ -362,7 +379,7 @@ def detailed_dzial(request, dzial_id):
         "oddzial": dzial.oddzial_nazwa.nazwa,
         "floor": dzial.pietro,
         "epoch": dzial.epoka
-        }
+    }
     form = DetailedDzialForm(initial=initial_values)
     return render(request, 'museum_app/detailed_dzial.html', {'form': form})
 
@@ -400,6 +417,7 @@ def detailed_obraz(request, obraz_id):
     }
     form = DetailedDzieloForm(initial=initial_values)
     return render(request, 'museum_app/detailed_dzielo.html', {'form': form})
+
 
 def detailed_rzezba(request, rzezba_id):
     rzezba = get_object_or_404(Rzezba, pk=rzezba_id)
