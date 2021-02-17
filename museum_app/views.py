@@ -226,9 +226,7 @@ def detailed_oddzial(request, oddzial_nazwa):
 
 def detailed_dzial(request, dzial_nazwa, oddzial_nazwa):
     initial_values = {}
-    print(oddzial_nazwa)
     for dzial in Dzial.objects.all():
-        print(dzial.oddzial_nazwa.)
         if dzial.nazwa == dzial_nazwa and dzial.oddzial_nazwa_id == oddzial_nazwa:
             initial_values = {
                 "name": dzial.nazwa,
