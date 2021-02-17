@@ -67,7 +67,7 @@
             <td>{{ obraz.nazwa }}</td>
             <td>{{ obraz.artysta_id.imie }} {{ obraz.artysta_id.nazwisko }}</td>
             <td>{{ obraz.dzial_id.nazwa }}</td>
-            <td><a type="button" class="btn btn-secondary float-right" role="button" href="/detailed/dzielo">Widok szczegółowy</a></td>
+            <td><a type="button" class="btn btn-secondary float-right" role="button" href="{% url 'detailed_obraz' obraz.id %}">Widok szczegółowy</a></td>
             <td><a type="button" class="btn btn-secondary float-right" role="button" href="/edit/dzielo">Edytuj</a></td>
         </tr>
         {% endfor %}
@@ -79,7 +79,7 @@
             <td>{{ rzezba.nazwa }}</td>
             <td>{{ rzezba.artysta_id.imie }} {{ rzezba.artysta_id.nazwisko }}</td>
             <td>{{ rzezba.dzial_id.nazwa }}</td>
-            <td><a type="button" class="btn btn-secondary float-right" role="button" href="/detailed/dzielo">Widok szczegółowy</a></td>
+            <td><a type="button" class="btn btn-secondary float-right" role="button" href="{% url 'detailed_rzezba' rzezba.id %}">Widok szczegółowy</a></td>
             <td><a type="button" class="btn btn-secondary float-right" role="button" href="/edit/dzielo">Edytuj</a></td>
         </tr>
         {% endfor %}
