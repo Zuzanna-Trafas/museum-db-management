@@ -1,12 +1,35 @@
 from django.http import HttpResponse
+from django.db import connection
 from django.shortcuts import render
+from plotly.offline import plot
+from plotly.graph_objs import Bar
 from museum_app.forms import OddzialForm, DzialForm, ObrazForm, RzezbaForm, ArtystaForm, BiletForm, RodzajBiletuForm, \
     PracownikForm, HarmonogramZwiedzaniaForm, WydarzenieForm, DetailedArtystaForm, DetailedDzialForm, DetailedDzieloForm, DetailedOddzialForm
+from museum_app.models import Rodzaj_biletu
 
+
+def get_profit(cursor, typ, czy_z_przewodnikiem, oddzial):
+    cursor.execute("SELECT policz_dochod(%s, %s, %s)", [typ, czy_z_przewodnikiem, oddzial])
+    return cursor.fetchone()[0]
 
 def main(request):
     # TODO searching
-    return render(request, 'museum_app/main.html')
+    cursor = connection.cursor()
+    rodzaj_biletu = Rodzaj_biletu.objects.all()
+    x = []
+    y = []
+    for bilet in rodzaj_biletu:
+        y.append(get_profit(cursor, bilet.typ, bilet.czy_z_przewodnikiem, bilet.oddzial_nazwa.nazwa))
+        guide = ""
+        if bilet.czy_z_przewodnikiem:
+            guide = "<br> z przewodnikiem"
+        else:
+            guide = "<br> bez przewodnika"
+        x.append(str(bilet.typ) + "<br>" + str(bilet.oddzial_nazwa.nazwa) + guide)
+
+    plot_div = plot([Bar(x=x, y=y, marker=dict(color='rgb(108,117,125)'))], output_type='div')
+    cursor.close()
+    return render(request, 'museum_app/main.html', context={'plot_div': plot_div})
 
 
 # TODO for all table views button ids have to include records primary key. Pass the id to detailed and edit views by url for example detailed/oddzial/10

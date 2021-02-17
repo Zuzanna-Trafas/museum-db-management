@@ -257,5 +257,11 @@
         <button type="button" class="btn btn-info">Wyszukaj</button>
     </div>
 </div>
+<div>
+    <div class="px-5 pt-5"><p>Dochód muzeum w zależności od rodzaju biletu:</p></div>
+    {% autoescape off %}
+        {{ plot_div }}
+    {% endautoescape %}
+</div>
 </body>
 </html>
