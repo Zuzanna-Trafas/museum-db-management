@@ -1,5 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
+from django.db.models import FieldDoesNotExist
 from django.http import Http404
 from django.db import connection
 from django.shortcuts import render
@@ -339,12 +340,12 @@ def detailed_oddzial(request, oddzial_nazwa):
     oddzial = get_object_or_404(Oddzial, pk=oddzial_nazwa)
     wydarzenie_oddzial = []
     for i in Wydarzenie_oddzial.objects.all():
-        if i.oddzial_nazwa_id == oddzial.nazwa:
+        if i.oddzial_nazwa.nazwa == oddzial.nazwa:
             wydarzenie_oddzial.append(i)
     wydarzenia = []
     for wydarzenie in Wydarzenie.objects.all():
         for i in wydarzenie_oddzial:
-            if wydarzenie.nazwa == i.wydarzenie_nazwa_id and wydarzenie.data_rozpoczecia == i.wydarzenie_data_rozpoczecia_id:
+            if wydarzenie.id == i.wydarzenie_id.id:
                 wydarzenia.append(wydarzenie)
     initial_values = {'name': oddzial.nazwa, 'opening_hour': oddzial.godzina_otwarcia,
                       'closing_hour': oddzial.godzina_zamkniecia, 'address': oddzial.adres,
@@ -354,18 +355,14 @@ def detailed_oddzial(request, oddzial_nazwa):
     return render(request, 'museum_app/detailed_oddzial.html', {'form': form, 'wydarzenia': wydarzenia})
 
 
-def detailed_dzial(request, dzial_nazwa, oddzial_nazwa):
-    initial_values = {}
-    for dzial in Dzial.objects.all():
-        if dzial.nazwa == dzial_nazwa and dzial.oddzial_nazwa_id == oddzial_nazwa:
-            initial_values = {
-                "name": dzial.nazwa,
-                "oddzial": dzial.oddzial_nazwa,
-                "floor": dzial.pietro,
-                "epoch": dzial.epoka
-            }
-    if initial_values == {}:
-        raise Http404("Dział nie istnieje")
+def detailed_dzial(request, dzial_id):
+    dzial = get_object_or_404(Dzial, pk=dzial_id)
+    initial_values = {
+        "name": dzial.nazwa,
+        "oddzial": dzial.oddzial_nazwa.nazwa,
+        "floor": dzial.pietro,
+        "epoch": dzial.epoka
+        }
     form = DetailedDzialForm(initial=initial_values)
     return render(request, 'museum_app/detailed_dzial.html', {'form': form})
 
@@ -376,23 +373,51 @@ def detailed_artysta(request, artysta_id):
         "name": artysta.imie,
         "surname": artysta.nazwisko,
         "birth_date": artysta.data_urodzenia,
-        "death_date": artysta.data_smierci
+        "death_date": artysta.data_smierci,
+
     }
     form = DetailedArtystaForm(initial=initial_values)
     return render(request, 'museum_app/detailed_artysta.html', {'form': form})
 
 
-def detailed_dzielo(request):
+def detailed_obraz(request, obraz_id):
     # for rzeźba pass -1 in width and height, for obraz pass -1 for weight and material
+    obraz = get_object_or_404(Obraz, pk=obraz_id)
+    try:
+        artysta = (obraz.artysta_id.imie + " " + obraz.artysta_id.nazwisko)
+    except AttributeError:
+        artysta = "Anonimowy"
+
     initial_values = {
-        "name": "Nazwa",
-        "branch": "Oddział",
-        "department": "Dział",
-        "artist": "Artysta",
+        "name": obraz.nazwa,
+        "branch": obraz.dzial_id.oddzial_nazwa.nazwa,
+        "department": obraz.dzial_id.nazwa,
+        "artist": artysta,
+        "width": obraz.szerokosc,
+        "height": obraz.wysokosc,
+        "weight": -1,
+        "material": -1
+    }
+    form = DetailedDzieloForm(initial=initial_values)
+    return render(request, 'museum_app/detailed_dzielo.html', {'form': form})
+
+def detailed_rzezba(request, rzezba_id):
+    rzezba = get_object_or_404(Rzezba, pk=rzezba_id)
+    # for rzeźba pass -1 in width and height, for obraz pass -1 for weight and material
+    try:
+        artysta = (rzezba.artysta_id.imie + " " + rzezba.artysta_id.nazwisko)
+    except AttributeError:
+        artysta = "Anonimowy"
+
+    initial_values = {
+        "name": rzezba.nazwa,
+        "branch": rzezba.dzial_id.oddzial_nazwa.nazwa,
+        "department": rzezba.dzial_id.nazwa,
+        "artist": artysta,
         "width": -1,
         "height": -1,
-        "weight": 1000,
-        "material": "Materiał"
+        "weight": rzezba.waga,
+        "material": rzezba.material
     }
     form = DetailedDzieloForm(initial=initial_values)
     return render(request, 'museum_app/detailed_dzielo.html', {'form': form})
