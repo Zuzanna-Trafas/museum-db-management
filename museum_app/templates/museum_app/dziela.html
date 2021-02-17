@@ -34,6 +34,9 @@
             <li class="nav-item">
                 <a class="nav-link" href="/table/bilety">Bilety</a>
             </li>
+            <li>
+                <a class="nav-link" href="/table/rodzaje_biletow">Rodzaje biletów</a>
+            </li>
             <li class="nav-item">
                 <a class="nav-link" href="/table/pracownicy">Pracownicy</a>
             </li>
@@ -46,56 +49,66 @@
 
 <h1 class="px-5 pt-4">Dzieła</h1>
 
-<div class="px-5">
-    <table class="table table-hover">
-        <thead class="thead bg-info text-light">
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">Nazwa</th>
-            <th scope="col">Artysta</th>
-            <th scope="col">Dział</th>
-            <th scope="col" width="16%"></th>
-            <th scope="col" width="6%"></th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for obraz in obrazy %}
-        <tr>
-            <th scope="row">
-                <div class="pl-3"><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"></div>
-            </th>
-            <td>{{ obraz.nazwa }}</td>
-            <td>{{ obraz.artysta_id.imie }} {{ obraz.artysta_id.nazwisko }}</td>
-            <td>{{ obraz.dzial_id.nazwa }}</td>
-            <td><a type="button" class="btn btn-secondary float-right" role="button" href="{% url 'detailed_obraz' obraz.id %}">Widok szczegółowy</a></td>
-            <td><a type="button" class="btn btn-secondary float-right" role="button" href="/edit/dzielo">Edytuj</a></td>
-        </tr>
-        {% endfor %}
-        {% for rzezba in rzezby %}
-        <tr>
-            <th scope="row">
-                <div class="pl-3"><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"></div>
-            </th>
-            <td>{{ rzezba.nazwa }}</td>
-            <td>{{ rzezba.artysta_id.imie }} {{ rzezba.artysta_id.nazwisko }}</td>
-            <td>{{ rzezba.dzial_id.nazwa }}</td>
-            <td><a type="button" class="btn btn-secondary float-right" role="button" href="{% url 'detailed_rzezba' rzezba.id %}">Widok szczegółowy</a></td>
-            <td><a type="button" class="btn btn-secondary float-right" role="button" href="/edit/dzielo">Edytuj</a></td>
-        </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-</div>
-
-<div class="d-flex px-5 pb-5">
-    <div class="p-2">
-        <button type="button" class="btn btn-secondary">Usuń</button>
+<form method="post">
+    {% csrf_token %}
+    <div class="px-5">
+        {% if error != "" %}
+            <div class="alert alert-danger" role="alert" id="alert"> {{ error }}</div> {% endif %}
+        <table class="table table-hover">
+            <thead class="thead bg-info text-light">
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Nazwa</th>
+                <th scope="col">Artysta</th>
+                <th scope="col">Dział</th>
+                <th scope="col" width="16%"></th>
+                <th scope="col" width="6%"></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for obraz in obrazy %}
+                <tr>
+                    <th scope="row">
+                        <div class="pl-3"><input class="form-check-input" type="checkbox" name="choices_obrazy"
+                                                 value={{ obraz.id }} id={{ obraz.id }}"></div>
+                    </th>
+                    <td>{{ obraz.nazwa }}</td>
+                    <td>{{ obraz.artysta_id.imie }} {{ obraz.artysta_id.nazwisko }}</td>
+                    <td>{{ obraz.dzial_id.nazwa }}</td>
+                    <td><a type="button" class="btn btn-secondary float-right" role="button" href="{% url 'detailed_obraz' obraz.id %}">Widok
+                        szczegółowy</a></td>
+                    <td><a type="button" class="btn btn-secondary float-right" role="button"
+                           href="/edit/dzielo">Edytuj</a></td>
+                </tr>
+            {% endfor %}
+            {% for rzezba in rzezby %}
+                <tr>
+                    <th scope="row">
+                        <div class="pl-3"><input class="form-check-input" type="checkbox" name="choices_rzezby"
+                                                 value={{ rzezba.id }} id="flexCheckDefault"></div>
+                    </th>
+                    <td>{{ rzezba.nazwa }}</td>
+                    <td>{{ rzezba.artysta_id.imie }} {{ rzezba.artysta_id.nazwisko }}</td>
+                    <td>{{ rzezba.dzial_id.nazwa }}</td>
+                    <td><a type="button" class="btn btn-secondary float-right" role="button" href="{% url 'detailed_rzezba' rzezba.id %}">Widok
+                        szczegółowy</a></td>
+                    <td><a type="button" class="btn btn-secondary float-right" role="button"
+                           href="/edit/dzielo">Edytuj</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
     </div>
-    <div class="ml-auto p-2">
-        <a type="button" class="btn btn-secondary" href="/add/obraz" role="button">Dodaj nowy obraz</a>
-        <a type="button" class="btn btn-secondary" href="/add/rzezba" role="button">Dodaj nową rzeźbę</a>
-    </div>
-</div>
 
+    <div class="d-flex px-5 pb-5">
+        <div class="p-2">
+            <button type="submit" class="btn btn-secondary" name="delete" id="delete">Usuń</button>
+        </div>
+        <div class="ml-auto p-2">
+            <a type="button" class="btn btn-secondary" href="/add/obraz" role="button">Dodaj nowy obraz</a>
+            <a type="button" class="btn btn-secondary" href="/add/rzezba" role="button">Dodaj nową rzeźbę</a>
+        </div>
+    </div>
+</form>
 </body>
 </html>

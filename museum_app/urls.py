@@ -11,6 +11,7 @@ urlpatterns = [
             path('table/bilety/', views.bilety, name='bilety'),
             path('table/pracownicy/', views.pracownicy, name='pracownicy'),
             path('table/harmonogram_zwiedzania/', views.harmonogram_zwiedzania, name='harmonogram_zwiedzania'),
+            path('table/rodzaje_biletow/', views.rodzaje_biletow, name='rodzaje_biletow'),
             path('add/oddzial', views.add_oddzial, name='add_oddzial'),
             path('add/dzial', views.add_dzial, name='add_dzial'),
             path('add/obraz', views.add_obraz, name='add_obraz'),

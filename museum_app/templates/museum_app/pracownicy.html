@@ -34,8 +34,12 @@
             <li class="nav-item">
                 <a class="nav-link" href="/table/bilety">Bilety</a>
             </li>
+            <li>
+                <a class="nav-link" href="/table/rodzaje_biletow">Rodzaje biletów</a>
+            </li>
             <li class="nav-item">
-                <a class="nav-link active" href="/table/pracownicy">Pracownicy  <span class="sr-only">(current)</span></a>
+                <a class="nav-link active" href="/table/pracownicy">Pracownicy <span
+                        class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/table/harmonogram_zwiedzania">Harmonogram zwiedzania</a>
@@ -46,48 +50,57 @@
 
 <h1 class="px-5 pt-4">Pracownicy</h1>
 
-<div class="px-5">
-    <table class="table table-hover">
-        <thead class="thead bg-info text-light">
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">Pesel</th>
-            <th scope="col">Imię</th>
-            <th scope="col">Nazwisko</th>
-            <th scope="col">Płaca</th>
-            <th scope="col">Etat</th>
-            <th scope="col">Data zatrudnienia</th>
-            <th scope="col">Numer telefonu</th>
-            <th scope="col" width="6%"></th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for pracownik in pracownicy %}
-        <tr>
-            <th scope="row">
-                <div class="pl-3"><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"></div>
-            </th>
-            <td>{{ pracownik.pesel }}</td>
-            <td>{{ pracownik.imie }}</td>
-            <td>{{ pracownik.nazwisko }}</td>
-            <td>{{ pracownik.placa }}</td>
-            <td>{{ pracownik.etat }}</td>
-            <td>{{ pracownik.data_zatrudnienia }}</td>
-             <td>{% if pracownik.numer_telefonu == None %}-{% else %}{{pracownik.numer_telefonu}}{% endif %}</td>
-            <td><a type="button" class="btn btn-secondary float-right" role="button" href="/edit/pracownik">Edytuj</a></td>
-        </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-</div>
+<form method="post">
+    {% csrf_token %}
+    <div class=" px-5">
+        {% if error != "" %}
+            <div class="alert alert-danger" role="alert" id="alert"> {{ error }}</div> {% endif %}
+        <table class="table table-hover">
+            <thead class="thead bg-info text-light">
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Pesel</th>
+                <th scope="col">Imię</th>
+                <th scope="col">Nazwisko</th>
+                <th scope="col">Płaca</th>
+                <th scope="col">Etat</th>
+                <th scope="col">Data zatrudnienia</th>
+                <th scope="col">Numer telefonu</th>
+                <th scope="col" width="6%"></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for pracownik in pracownicy %}
+                <tr>
+                    <th scope="row">
+                        <div class="pl-3"><input class="form-check-input" type="checkbox" name="choices"
+                                                 value="{{ pracownik.pesel }}"
+                                                 id="flexCheckDefault"></div>
+                    </th>
+                    <td>{{ pracownik.pesel }}</td>
+                    <td>{{ pracownik.imie }}</td>
+                    <td>{{ pracownik.nazwisko }}</td>
+                    <td>{{ pracownik.placa }}</td>
+                    <td>{{ pracownik.etat }}</td>
+                    <td>{{ pracownik.data_zatrudnienia }}</td>
+                    <td>{% if pracownik.numer_telefonu == None %}-{% else %}
+                        {{ pracownik.numer_telefonu }}{% endif %}</td>
+                    <td><a type="button" class="btn btn-secondary float-right" role="button" href="/edit/pracownik">Edytuj</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
-<div class="d-flex px-5 pb-5">
-    <div class="p-2">
-        <button type="button" class="btn btn-secondary">Usuń</button>
+    <div class="d-flex px-5 pb-5">
+        <div class="p-2">
+            <button type="submit" class="btn btn-secondary" name="delete" id="delete">Usuń</button>
+        </div>
+        <div class="ml-auto p-2">
+            <a type="button" class="btn btn-secondary" href="/add/pracownik" role="button">Dodaj nowego pracownika</a>
+        </div>
     </div>
-    <div class="ml-auto p-2">
-        <a type="button" class="btn btn-secondary" href="/add/pracownik" role="button">Dodaj nowego pracownika</a>
-    </div>
-</div>
+</form>
 </body>
 </html>

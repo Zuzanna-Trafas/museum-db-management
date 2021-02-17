@@ -1,4 +1,6 @@
 from django import forms
+from museum_app.models import Oddzial, Wydarzenie, Wydarzenie_oddzial, Rodzaj_biletu, Pracownik, Harmonogram_zwiedzania, \
+    Bilet, Dzial, Artysta, Obraz, Rzezba
 
 OPTIONS = [("Pracownik", "Pracownik"),
            ("Stażysta", "Stażysta"),
@@ -226,3 +228,72 @@ class DetailedOddzialForm(forms.Form):
                                                             'maxlength': "100", 'required': 'true'}))
 
     number = forms.CharField(widget=forms.TextInput(attrs={'type': "text", "class": "form-control", "id": "number"}))
+
+
+class TableArtystaForm(forms.Form):
+    choices = forms.ModelMultipleChoiceField(
+        queryset=Artysta.objects.all(),  # not optional, use .all() if unsure
+        widget=forms.CheckboxSelectMultiple,
+    )
+
+
+class TableDzialForm(forms.Form):
+    choices = forms.ModelMultipleChoiceField(
+        queryset=Dzial.objects.all(),  # not optional, use .all() if unsure
+        widget=forms.CheckboxSelectMultiple,
+    )
+
+
+class TableOddzialForm(forms.Form):
+    choices = forms.ModelMultipleChoiceField(
+        queryset=Oddzial.objects.all(),  # not optional, use .all() if unsure
+        widget=forms.CheckboxSelectMultiple,
+    )
+
+
+class TableDzieloForm(forms.Form):
+    choices_obrazy = forms.ModelMultipleChoiceField(
+        queryset=Obraz.objects.all(),  # not optional, use .all() if unsure
+        widget=forms.CheckboxSelectMultiple,
+        required=False,
+    )
+
+    choices_rzezby = forms.ModelMultipleChoiceField(
+        queryset=Rzezba.objects.all(),  # not optional, use .all() if unsure
+        widget=forms.CheckboxSelectMultiple,
+        required=False,
+    )
+
+
+class TablePracownikForm(forms.Form):
+    choices = forms.ModelMultipleChoiceField(
+        queryset=Pracownik.objects.all(),  # not optional, use .all() if unsure
+        widget=forms.CheckboxSelectMultiple,
+    )
+
+
+class TableHarmonogramZwiedzaniaForm(forms.Form):
+    choices = forms.ModelMultipleChoiceField(
+        queryset=Harmonogram_zwiedzania.objects.all(),  # not optional, use .all() if unsure
+        widget=forms.CheckboxSelectMultiple,
+    )
+
+
+class TableBiletyForm(forms.Form):
+    choices = forms.ModelMultipleChoiceField(
+        queryset=Bilet.objects.all(),  # not optional, use .all() if unsure
+        widget=forms.CheckboxSelectMultiple,
+    )
+
+
+class TableRodzajeBiletowForm(forms.Form):
+    choices = forms.ModelMultipleChoiceField(
+        queryset=Rodzaj_biletu.objects.all(),  # not optional, use .all() if unsure
+        widget=forms.CheckboxSelectMultiple,
+    )
+
+class TableWydarzeniaForm(forms.Form):
+    choices = forms.ModelMultipleChoiceField(
+        queryset=Wydarzenie.objects.all(),  # not optional, use .all() if unsure
+        widget=forms.CheckboxSelectMultiple,
+    )
