@@ -40,8 +40,8 @@ END$$
 --
 CREATE DEFINER=`admin`@`%` FUNCTION `policz_dochod` (`typ_biletu` VARCHAR(100), `czy_z_przewodnikiem` TINYINT(1), `oddzial` VARCHAR(100)) RETURNS FLOAT DETERMINISTIC BEGIN
 	DECLARE suma FLOAT DEFAULT 0;
-	SELECT SUM(r.cena) INTO suma FROM museum_app_bilet b LEFT JOIN museum_app_rodzaj_biletu r ON (b.rodzaj_biletu_typ_id=r.typ AND b.rodzaj_biletu_oddzial_nazwa_id=r.oddzial_nazwa_id AND b.rodzaj_biletu_czy_z_przewodnikiem_id=r.czy_z_przewodnikiem)
-    WHERE b.rodzaj_biletu_typ_id=typ_biletu AND b.rodzaj_biletu_czy_z_przewodnikiem_id=czy_z_przewodnikiem AND b.rodzaj_biletu_oddzial_nazwa_id=oddzial;
+	SELECT SUM(r.cena) INTO suma FROM museum_app_bilet b LEFT JOIN museum_app_rodzaj_biletu r ON (b.rodzaj_biletu_id_id = r.id)
+    WHERE r.typ=typ_biletu AND r.czy_z_przewodnikiem=czy_z_przewodnikiem AND r.oddzial_nazwa_id=oddzial;
     RETURN suma;
 END$$
 
@@ -70,6 +70,7 @@ INSERT INTO `museum_app_artysta` (`id`, `imie`, `nazwisko`, `data_urodzenia`, `d
 (2, 'Claude', 'Monet', '1840-11-14', '1926-12-05'),
 (3, 'Kazimierz', 'Adamski', '1964-07-20', NULL);
 
+
 -- --------------------------------------------------------
 
 --
@@ -79,22 +80,20 @@ INSERT INTO `museum_app_artysta` (`id`, `imie`, `nazwisko`, `data_urodzenia`, `d
 CREATE TABLE `museum_app_bilet` (
   `id` int NOT NULL,
   `data_zakupu` date NOT NULL,
-  `rodzaj_biletu_typ_id` varchar(100) NOT NULL,
-  `rodzaj_biletu_oddzial_nazwa_id` varchar(100) NOT NULL,
   `harmonogram_zwiedzania_id_id` int DEFAULT NULL,
-  `rodzaj_biletu_czy_z_przewodnikiem_id` tinyint(1) NOT NULL
+  `rodzaj_biletu_id_id` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;;
 
 --
 -- Zrzut danych tabeli `museum_app_bilet`
 --
 
-INSERT INTO `museum_app_bilet` (`id`, `data_zakupu`, `rodzaj_biletu_typ_id`, `rodzaj_biletu_oddzial_nazwa_id`, `harmonogram_zwiedzania_id_id`, `rodzaj_biletu_czy_z_przewodnikiem_id`) VALUES
-(1, '2020-12-08', 'normalny', 'muzeum narodowe w poznaniu', 1, 1),
-(2, '2020-12-10', 'ulgowy', 'muzeum narodowe w warszawie', NULL, 0),
-(3, '2020-12-06', 'ulgowy', 'muzeum narodowe w poznaniu', 3, 1),
-(4, '2020-12-03', 'normalny', 'muzeum narodowe w warszawie', 2, 1),
-(5, '2020-12-12', 'normalny', 'muzeum narodowe w poznaniu', NULL, 0);
+INSERT INTO `museum_app_bilet` (`id`, `data_zakupu`, `rodzaj_biletu_id_id`, `harmonogram_zwiedzania_id_id`) VALUES
+(1, '2020-12-08', 1, 1),
+(2, '2020-12-10', 2, NULL),
+(3, '2020-12-06', 3, 3),
+(4, '2020-12-03', 4, 2),
+(5, '2020-12-12', 5, NULL);
 
 -- --------------------------------------------------------
 
@@ -103,6 +102,7 @@ INSERT INTO `museum_app_bilet` (`id`, `data_zakupu`, `rodzaj_biletu_typ_id`, `ro
 --
 
 CREATE TABLE `museum_app_dzial` (
+  `id` int NOT NULL,
   `nazwa` varchar(100) NOT NULL,
   `pietro` int NOT NULL,
   `epoka` varchar(100) DEFAULT NULL,
@@ -113,12 +113,12 @@ CREATE TABLE `museum_app_dzial` (
 -- Zrzut danych tabeli `museum_app_dzial`
 --
 
-INSERT INTO `museum_app_dzial` (`nazwa`, `pietro`, `epoka`, `oddzial_nazwa_id`) VALUES
-('sztuka europejska XIV-XIX wieku', 1, NULL, 'muzeum narodowe w poznaniu'),
-('sztuka nowoczesna', 2, 'wspolczesnosc', 'muzeum narodowe w warszawie'),
-('sztuka polska I pol. XX wieku', 1, 'mloda polska', 'muzeum narodowe w poznaniu'),
-('sztuka sredniowieczna', 1, 'sredniowiecze', 'muzeum narodowe w poznaniu'),
-('sztuka sredniowieczna', 0, 'sredniowiecze', 'muzeum narodowe w warszawie');
+INSERT INTO `museum_app_dzial` (`id`, `nazwa`, `pietro`, `epoka`, `oddzial_nazwa_id`) VALUES
+(1, 'sztuka europejska XIV-XIX wieku', 1, NULL, 'muzeum narodowe w poznaniu'),
+(2, 'sztuka nowoczesna', 2, 'wspolczesnosc', 'muzeum narodowe w warszawie'),
+(3, 'sztuka polska I pol. XX wieku', 1, 'mloda polska', 'muzeum narodowe w poznaniu'),
+(4, 'sztuka sredniowieczna', 1, 'sredniowiecze', 'muzeum narodowe w poznaniu'),
+(5, 'sztuka sredniowieczna', 0, 'sredniowiecze', 'muzeum narodowe w warszawie');
 
 -- --------------------------------------------------------
 
@@ -154,20 +154,19 @@ CREATE TABLE `museum_app_obraz` (
   `szerokosc` float NOT NULL,
   `wysokosc` float NOT NULL,
   `artysta_id_id` int DEFAULT NULL,
-  `dzial_nazwa_id` varchar(100) NOT NULL,
-  `dzial_oddzial_nazwa_id` varchar(100) NOT NULL
+  `dzial_id_id` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;;
 
 --
 -- Zrzut danych tabeli `museum_app_obraz`
 --
 
-INSERT INTO `museum_app_obraz` (`id`, `nazwa`, `szerokosc`, `wysokosc`, `artysta_id_id`, `dzial_nazwa_id`, `dzial_oddzial_nazwa_id`) VALUES
-(1, 'drzewo nad stawem', 41, 33, 1, 'sztuka polska I pol. XX wieku', 'muzeum narodowe w poznaniu'),
-(2, 'bledne kolo', 240, 174, 1, 'sztuka polska I pol. XX wieku', 'muzeum narodowe w poznaniu'),
-(3, 'melancholia', 240, 139, 1, 'sztuka polska I pol. XX wieku', 'muzeum narodowe w poznaniu'),
-(4, 'plaza w pourville', 60, 73, 2, 'sztuka europejska XIV-XIX wieku', 'muzeum narodowe w poznaniu'),
-(5, 'nawiedzenie', 40, 100, NULL, 'sztuka sredniowieczna', 'muzeum narodowe w poznaniu');
+INSERT INTO `museum_app_obraz` (`id`, `nazwa`, `szerokosc`, `wysokosc`, `artysta_id_id`, `dzial_id_id`) VALUES
+(1, 'drzewo nad stawem', 41, 33, 1, 1),
+(2, 'bledne kolo', 240, 174, 1, 2),
+(3, 'melancholia', 240, 139, 1, 3),
+(4, 'plaza w pourville', 60, 73, 2, 4),
+(5, 'nawiedzenie', 40, 100, NULL, 5);
 
 -- --------------------------------------------------------
 
@@ -225,6 +224,7 @@ INSERT INTO `museum_app_pracownik` (`pesel`, `imie`, `nazwisko`, `placa`, `etat`
 --
 
 CREATE TABLE `museum_app_rodzaj_biletu` (
+  `id` int NOT NULL,
   `typ` varchar(100) NOT NULL,
   `czy_z_przewodnikiem` tinyint(1) NOT NULL,
   `cena` float NOT NULL,
@@ -235,15 +235,15 @@ CREATE TABLE `museum_app_rodzaj_biletu` (
 -- Zrzut danych tabeli `museum_app_rodzaj_biletu`
 --
 
-INSERT INTO `museum_app_rodzaj_biletu` (`typ`, `czy_z_przewodnikiem`, `cena`, `oddzial_nazwa_id`) VALUES
-('normalny', 0, 20, 'muzeum narodowe w poznaniu'),
-('normalny', 0, 30, 'muzeum narodowe w warszawie'),
-('normalny', 1, 25, 'muzeum narodowe w poznaniu'),
-('normalny', 1, 40, 'muzeum narodowe w warszawie'),
-('ulgowy', 0, 10, 'muzeum narodowe w poznaniu'),
-('ulgowy', 0, 20, 'muzeum narodowe w warszawie'),
-('ulgowy', 1, 12.5, 'muzeum narodowe w poznaniu'),
-('ulgowy', 1, 30, 'muzeum narodowe w warszawie');
+INSERT INTO `museum_app_rodzaj_biletu` (`id`, `typ`, `czy_z_przewodnikiem`, `cena`, `oddzial_nazwa_id`) VALUES
+(1, 'normalny', 0, 20, 'muzeum narodowe w poznaniu'),
+(2, 'normalny', 0, 30, 'muzeum narodowe w warszawie'),
+(3, 'normalny', 1, 25, 'muzeum narodowe w poznaniu'),
+(4, 'normalny', 1, 40, 'muzeum narodowe w warszawie'),
+(5, 'ulgowy', 0, 10, 'muzeum narodowe w poznaniu'),
+(6, 'ulgowy', 0, 20, 'muzeum narodowe w warszawie'),
+(7, 'ulgowy', 1, 12.5, 'muzeum narodowe w poznaniu'),
+(8, 'ulgowy', 1, 30, 'muzeum narodowe w warszawie');
 
 -- --------------------------------------------------------
 
@@ -257,17 +257,16 @@ CREATE TABLE `museum_app_rzezba` (
   `waga` float NOT NULL,
   `material` varchar(50) NOT NULL,
   `artysta_id_id` int DEFAULT NULL,
-  `dzial_nazwa_id` varchar(100) NOT NULL,
-  `dzial_oddzial_nazwa_id` varchar(100) NOT NULL
+  `dzial_id_id` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;;
 
 --
 -- Zrzut danych tabeli `museum_app_rzezba`
 --
 
-INSERT INTO `museum_app_rzezba` (`id`, `nazwa`, `waga`, `material`, `artysta_id_id`, `dzial_nazwa_id`, `dzial_oddzial_nazwa_id`) VALUES
-(1, 'popiersie adama loreta', 48, 'braz', 3, 'sztuka nowoczesna', 'muzeum narodowe w warszawie'),
-(2, 'pieta z lubiaza', 30, 'drewno lipowe', NULL, 'sztuka sredniowieczna', 'muzeum narodowe w warszawie');
+INSERT INTO `museum_app_rzezba` (`id`, `nazwa`, `waga`, `material`, `artysta_id_id`, `dzial_id_id`) VALUES
+(1, 'popiersie adama loreta', 48, 'braz', 3, 1),
+(2, 'pieta z lubiaza', 30, 'drewno lipowe', NULL, 2);
 
 -- --------------------------------------------------------
 
@@ -276,6 +275,7 @@ INSERT INTO `museum_app_rzezba` (`id`, `nazwa`, `waga`, `material`, `artysta_id_
 --
 
 CREATE TABLE `museum_app_wydarzenie` (
+  `id` int NOT NULL,
   `nazwa` varchar(100) NOT NULL,
   `data_rozpoczecia` date NOT NULL,
   `data_zakonczenia` date NOT NULL
@@ -285,10 +285,10 @@ CREATE TABLE `museum_app_wydarzenie` (
 -- Zrzut danych tabeli `museum_app_wydarzenie`
 --
 
-INSERT INTO `museum_app_wydarzenie` (`nazwa`, `data_rozpoczecia`, `data_zakonczenia`) VALUES
-('dzien seniora', '2021-01-30', '2021-01-30'),
-('noc w muzeum', '2021-02-19', '2021-02-19'),
-('wystawa prac studentow', '2021-06-01', '2021-06-30');
+INSERT INTO `museum_app_wydarzenie` (`id`, `nazwa`, `data_rozpoczecia`, `data_zakonczenia`) VALUES
+(1, 'dzien seniora', '2021-01-30', '2021-01-30'),
+(2, 'noc w muzeum', '2021-02-19', '2021-02-19'),
+(3, 'wystawa prac studentow', '2021-06-01', '2021-06-30');
 
 -- --------------------------------------------------------
 
@@ -297,20 +297,20 @@ INSERT INTO `museum_app_wydarzenie` (`nazwa`, `data_rozpoczecia`, `data_zakoncze
 --
 
 CREATE TABLE `museum_app_wydarzenie_oddzial` (
+  `id` int NOT NULL,
   `oddzial_nazwa_id` varchar(100) NOT NULL,
-  `wydarzenie_nazwa_id` varchar(100) NOT NULL,
-  `wydarzenie_data_rozpoczecia_id` date NOT NULL
+  `wydarzenie_id_id` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;;
 
 --
 -- Zrzut danych tabeli `museum_app_wydarzenie_oddzial`
 --
 
-INSERT INTO `museum_app_wydarzenie_oddzial` (`oddzial_nazwa_id`, `wydarzenie_nazwa_id`, `wydarzenie_data_rozpoczecia_id`) VALUES
-('muzeum narodowe w poznaniu', 'dzien seniora', '2021-01-30'),
-('muzeum narodowe w warszawie', 'dzien seniora', '2021-01-30'),
-('muzeum narodowe w poznaniu', 'noc w muzeum', '2021-02-19'),
-('muzeum narodowe w warszawie', 'wystawa prac studentow', '2021-06-01');
+INSERT INTO `museum_app_wydarzenie_oddzial` (`id`, `oddzial_nazwa_id`, `wydarzenie_id_id`) VALUES
+(1, 'muzeum narodowe w poznaniu', 1),
+(2, 'muzeum narodowe w warszawie', 1),
+(3, 'muzeum narodowe w poznaniu', 2),
+(4, 'muzeum narodowe w warszawie', 3);
 
 --
 -- Indeksy dla zrzutów tabel
@@ -327,14 +327,15 @@ ALTER TABLE `museum_app_artysta`
 --
 ALTER TABLE `museum_app_bilet`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `bilet_rodzaj_biletu` (`rodzaj_biletu_typ_id`,`rodzaj_biletu_czy_z_przewodnikiem_id`,`rodzaj_biletu_oddzial_nazwa_id`),
+  ADD KEY `bilet_rodzaj_biletu` (`rodzaj_biletu_id_id`),
   ADD KEY `bilet_harmonogram_zwiedzania_FK` (`harmonogram_zwiedzania_id_id`) USING BTREE;
 
 --
 -- Indeksy dla tabeli `museum_app_dzial`
 --
 ALTER TABLE `museum_app_dzial`
-  ADD PRIMARY KEY (`nazwa`,`oddzial_nazwa_id`) USING BTREE,
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY (`nazwa`,`oddzial_nazwa_id`) USING BTREE,
   ADD KEY `dzial_oddzial_fk` (`oddzial_nazwa_id`);
 
 --
@@ -350,7 +351,7 @@ ALTER TABLE `museum_app_harmonogram_zwiedzania`
 --
 ALTER TABLE `museum_app_obraz`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `obraz_dzial_FK` (`dzial_nazwa_id`,`dzial_oddzial_nazwa_id`) USING BTREE,
+  ADD KEY `obraz_dzial_FK` (`dzial_id_id`) USING BTREE,
   ADD KEY `obraz_artysta_FK` (`artysta_id_id`);
 
 --
@@ -370,7 +371,8 @@ ALTER TABLE `museum_app_pracownik`
 -- Indeksy dla tabeli `museum_app_rodzaj_biletu`
 --
 ALTER TABLE `museum_app_rodzaj_biletu`
-  ADD PRIMARY KEY (`typ`,`czy_z_przewodnikiem`,`oddzial_nazwa_id`) USING BTREE,
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY (`typ`,`czy_z_przewodnikiem`,`oddzial_nazwa_id`) USING BTREE,
   ADD KEY `rodzaj_biletu_oddzial_FK` (`oddzial_nazwa_id`);
 
 --
@@ -378,26 +380,39 @@ ALTER TABLE `museum_app_rodzaj_biletu`
 --
 ALTER TABLE `museum_app_rzezba`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `rzezba_dzial_FK` (`dzial_nazwa_id`,`dzial_oddzial_nazwa_id`),
+  ADD KEY `rzezba_dzial_FK` (`dzial_id_id`),
   ADD KEY `rzezba_artysta_FK` (`artysta_id_id`);
 
 --
 -- Indeksy dla tabeli `museum_app_wydarzenie`
 --
 ALTER TABLE `museum_app_wydarzenie`
-  ADD PRIMARY KEY (`nazwa`,`data_rozpoczecia`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY (`nazwa`,`data_rozpoczecia`);
 
 --
 -- Indeksy dla tabeli `museum_app_wydarzenie_oddzial`
 --
 ALTER TABLE `museum_app_wydarzenie_oddzial`
-  ADD PRIMARY KEY (`oddzial_nazwa_id`,`wydarzenie_data_rozpoczecia_id`,`wydarzenie_nazwa_id`),
-  ADD KEY `wydarzenie_FK` (`wydarzenie_nazwa_id`,`wydarzenie_data_rozpoczecia_id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY (`oddzial_nazwa_id`,`wydarzenie_id_id`),
+  ADD KEY `wydarzenie_FK` (`wydarzenie_id_id`);
 
 --
 -- AUTO_INCREMENT dla zrzuconych tabel
 --
+ALTER TABLE `museum_app_wydarzenie`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
+
+ALTER TABLE `museum_app_wydarzenie_oddzial`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+ALTER TABLE `museum_app_dzial`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+ALTER TABLE `museum_app_rodzaj_biletu`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 --
 -- AUTO_INCREMENT dla tabeli `museum_app_artysta`
 --
@@ -431,7 +446,7 @@ ALTER TABLE `museum_app_rzezba`
 --
 ALTER TABLE `museum_app_bilet`
   ADD CONSTRAINT `bilet_harmonogram_zwiedzania_FK` FOREIGN KEY (`harmonogram_zwiedzania_id_id`) REFERENCES `museum_app_harmonogram_zwiedzania` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  ADD CONSTRAINT `bilet_rodzaj_biletu` FOREIGN KEY (`rodzaj_biletu_typ_id`,`rodzaj_biletu_czy_z_przewodnikiem_id`,`rodzaj_biletu_oddzial_nazwa_id`) REFERENCES `museum_app_rodzaj_biletu` (`typ`, `czy_z_przewodnikiem`, `oddzial_nazwa_id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+  ADD CONSTRAINT `bilet_rodzaj_biletu` FOREIGN KEY (`rodzaj_biletu_id_id`) REFERENCES `museum_app_rodzaj_biletu` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
 -- Ograniczenia dla tabeli `museum_app_dzial`
@@ -450,7 +465,7 @@ ALTER TABLE `museum_app_harmonogram_zwiedzania`
 --
 ALTER TABLE `museum_app_obraz`
   ADD CONSTRAINT `obraz_artysta_FK` FOREIGN KEY (`artysta_id_id`) REFERENCES `museum_app_artysta` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  ADD CONSTRAINT `obraz_oddzial_FK` FOREIGN KEY (`dzial_nazwa_id`,`dzial_oddzial_nazwa_id`) REFERENCES `museum_app_dzial` (`nazwa`, `oddzial_nazwa_id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+  ADD CONSTRAINT `obraz_oddzial_FK` FOREIGN KEY (`dzial_id_id`) REFERENCES `museum_app_dzial` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
 -- Ograniczenia dla tabeli `museum_app_pracownik`
@@ -469,14 +484,14 @@ ALTER TABLE `museum_app_rodzaj_biletu`
 --
 ALTER TABLE `museum_app_rzezba`
   ADD CONSTRAINT `rzezba_artysta_FK` FOREIGN KEY (`artysta_id_id`) REFERENCES `museum_app_artysta` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  ADD CONSTRAINT `rzezba_dzial_FK` FOREIGN KEY (`dzial_nazwa_id`,`dzial_oddzial_nazwa_id`) REFERENCES `museum_app_dzial` (`nazwa`, `oddzial_nazwa_id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+  ADD CONSTRAINT `rzezba_dzial_FK` FOREIGN KEY (`dzial_id_id`) REFERENCES `museum_app_dzial` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
 -- Ograniczenia dla tabeli `museum_app_wydarzenie_oddzial`
 --
 ALTER TABLE `museum_app_wydarzenie_oddzial`
   ADD CONSTRAINT `oddzial_FK` FOREIGN KEY (`oddzial_nazwa_id`) REFERENCES `museum_app_oddzial` (`nazwa`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  ADD CONSTRAINT `wydarzenie_FK` FOREIGN KEY (`wydarzenie_nazwa_id`,`wydarzenie_data_rozpoczecia_id`) REFERENCES `museum_app_wydarzenie` (`nazwa`, `data_rozpoczecia`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+  ADD CONSTRAINT `wydarzenie_FK` FOREIGN KEY (`wydarzenie_id_id`) REFERENCES `museum_app_wydarzenie` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
