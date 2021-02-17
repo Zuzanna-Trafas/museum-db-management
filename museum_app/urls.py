@@ -32,7 +32,8 @@ urlpatterns = [
             path('edit/harmonogram_zwiedzania', views.edit_harmonogram_zwiedzania, name='edit_harmonogram_zwiedzania'),
             path('edit/wydarzenie', views.edit_wydarzenie, name='edit_wydarzenie'),
             path('detailed/<str:oddzial_nazwa>/oddzial', views.detailed_oddzial, name='detailed_oddzial'),
-            path('detailed/dzial', views.detailed_dzial, name='detailed_dzial'),
-            path('detailed/artysta', views.detailed_artysta, name='detailed_artysta'),
-            path('detailed/dzielo', views.detailed_dzielo, name='detailed_dzielo')
+            path('detailed/<str:oddzial_nazwa>/<str:dzial_nazwa>/dzial', views.detailed_dzial, name='detailed_dzial'),
+            path('detailed/<int:artysta_id>/artysta', views.detailed_artysta, name='detailed_artysta'),
+            path('detailed/<int:obraz_id>/dzielo/obraz', views.detailed_dzielo, name='detailed_dzielo'),
+            path('detailed/<int:rzezba_id>/dzielo/rzezba', views.detailed_dzielo, name='detailed_dzielo'),
             ]
