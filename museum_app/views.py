@@ -352,7 +352,7 @@ def detailed_oddzial(request, oddzial_nazwa):
                       'number': oddzial.numer_telefonu}
 
     form = DetailedOddzialForm(initial=initial_values)
-    return render(request, 'museum_app/detailed_oddzial.html', {'form': form, 'wydarzenia': wydarzenia})
+    return render(request, 'museum_app/detailed_oddzial.html', {'form': form, 'wydarzenia': wydarzenia, 'error': error})
 
 
 def detailed_dzial(request, dzial_id):
