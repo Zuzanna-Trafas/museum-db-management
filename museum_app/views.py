@@ -7,14 +7,17 @@ from plotly.offline import plot
 from plotly.graph_objs import Bar
 from museum_app.forms import OddzialForm, DzialForm, ObrazForm, RzezbaForm, ArtystaForm, BiletForm, RodzajBiletuForm, \
     PracownikForm, HarmonogramZwiedzaniaForm, WydarzenieForm, DetailedArtystaForm, DetailedDzialForm, \
-    DetailedDzieloForm, DetailedOddzialForm, TableOddzialForm, TableDzialForm, TableArtystaForm, TableBiletyForm,\
-    TableHarmonogramZwiedzaniaForm, TableDzieloForm, TablePracownikForm
-from museum_app.models import Oddzial, Wydarzenie, Wydarzenie_oddzial, Rodzaj_biletu, Pracownik, Harmonogram_zwiedzania, Bilet, Dzial, Artysta, Obraz, Rzezba
+    DetailedDzieloForm, DetailedOddzialForm, TableOddzialForm, TableDzialForm, TableArtystaForm, TableBiletyForm, \
+    TableHarmonogramZwiedzaniaForm, TableDzieloForm, TablePracownikForm, TableRodzajeBiletowForm, TableWydarzeniaForm
+from museum_app.models import Oddzial, Wydarzenie, Wydarzenie_oddzial, Rodzaj_biletu, Pracownik, Harmonogram_zwiedzania, \
+    Bilet, Dzial, Artysta, Obraz, Rzezba
 import sys
+
 
 def get_profit(cursor, typ, czy_z_przewodnikiem, oddzial):
     cursor.execute("SELECT policz_dochod(%s, %s, %s)", [typ, czy_z_przewodnikiem, oddzial])
     return cursor.fetchone()[0]
+
 
 def main(request):
     # TODO searching
@@ -86,6 +89,7 @@ def dzialy(request):
 def dziela(request):
     form = TableDzieloForm(request.POST)
     error = ""
+    print(request.POST, file=sys.stderr)
     if request.method == 'POST' and form.is_valid():
         print("jestem abc", file=sys.stderr)
         if 'delete' in request.POST:
@@ -171,13 +175,32 @@ def harmonogram_zwiedzania(request):
                 except Exception as e:
                     error = "Nie można usunąć"
 
+    harmonogram_zwiedzania = Harmonogram_zwiedzania.objects.all()
     cursor = connection.cursor()
     cursor.execute('CALL podsumowanie_zwiedzania()')
     podsumowanie = cursor.fetchall()
     cursor.close()
-    context = {'podsumowanie': podsumowanie, 'error': error}
-
+    context = {'podsumowanie': podsumowanie, 'harmonogram_zwiedzania': harmonogram_zwiedzania, 'error': error}
     return render(request, 'museum_app/harmonogram_zwiedzania.html', context)
+
+
+def rodzaje_biletow(request):
+    form = TableRodzajeBiletowForm(request.POST)
+    error = ""
+    if request.method == 'POST' and form.is_valid():
+        if 'delete' in request.POST:
+            for item in form.cleaned_data['choices']:
+                try:
+                    item.delete()
+                except Exception as e:
+                    error = "Nie można usunąć"
+                    if "Bilet" in e.args[0]:
+                        error = "Nie można usunąć, gdyż rodzaj biletu jest powiązany z biletami"
+
+    rodzaje_biletow = Rodzaj_biletu.objects.all()
+
+    context = {'rodzaje_biletow': rodzaje_biletow, 'error': error}
+    return render(request, 'museum_app/rodzaje_biletow.html', context)
 
 
 # TODO handle adding for all tables (also wydarzenia)
@@ -240,6 +263,7 @@ def add_wydarzenie(request):
     form = WydarzenieForm(request.POST)
     return render(request, 'museum_app/add_wydarzenie.html', {'form': form})
 
+
 # TODO handle editing for all tables (also wydarzenia) - fill values with initial, like for detailed
 # TODO disable primary keys after filling them for editing
 # TODO figure out how to fill date and time fields
@@ -300,6 +324,18 @@ def edit_wydarzenie(request):
 # TODO fill initial values with values from model
 
 def detailed_oddzial(request, oddzial_nazwa):
+    form = TableWydarzeniaForm(request.POST)
+    error = ""
+    if request.method == 'POST' and form.is_valid():
+        if 'delete' in request.POST:
+            for item in form.cleaned_data['choices']:
+                try:
+                    item.delete()
+                except Exception as e:
+                    error = "Nie można usunąć"
+                    if "Rzezba" in e.args[0] or "Obraz" in e.args[0]:
+                        error = "Nie można usunąć, gdyż artysta jest powiązany z dziełami"
+
     oddzial = get_object_or_404(Oddzial, pk=oddzial_nazwa)
     wydarzenie_oddzial = []
     for i in Wydarzenie_oddzial.objects.all():
@@ -313,6 +349,7 @@ def detailed_oddzial(request, oddzial_nazwa):
     initial_values = {'name': oddzial.nazwa, 'opening_hour': oddzial.godzina_otwarcia,
                       'closing_hour': oddzial.godzina_zamkniecia, 'address': oddzial.adres,
                       'number': oddzial.numer_telefonu}
+
     form = DetailedOddzialForm(initial=initial_values)
     return render(request, 'museum_app/detailed_oddzial.html', {'form': form, 'wydarzenia': wydarzenia})
 
@@ -359,4 +396,3 @@ def detailed_dzielo(request):
     }
     form = DetailedDzieloForm(initial=initial_values)
     return render(request, 'museum_app/detailed_dzielo.html', {'form': form})
-

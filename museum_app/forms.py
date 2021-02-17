@@ -252,14 +252,16 @@ class TableOddzialForm(forms.Form):
 
 
 class TableDzieloForm(forms.Form):
-    choices_rzezby = forms.ModelMultipleChoiceField(
-        queryset=Rzezba.objects.all(),  # not optional, use .all() if unsure
-        widget=forms.CheckboxSelectMultiple,
-    )
-
     choices_obrazy = forms.ModelMultipleChoiceField(
         queryset=Obraz.objects.all(),  # not optional, use .all() if unsure
         widget=forms.CheckboxSelectMultiple,
+        required=False,
+    )
+
+    choices_rzezby = forms.ModelMultipleChoiceField(
+        queryset=Rzezba.objects.all(),  # not optional, use .all() if unsure
+        widget=forms.CheckboxSelectMultiple,
+        required=False,
     )
 
 
@@ -280,5 +282,18 @@ class TableHarmonogramZwiedzaniaForm(forms.Form):
 class TableBiletyForm(forms.Form):
     choices = forms.ModelMultipleChoiceField(
         queryset=Bilet.objects.all(),  # not optional, use .all() if unsure
+        widget=forms.CheckboxSelectMultiple,
+    )
+
+
+class TableRodzajeBiletowForm(forms.Form):
+    choices = forms.ModelMultipleChoiceField(
+        queryset=Rodzaj_biletu.objects.all(),  # not optional, use .all() if unsure
+        widget=forms.CheckboxSelectMultiple,
+    )
+
+class TableWydarzeniaForm(forms.Form):
+    choices = forms.ModelMultipleChoiceField(
+        queryset=Wydarzenie.objects.all(),  # not optional, use .all() if unsure
         widget=forms.CheckboxSelectMultiple,
     )

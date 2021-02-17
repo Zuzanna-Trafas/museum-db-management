@@ -8,7 +8,7 @@
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
-    <title>Harmonogram zwiedzania</title>
+    <title>Rodzaje biletów</title>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -35,51 +35,50 @@
                 <a class="nav-link" href="/table/bilety">Bilety</a>
             </li>
             <li>
-                <a class="nav-link" href="/table/rodzaje_biletow">Rodzaje biletów</a>
+                <a class="nav-link active" href="/table/rodzaje_biletow">Rodzaje biletów <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/table/pracownicy">Pracownicy</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link active" href="/table/harmonogram_zwiedzania">Harmonogram zwiedzania <span
-                        class="sr-only">(current)</span></a>
+                <a class="nav-link" href="/table/harmonogram_zwiedzania">Harmonogram zwiedzania</a>
             </li>
         </ul>
     </div>
 </nav>
 
-<h1 class="px-5 pt-4">Harmonogram zwiedzania</h1>
+<h1 class="px-5 pt-4">Rodzaje biletów</h1>
 
 <form method="post">
     {% csrf_token %}
-    <div class="px-5">
+    <div class=" px-5">
         {% if error != "" %}
             <div class="alert alert-danger" role="alert" id="alert"> {{ error }}</div> {% endif %}
         <table class="table table-hover">
             <thead class="thead bg-info text-light">
             <tr>
                 <th scope="col">#</th>
-                <th scope="col">Data</th>
-                <th scope="col">Godzina rozpoczęcia</th>
-                <th scope="col">Przewodnik</th>
-                <th scope="col">Ilość kupionych biletów</th>
+                <th scope="col">Typ</th>
+                <th scope="col">Oddział</th>
+                <th scope="col">Czy z przewodnikiem</th>
+                <th scope="col">Cena</th>
                 <th scope="col" width="6%"></th>
             </tr>
             </thead>
             <tbody>
-            {% for x in podsumowanie %}
+            {% for rodzaj in rodzaje_biletow %}
                 <tr>
                     <th scope="row">
                         <div class="pl-3"><input class="form-check-input" type="checkbox" name="choices"
-                                                 value="{% for harmonogram in harmonogram_zwiedzania %}{% if harmonogram.data == x.0 and harmonogram.godzina_rozpoczecia == x.1  and harmonogram.pracownik_pesel.imie == x.2 and harmonogram.pracownik_pesel.nazwisko == x.3  %}{{ harmonogram.id }}{% endif %}{% endfor %}"
+                                                 value="{{ rodzaj.id }}"
                                                  id="flexCheckDefault"></div>
                     </th>
-                    <td>{{ x.0 }}</td>
-                    <td>{{ x.1|date:'H:i' }}</td>
-                    <td>{{ x.2 }} {{ x.3 }}</td>
-                    <td>{{ x.4 }}</td>
-                    <td><a type="button" class="btn btn-secondary float-right" role="button"
-                           href="/edit/harmonogram_zwiedzania">Edytuj</a></td>
+                    <td>{{ rodzaj.typ }}</td>
+                    <td>{{ rodzaj.oddzial_nazwa_id }}</td>
+                    <td>{% if rodzaj.czy_z_przewodnikiem == True %}Tak{% else %}Nie{% endif %}</td>
+                    <td>{{ rodzaj.cena|floatformat:2 }} PLN</td>
+                    <td><a type="button" class="btn btn-secondary float-right" role="button" href="/edit/rodzaj_biletu">Edytuj</a>
+                    </td>
                 </tr>
             {% endfor %}
             </tbody>
@@ -91,8 +90,7 @@
             <button type="submit" class="btn btn-secondary" name="delete" id="delete">Usuń</button>
         </div>
         <div class="ml-auto p-2">
-            <a type="button" class="btn btn-secondary" href="/add/harmonogram_zwiedzania" role="button">Dodaj nową
-                wycieczkę</a>
+            <a type="button" class="btn btn-secondary" href="/add/rodzaj_biletu" role="button">Dodaj nowy rodzaj biletu</a>
         </div>
     </div>
 </form>

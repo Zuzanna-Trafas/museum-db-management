@@ -58,9 +58,12 @@ class Pracownik(models.Model):
 
 class Harmonogram_zwiedzania(models.Model):
     id = models.PositiveIntegerField(primary_key=True)
-    godzina_rozpoczecia = models.TimeField(unique=True)
-    data = models.DateField(unique=True)
+    godzina_rozpoczecia = models.TimeField()
+    data = models.DateField()
     pracownik_pesel = models.ForeignKey(Pracownik, on_delete=models.PROTECT)
+
+    class Meta:
+        unique_together = (("godzina_rozpoczecia", "data", "pracownik_pesel"),)
 
 
 class Bilet(models.Model):

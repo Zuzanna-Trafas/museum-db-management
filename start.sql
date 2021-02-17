@@ -445,53 +445,53 @@ ALTER TABLE `museum_app_rzezba`
 -- Ograniczenia dla tabeli `museum_app_bilet`
 --
 ALTER TABLE `museum_app_bilet`
-  ADD CONSTRAINT `bilet_harmonogram_zwiedzania_FK` FOREIGN KEY (`harmonogram_zwiedzania_id_id`) REFERENCES `museum_app_harmonogram_zwiedzania` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  ADD CONSTRAINT `bilet_rodzaj_biletu` FOREIGN KEY (`rodzaj_biletu_id_id`) REFERENCES `museum_app_rodzaj_biletu` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+  ADD CONSTRAINT `bilet_harmonogram_zwiedzania_FK` FOREIGN KEY (`harmonogram_zwiedzania_id_id`) REFERENCES `museum_app_harmonogram_zwiedzania` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  ADD CONSTRAINT `bilet_rodzaj_biletu` FOREIGN KEY (`rodzaj_biletu_id_id`) REFERENCES `museum_app_rodzaj_biletu` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 --
 -- Ograniczenia dla tabeli `museum_app_dzial`
 --
 ALTER TABLE `museum_app_dzial`
-  ADD CONSTRAINT `dzial_oddzial_fk` FOREIGN KEY (`oddzial_nazwa_id`) REFERENCES `museum_app_oddzial` (`nazwa`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+  ADD CONSTRAINT `dzial_oddzial_fk` FOREIGN KEY (`oddzial_nazwa_id`) REFERENCES `museum_app_oddzial` (`nazwa`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 --
 -- Ograniczenia dla tabeli `museum_app_harmonogram_zwiedzania`
 --
 ALTER TABLE `museum_app_harmonogram_zwiedzania`
-  ADD CONSTRAINT `harmonogram_zwiedzania_pracownik_FK` FOREIGN KEY (`pracownik_pesel_id`) REFERENCES `museum_app_pracownik` (`pesel`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+  ADD CONSTRAINT `harmonogram_zwiedzania_pracownik_FK` FOREIGN KEY (`pracownik_pesel_id`) REFERENCES `museum_app_pracownik` (`pesel`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 --
 -- Ograniczenia dla tabeli `museum_app_obraz`
 --
 ALTER TABLE `museum_app_obraz`
-  ADD CONSTRAINT `obraz_artysta_FK` FOREIGN KEY (`artysta_id_id`) REFERENCES `museum_app_artysta` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  ADD CONSTRAINT `obraz_oddzial_FK` FOREIGN KEY (`dzial_id_id`) REFERENCES `museum_app_dzial` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+  ADD CONSTRAINT `obraz_artysta_FK` FOREIGN KEY (`artysta_id_id`) REFERENCES `museum_app_artysta` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  ADD CONSTRAINT `obraz_oddzial_FK` FOREIGN KEY (`dzial_id_id`) REFERENCES `museum_app_dzial` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 --
 -- Ograniczenia dla tabeli `museum_app_pracownik`
 --
 ALTER TABLE `museum_app_pracownik`
-  ADD CONSTRAINT `pracownik_oddzial_FK` FOREIGN KEY (`oddzial_nazwa_id`) REFERENCES `museum_app_oddzial` (`nazwa`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+  ADD CONSTRAINT `pracownik_oddzial_FK` FOREIGN KEY (`oddzial_nazwa_id`) REFERENCES `museum_app_oddzial` (`nazwa`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 --
 -- Ograniczenia dla tabeli `museum_app_rodzaj_biletu`
 --
 ALTER TABLE `museum_app_rodzaj_biletu`
-  ADD CONSTRAINT `rodzaj_biletu_oddzial_FK` FOREIGN KEY (`oddzial_nazwa_id`) REFERENCES `museum_app_oddzial` (`nazwa`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+  ADD CONSTRAINT `rodzaj_biletu_oddzial_FK` FOREIGN KEY (`oddzial_nazwa_id`) REFERENCES `museum_app_oddzial` (`nazwa`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 --
 -- Ograniczenia dla tabeli `museum_app_rzezba`
 --
 ALTER TABLE `museum_app_rzezba`
-  ADD CONSTRAINT `rzezba_artysta_FK` FOREIGN KEY (`artysta_id_id`) REFERENCES `museum_app_artysta` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  ADD CONSTRAINT `rzezba_dzial_FK` FOREIGN KEY (`dzial_id_id`) REFERENCES `museum_app_dzial` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+  ADD CONSTRAINT `rzezba_artysta_FK` FOREIGN KEY (`artysta_id_id`) REFERENCES `museum_app_artysta` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  ADD CONSTRAINT `rzezba_dzial_FK` FOREIGN KEY (`dzial_id_id`) REFERENCES `museum_app_dzial` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 --
 -- Ograniczenia dla tabeli `museum_app_wydarzenie_oddzial`
 --
 ALTER TABLE `museum_app_wydarzenie_oddzial`
-  ADD CONSTRAINT `oddzial_FK` FOREIGN KEY (`oddzial_nazwa_id`) REFERENCES `museum_app_oddzial` (`nazwa`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  ADD CONSTRAINT `wydarzenie_FK` FOREIGN KEY (`wydarzenie_id_id`) REFERENCES `museum_app_wydarzenie` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+  ADD CONSTRAINT `oddzial_FK` FOREIGN KEY (`oddzial_nazwa_id`) REFERENCES `museum_app_oddzial` (`nazwa`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  ADD CONSTRAINT `wydarzenie_FK` FOREIGN KEY (`wydarzenie_id_id`) REFERENCES `museum_app_wydarzenie` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

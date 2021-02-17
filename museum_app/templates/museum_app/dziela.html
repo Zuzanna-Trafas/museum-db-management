@@ -34,6 +34,9 @@
             <li class="nav-item">
                 <a class="nav-link" href="/table/bilety">Bilety</a>
             </li>
+            <li>
+                <a class="nav-link" href="/table/rodzaje_biletow">Rodzaje biletów</a>
+            </li>
             <li class="nav-item">
                 <a class="nav-link" href="/table/pracownicy">Pracownicy</a>
             </li>
@@ -70,10 +73,12 @@
                                                  value={{ obraz.id }} id={{ obraz.id }}"></div>
                     </th>
                     <td>{{ obraz.nazwa }}</td>
-            <td>{{ obraz.artysta_id.imie }} {{ obraz.artysta_id.nazwisko }}</td>
-            <td>{{ obraz.dzial_id.nazwa }}</td>
-            <td><a type="button" class="btn btn-secondary float-right" role="button" href="/detailed/dzielo">Widok szczegółowy</a></td>
-            <td><a type="button" class="btn btn-secondary float-right" role="button" href="/edit/dzielo">Edytuj</a></td>
+                    <td>{{ obraz.artysta_id.imie }} {{ obraz.artysta_id.nazwisko }}</td>
+                    <td>{{ obraz.dzial_id.nazwa }}</td>
+                    <td><a type="button" class="btn btn-secondary float-right" role="button" href="/detailed/dzielo">Widok
+                        szczegółowy</a></td>
+                    <td><a type="button" class="btn btn-secondary float-right" role="button"
+                           href="/edit/dzielo">Edytuj</a></td>
                 </tr>
             {% endfor %}
             {% for rzezba in rzezby %}
@@ -83,10 +88,12 @@
                                                  value={{ rzezba.id }} id="flexCheckDefault"></div>
                     </th>
                     <td>{{ rzezba.nazwa }}</td>
-            <td>{{ rzezba.artysta_id.imie }} {{ rzezba.artysta_id.nazwisko }}</td>
-            <td>{{ rzezba.dzial_id.nazwa }}</td>
-            <td><a type="button" class="btn btn-secondary float-right" role="button" href="/detailed/dzielo">Widok szczegółowy</a></td>
-            <td><a type="button" class="btn btn-secondary float-right" role="button" href="/edit/dzielo">Edytuj</a></td>
+                    <td>{{ rzezba.artysta_id.imie }} {{ rzezba.artysta_id.nazwisko }}</td>
+                    <td>{{ rzezba.dzial_id.nazwa }}</td>
+                    <td><a type="button" class="btn btn-secondary float-right" role="button" href="/detailed/dzielo">Widok
+                        szczegółowy</a></td>
+                    <td><a type="button" class="btn btn-secondary float-right" role="button"
+                           href="/edit/dzielo">Edytuj</a></td>
                 </tr>
             {% endfor %}
             </tbody>
