@@ -52,23 +52,37 @@
         <tr>
             <th scope="col">#</th>
             <th scope="col">Nazwa</th>
-            <th scope="col">Imię artysty</th>
-            <th scope="col">Nazwisko artysty</th>
+            <th scope="col">Artysta</th>
+            <th scope="col">Dział</th>
             <th scope="col" width="16%"></th>
             <th scope="col" width="6%"></th>
         </tr>
         </thead>
         <tbody>
+        {% for obraz in obrazy %}
         <tr>
             <th scope="row">
                 <div class="pl-3"><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"></div>
             </th>
-            <td>nazwa</td>
-            <td>imię</td>
-            <td>nazwisko</td>
+            <td>{{ obraz.nazwa }}</td>
+            <td>{{ obraz.artysta_id.imie }} {{ obraz.artysta_id.nazwisko }}</td>
+            <td>{{ obraz.dzial_nazwa_id }}</td>
             <td><a type="button" class="btn btn-secondary float-right" role="button" href="/detailed/dzielo">Widok szczegółowy</a></td>
             <td><a type="button" class="btn btn-secondary float-right" role="button" href="/edit/dzielo">Edytuj</a></td>
         </tr>
+        {% endfor %}
+        {% for rzezba in rzezby %}
+        <tr>
+            <th scope="row">
+                <div class="pl-3"><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"></div>
+            </th>
+            <td>{{ rzezba.nazwa }}</td>
+            <td>{{ rzezba.artysta_id.imie }} {{ rzezba.artysta_id.nazwisko }}</td>
+            <td>{{ rzezba.dzial_nazwa_id }}</td>
+            <td><a type="button" class="btn btn-secondary float-right" role="button" href="/detailed/dzielo">Widok szczegółowy</a></td>
+            <td><a type="button" class="btn btn-secondary float-right" role="button" href="/edit/dzielo">Edytuj</a></td>
+        </tr>
+        {% endfor %}
         </tbody>
     </table>
 </div>

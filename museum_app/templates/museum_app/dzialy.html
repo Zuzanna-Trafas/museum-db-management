@@ -52,6 +52,7 @@
         <tr>
             <th scope="col">#</th>
             <th scope="col">Nazwa</th>
+            <th scope="col">Nazwa oddziału</th>
             <th scope="col">Piętro</th>
             <th scope="col">Epoka</th>
             <th scope="col" width="16%"></th>
@@ -59,16 +60,19 @@
         </tr>
         </thead>
         <tbody>
+        {% for dzial in dzialy %}
         <tr>
             <th scope="row">
                 <div class="pl-3"><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"></div>
             </th>
-            <td>nazwa</td>
-            <td>piętro</td>
-            <td>epoka</td>
+            <td>{{dzial.nazwa}}</td>
+            <td>{{dzial.oddzial_nazwa.nazwa}}</td>
+            <td>{{dzial.pietro}}</td>
+            <td>{% if dzial.epoka == None %}-{% else %}{{dzial.epoka}}{% endif %}</td>
             <td><a type="button" class="btn btn-secondary float-right" role="button" href="/detailed/dzial">Widok szczegółowy</a></td>
             <td><a type="button" class="btn btn-secondary float-right" role="button" href="/edit/dzial">Edytuj</a></td>
         </tr>
+        {% endfor %}
         </tbody>
     </table>
 </div>

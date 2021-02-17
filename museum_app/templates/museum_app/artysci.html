@@ -60,17 +60,19 @@
         </tr>
         </thead>
         <tbody>
+        {% for artysta in artysci %}
         <tr>
             <th scope="row">
                 <div class="pl-3"><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"></div>
             </th>
-            <td>imię</td>
-            <td>nazwisko</td>
-            <td>data urodzenia</td>
-            <td>data śmierci</td>
+            <td>{{artysta.imie}}</td>
+            <td>{{artysta.nazwisko}}</td>
+            <td>{{artysta.data_urodzenia}}</td>
+            <td>{% if artysta.data_smierci == None %}-{% else %}{{artysta.data_smierci}}{% endif %}</td>
             <td><a type="button" class="btn btn-secondary float-right" role="button" href="/detailed/artysta">Widok szczegółowy</a></td>
             <td><a type="button" class="btn btn-secondary float-right" role="button" href="/edit/artysta">Edytuj</a></td>
         </tr>
+        {% endfor %}
         </tbody>
     </table>
 </div>

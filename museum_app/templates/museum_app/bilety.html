@@ -60,17 +60,19 @@
         </tr>
         </thead>
         <tbody>
+        {% for bilet in bilety %}
         <tr>
             <th scope="row">
                 <div class="pl-3"><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"></div>
             </th>
-            <td>data</td>
-            <td>oddział</td>
-            <td>typ</td>
-            <td>cena</td>
-            <td>tak</td>
+            <td>{{bilet.data_zakupu}}</td>
+            <td>{{bilet.rodzaj_biletu_oddzial_nazwa_id}}</td>
+            <td>{{bilet.rodzaj_biletu_typ_id}}</td>
+            <td>{% for rodzaj_biletu in rodzaje_biletow %}{% if rodzaj_biletu.typ == bilet.rodzaj_biletu_typ_id %}{{ rodzaj_biletu.cena }}{% endif %}{% endfor %}</td>
+            <td>{{bilet.rodzaj_biletu_czy_z_przewodnikiem_id}}</td>
             <td><a type="button" class="btn btn-secondary float-right" role="button" href="/edit/bilet">Edytuj</a></td>
         </tr>
+        {% endfor %}
         </tbody>
     </table>
 </div>
