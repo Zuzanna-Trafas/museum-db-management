@@ -97,18 +97,20 @@
                 </tr>
                 </thead>
                 <tbody>
+                {% for wydarzenie in wydarzenia %}
                 <tr>
                     <th scope="row">
                         <div class="pl-3"><input class="form-check-input" type="checkbox" value=""
                                                  id="flexCheckDefault"></div>
                     </th>
-                    <td>nazwa</td>
-                    <td>data 1</td>
-                    <td>data 2</td>
+                    <td>{{ wydarzenie.nazwa }}</td>
+                    <td>{{ wydarzenie.data_rozpoczecia }}</td>
+                    <td>{{ wydarzenie.data_zakonczenia }}</td>
                     <td><a type="button" class="btn btn-secondary float-right" role="button"
                            href="/edit/wydarzenie">Edytuj</a></td>
                 </tr>
                 </tbody>
+                {% endfor %}
             </table>
         </div>
 

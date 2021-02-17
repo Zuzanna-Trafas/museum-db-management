@@ -1,11 +1,12 @@
 from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, render
 from django.db import connection
 from django.shortcuts import render
 from plotly.offline import plot
 from plotly.graph_objs import Bar
 from museum_app.forms import OddzialForm, DzialForm, ObrazForm, RzezbaForm, ArtystaForm, BiletForm, RodzajBiletuForm, \
     PracownikForm, HarmonogramZwiedzaniaForm, WydarzenieForm, DetailedArtystaForm, DetailedDzialForm, DetailedDzieloForm, DetailedOddzialForm
-from museum_app.models import Rodzaj_biletu
+from museum_app.models import Oddzial, Wydarzenie, Wydarzenie_oddzial, Rodzaj_biletu, Pracownik, Harmonogram_zwiedzania, Bilet, Dzial, Artysta, Obraz, Rzezba
 
 
 def get_profit(cursor, typ, czy_z_przewodnikiem, oddzial):
@@ -38,31 +39,52 @@ def main(request):
 # TODO somehow handle "usuń" button
 # everything done for table views has to be done also for detailed_oddzial for wydarzenia
 def oddzialy(request):
-    return render(request, 'museum_app/oddzialy.html')
+    oddzialy = Oddzial.objects.all()
+    context = {'oddzialy': oddzialy}
+    return render(request, 'museum_app/oddzialy.html', context)
 
 
 def dzialy(request):
-    return render(request, 'museum_app/dzialy.html')
+    dzialy = Dzial.objects.all()
+    oddzialy = Oddzial.objects.all()
+    context = {'dzialy': dzialy, 'oddzialy': oddzialy}
+    return render(request, 'museum_app/dzialy.html', context)
 
 
 def dziela(request):
-    return render(request, 'museum_app/dziela.html')
+    obrazy = Obraz.objects.all()
+    rzezby = Rzezba.objects.all()
+    context = {'obrazy': obrazy, 'rzezby': rzezby}
+    return render(request, 'museum_app/dziela.html', context)
 
 
 def artysci(request):
-    return render(request, 'museum_app/artysci.html')
+    artysci = Artysta.objects.all()
+    context = {'artysci': artysci}
+    return render(request, 'museum_app/artysci.html', context)
 
 
 def bilety(request):
-    return render(request, 'museum_app/bilety.html')
+    bilety = Bilet.objects.all()
+    rodzaje_biletow = Rodzaj_biletu.objects.all()
+    context = {'bilety': bilety, 'rodzaje_biletow': rodzaje_biletow}
+    return render(request, 'museum_app/bilety.html', context)
 
 
 def pracownicy(request):
-    return render(request, 'museum_app/pracownicy.html')
+    pracownicy = Pracownik.objects.all()
+    context = {'pracownicy': pracownicy}
+    return render(request, 'museum_app/pracownicy.html', context)
 
 
 def harmonogram_zwiedzania(request):
-    return render(request, 'museum_app/harmonogram_zwiedzania.html')
+    cursor = connection.cursor()
+    cursor.execute('CALL podsumowanie_zwiedzania()')
+    podsumowanie = cursor.fetchall()
+    cursor.close()
+    context = {'podsumowanie': podsumowanie}
+
+    return render(request, 'museum_app/harmonogram_zwiedzania.html', context)
 
 
 # TODO handle adding for all tables (also wydarzenia)
@@ -183,12 +205,22 @@ def edit_wydarzenie(request):
 
 # TODO fill initial values with values from model
 
-def detailed_oddzial(request):
-    initial_values = {
-        "name": "Nazwa"
-    }
+def detailed_oddzial(request, oddzial_nazwa):
+    oddzial = get_object_or_404(Oddzial, pk=oddzial_nazwa)
+    wydarzenie_oddzial = []
+    for i in Wydarzenie_oddzial.objects.all():
+        if i.oddzial_nazwa_id == oddzial.nazwa:
+            wydarzenie_oddzial.append(i)
+    wydarzenia = []
+    for wydarzenie in Wydarzenie.objects.all():
+        for i in wydarzenie_oddzial:
+            if wydarzenie.nazwa == i.wydarzenie_nazwa_id and wydarzenie.data_rozpoczecia == i.wydarzenie_data_rozpoczecia_id:
+                wydarzenia.append(wydarzenie)
+    initial_values = {'name': oddzial.nazwa, 'opening_hour': oddzial.godzina_otwarcia,
+                      'closing_hour': oddzial.godzina_zamkniecia, 'address': oddzial.adres,
+                      'number': oddzial.numer_telefonu}
     form = DetailedOddzialForm(initial=initial_values)
-    return render(request, 'museum_app/detailed_oddzial.html', {'form': form})
+    return render(request, 'museum_app/detailed_oddzial.html', {'form': form, 'wydarzenia': wydarzenia})
 
 
 def detailed_dzial(request):

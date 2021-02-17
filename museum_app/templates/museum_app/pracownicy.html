@@ -62,19 +62,21 @@
         </tr>
         </thead>
         <tbody>
+        {% for pracownik in pracownicy %}
         <tr>
             <th scope="row">
                 <div class="pl-3"><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"></div>
             </th>
-            <td>pesel</td>
-            <td>imię</td>
-            <td>nazwisko</td>
-            <td>płaca</td>
-            <td>etat</td>
-            <td>data</td>
-            <td>numer</td>
+            <td>{{ pracownik.pesel }}</td>
+            <td>{{ pracownik.imie }}</td>
+            <td>{{ pracownik.nazwisko }}</td>
+            <td>{{ pracownik.placa }}</td>
+            <td>{{ pracownik.etat }}</td>
+            <td>{{ pracownik.data_zatrudnienia }}</td>
+             <td>{% if pracownik.numer_telefonu == None %}-{% else %}{{pracownik.numer_telefonu}}{% endif %}</td>
             <td><a type="button" class="btn btn-secondary float-right" role="button" href="/edit/pracownik">Edytuj</a></td>
         </tr>
+        {% endfor %}
         </tbody>
     </table>
 </div>

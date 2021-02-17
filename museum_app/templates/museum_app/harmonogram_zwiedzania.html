@@ -53,24 +53,24 @@
             <th scope="col">#</th>
             <th scope="col">Data</th>
             <th scope="col">Godzina rozpoczęcia</th>
-            <th scope="col">Imię przewodnika</th>
-            <th scope="col">Nazwisko przewodnika</th>
+            <th scope="col">Przewodnik</th>
             <th scope="col">Ilość kupionych biletów</th>
             <th scope="col" width="6%"></th>
         </tr>
         </thead>
         <tbody>
+        {% for x in podsumowanie %}
         <tr>
             <th scope="row">
                 <div class="pl-3"><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"></div>
             </th>
-            <td>data</td>
-            <td>godzina</td>
-            <td>imię</td>
-            <td>nazwisko</td>
-            <td>ilość</td>
+            <td>{{ x.0 }}</td>
+            <td>{{ x.1|date:'H:i' }}</td>
+            <td>{{ x.2 }} {{ x.3 }}</td>
+            <td>{{ x.4 }}</td>
             <td><a type="button" class="btn btn-secondary float-right" role="button" href="/edit/harmonogram_zwiedzania">Edytuj</a></td>
         </tr>
+        {% endfor %}
         </tbody>
     </table>
 </div>

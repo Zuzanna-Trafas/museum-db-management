@@ -60,18 +60,20 @@
         </tr>
         </thead>
         <tbody>
-        <tr>
+        {% for oddzial in oddzialy %}
+        <tr> 
             <th scope="row">
                 <div class="pl-3"><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"></div>
             </th>
-            <td>nazwa</td>
-            <td>godzina</td>
-            <td>godzina</td>
-            <td>adres</td>
-            <td>numer</td>
-            <td><a type="button" class="btn btn-secondary float-right" role="button" href="/detailed/oddzial">Widok szczegółowy</a></td>
+            <td>{{oddzial.nazwa}}</td>
+            <td>{{oddzial.godzina_otwarcia|date:'H:i'}}</td>
+            <td>{{oddzial.godzina_zamkniecia|date:'H:i'}}</td>
+            <td>{{oddzial.adres}}</td>
+            <td>{{oddzial.numer_telefonu}}</td>
+            <td><a type="button" class="btn btn-secondary float-right" role="button" href="{% url 'detailed_oddzial' oddzial.nazwa %}">Widok szczegółowy</a></td>
             <td><a type="button" class="btn btn-secondary float-right" role="button" href="/edit/oddzial">Edytuj</a></td>
         </tr>
+        {% endfor %}
         </tbody>
     </table>
 </div>
