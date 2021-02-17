@@ -1,5 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
+from django.http import Http404
 from django.db import connection
 from django.shortcuts import render
 from plotly.offline import plot
@@ -316,23 +317,29 @@ def detailed_oddzial(request, oddzial_nazwa):
     return render(request, 'museum_app/detailed_oddzial.html', {'form': form, 'wydarzenia': wydarzenia})
 
 
-def detailed_dzial(request):
-    initial_values = {
-        "name": "Nazwa",
-        "oddzial": "Oddzial",
-        "floor": 1,
-        "epoch": "Epoka"
-    }
+def detailed_dzial(request, dzial_nazwa, oddzial_nazwa):
+    initial_values = {}
+    for dzial in Dzial.objects.all():
+        if dzial.nazwa == dzial_nazwa and dzial.oddzial_nazwa_id == oddzial_nazwa:
+            initial_values = {
+                "name": dzial.nazwa,
+                "oddzial": dzial.oddzial_nazwa,
+                "floor": dzial.pietro,
+                "epoch": dzial.epoka
+            }
+    if initial_values == {}:
+        raise Http404("Dział nie istnieje")
     form = DetailedDzialForm(initial=initial_values)
     return render(request, 'museum_app/detailed_dzial.html', {'form': form})
 
 
-def detailed_artysta(request):
+def detailed_artysta(request, artysta_id):
+    artysta = get_object_or_404(Artysta, pk=artysta_id)
     initial_values = {
-        "name": "Imię",
-        "surname": "Nazwisko",
-        "birth_date": "01/01/2000",
-        "death_date": "01/01/2020"
+        "name": artysta.imie,
+        "surname": artysta.nazwisko,
+        "birth_date": artysta.data_urodzenia,
+        "death_date": artysta.data_smierci
     }
     form = DetailedArtystaForm(initial=initial_values)
     return render(request, 'museum_app/detailed_artysta.html', {'form': form})
@@ -352,3 +359,4 @@ def detailed_dzielo(request):
     }
     form = DetailedDzieloForm(initial=initial_values)
     return render(request, 'museum_app/detailed_dzielo.html', {'form': form})
+

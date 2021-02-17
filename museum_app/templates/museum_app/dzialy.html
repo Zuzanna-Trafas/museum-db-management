@@ -69,14 +69,12 @@
                         <div class="pl-3"><input class="form-check-input" type="checkbox" name='choices' value="{{ dzial.id }}"
                                                  id={{ dzial.id }}></div>
                     </th>
-                    <td>{{ dzial.nazwa }}</td>
-                    <td>{{ dzial.oddzial_nazwa.nazwa }}</td>
-                    <td>{{ dzial.pietro }}</td>
-                    <td>{% if dzial.epoka == None %}-{% else %}{{ dzial.epoka }}{% endif %}</td>
-                    <td><a type="button" class="btn btn-secondary float-right" role="button" href="/detailed/dzial">Widok
-                        szczegółowy</a></td>
-                    <td><a type="button" class="btn btn-secondary float-right" role="button"
-                           href="/edit/dzial">Edytuj</a></td>
+                    <td>{{dzial.nazwa}}</td>
+            <td>{{dzial.oddzial_nazwa.nazwa}}</td>
+            <td>{{dzial.pietro}}</td>
+            <td>{% if dzial.epoka == None %}-{% else %}{{dzial.epoka}}{% endif %}</td>
+            <td><a type="button" class="btn btn-secondary float-right" role="button" href="{% url 'detailed_dzial' dzial.nazwa dzial.oddzial_nazwa.nazwa %}">Widok szczegółowy</a></td>
+            <td><a type="button" class="btn btn-secondary float-right" role="button" href="/edit/dzial">Edytuj</a></td>
                 </tr>
             {% endfor %}
             </tbody>
