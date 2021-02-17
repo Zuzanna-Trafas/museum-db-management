@@ -227,11 +227,15 @@ def detailed_oddzial(request, oddzial_nazwa):
 
 def detailed_dzial(request, dzial_id):
     dzial = get_object_or_404(Dzial, pk=dzial_id)
+    if dzial.epoka == None:
+        epoka = "Brak informacji"
+    else:
+        epoka = dzial.epoka
     initial_values = {
         "name": dzial.nazwa,
         "oddzial": dzial.oddzial_nazwa.nazwa,
         "floor": dzial.pietro,
-        "epoch": dzial.epoka
+        "epoch": epoka
         }
     form = DetailedDzialForm(initial=initial_values)
     return render(request, 'museum_app/detailed_dzial.html', {'form': form})
