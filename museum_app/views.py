@@ -15,6 +15,19 @@ from museum_app.models import Oddzial, Wydarzenie, Wydarzenie_oddzial, Rodzaj_bi
 import sys
 
 
+def number_validator(number):
+    if len(number) == 0:
+        return ""
+    number = number.strip().replace(" ", "").replace("-", "")
+
+    if number[0] == "+" and len(number) == 12 and number[1:].isdecimal():
+        return number
+    elif len(number) == 9 and number.isdecimal():
+        return number
+    else:
+        return -1
+
+
 def get_profit(cursor, typ, czy_z_przewodnikiem, oddzial):
     cursor.execute("SELECT policz_dochod(%s, %s, %s)", [typ, czy_z_przewodnikiem, oddzial])
     return cursor.fetchone()[0]
@@ -203,6 +216,9 @@ def rodzaje_biletow(request):
 
 def add_oddzial(request):
     form = OddzialForm(request.POST)
+    error = ""
+    error_time = ""
+    error_number = ""
     if form.is_valid():
         name = form.cleaned_data['name']
         opening_hour = form.cleaned_data['opening_hour']
@@ -210,13 +226,30 @@ def add_oddzial(request):
         address = form.cleaned_data['address']
         number = form.cleaned_data['number']
 
-        #if opening_hour > closing_hour:
-        #    self.add"Godzina otwarcia musi być przed godziną zamknięcia!")
+        if opening_hour > closing_hour:
+            error_time = "Godzina otwarcia musi być przed godziną zamknięcia!"
 
-        #else:
-        Oddzial.objects.create(nazwa=name, godzina_otwarcia=opening_hour, godzina_zamkniecia=closing_hour, adres=address, numer_telefonu=number)
-        return redirect('/table/oddzialy')
-    return render(request, 'museum_app/add_oddzial.html', {'form': form})
+        validator = number_validator(number)
+        if validator == -1:
+            error_number = "Niepoprawny numer telefonu."
+        else:
+            number = validator
+
+        try:
+            Oddzial.objects.create(nazwa=name, godzina_otwarcia=opening_hour, godzina_zamkniecia=closing_hour,
+                                   adres=address, numer_telefonu=number)
+        except Exception as e:
+            error = e.args
+            if "Duplicate" in e.args[1]:
+                error = "Ta nazwa oddziału już istnieje."
+        if error != "" or error_time != "" or error_number != "":
+            return render(request, 'museum_app/add_oddzial.html',
+                          {'form': form, 'error_time': error_time, 'error_number': error_number, 'error': error})
+        else:
+            return redirect('/table/oddzialy')
+
+    return render(request, 'museum_app/add_oddzial.html',
+                  {'form': form, 'error_time': error_time, 'error_number': error_number, 'error': error})
 
 
 def add_dzial(request):
@@ -227,10 +260,7 @@ def add_dzial(request):
         epoch = form.cleaned_data['epoch']
         oddzial_select = form.cleaned_data['oddzial_select'][0]
         for x in Oddzial.objects.all():
-            print(x.nazwa, file=sys.stderr)
-            print(oddzial_select, file=sys.stderr)
             if str(x.nazwa) == str(oddzial_select):
-                print("WHYYYYYY", file=sys.stderr)
                 oddzial = x
         Dzial.objects.create(nazwa=name, pietro=floor, epoka=epoch,
                              oddzial_nazwa=oddzial)
@@ -286,6 +316,8 @@ def add_wydarzenie(request):
 # TODO figure out how to fill date and time fields
 # TODO redirect to table view after submit
 
+
+# UWAGA NIESPRAWDZONE
 def edit_oddzial(request, oddzial_nazwa):
     oddzial = get_object_or_404(Oddzial, pk=oddzial_nazwa)
     initial_values = {'name': oddzial.nazwa,
@@ -295,12 +327,42 @@ def edit_oddzial(request, oddzial_nazwa):
                       'number': oddzial.numer_telefonu}
 
     form = OddzialForm(initial=initial_values)
+    error = ""
+    error_time = ""
+    error_number = ""
     if form.is_valid():
         name = form.cleaned_data['name']
-        print(name, file=sys.stderr)
-        return redirect('/')
+        opening_hour = form.cleaned_data['opening_hour']
+        closing_hour = form.cleaned_data['closing_hour']
+        address = form.cleaned_data['address']
+        number = form.cleaned_data['number']
 
-    return render(request, 'museum_app/add_oddzial.html', {'form': form})
+        if opening_hour > closing_hour:
+            error_time = "Godzina otwarcia musi być przed godziną zamknięcia!"
+
+        validator = number_validator(number)
+        if validator == -1:
+            error_number = "Niepoprawny numer telefonu."
+        else:
+            number = validator
+
+        try:
+            oddzial.nazwa = name
+        except Exception as e:
+            error = e.args
+            if "Duplicate" in e.args[1]:
+                error = "Ta nazwa oddziału już istnieje."
+
+        if error != "" or error_time != "" or error_number != "":
+            return render(request, 'museum_app/add_oddzial.html',
+                          {'form': form, 'error_time': error_time, 'error_number': error_number, 'error': error})
+        else:
+            oddzial.godzina_otwarcia = opening_hour
+            oddzial.godzina_zamkniecia = closing_hour
+            oddzial.adres = adres
+            oddzial.numer_telefonu = number
+            return redirect('/table/oddzialy')
+    return render(request, 'museum_app/add_oddzial.html', {'form': form, 'error_time': error_time, 'error_number': error_number, 'error': error})
 
 
 def edit_dzial(request):
@@ -394,7 +456,7 @@ def detailed_dzial(request, dzial_id):
         "oddzial": dzial.oddzial_nazwa.nazwa,
         "floor": dzial.pietro,
         "epoch": epoka,
-        }
+    }
     form = DetailedDzialForm(initial=initial_values)
     return render(request, 'museum_app/detailed_dzial.html', {'form': form})
 

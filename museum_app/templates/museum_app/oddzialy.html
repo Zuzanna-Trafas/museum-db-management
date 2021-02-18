@@ -78,7 +78,7 @@
                     <td>{{ oddzial.godzina_otwarcia|date:'H:i' }}</td>
                     <td>{{ oddzial.godzina_zamkniecia|date:'H:i' }}</td>
                     <td>{{ oddzial.adres }}</td>
-                    <td>{{ oddzial.numer_telefonu }}</td>
+                    <td>{% if oddzial.numer_telefonu == None or oddzial.numer_telefonu == "" %}-{% else %}{{ oddzial.numer_telefonu }}{% endif %}</td>
                     <td><a type="button" class="btn btn-secondary float-right" role="button"
                            href="{% url 'detailed_oddzial' oddzial.nazwa %}">Widok szczegółowy</a></td>
                     <td><a type="button" class="btn btn-secondary float-right" role="button"

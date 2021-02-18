@@ -1,7 +1,7 @@
 from django import forms
 import sys
 from museum_app.models import Oddzial, Wydarzenie, Wydarzenie_oddzial, Rodzaj_biletu, Pracownik, Harmonogram_zwiedzania, \
-    Bilet, Dzial, Artysta, Obraz, Rzezba, number_validator
+    Bilet, Dzial, Artysta, Obraz, Rzezba
 
 OPTIONS = [("Pracownik", "Pracownik"),
            ("Stażysta", "Stażysta"),
@@ -9,8 +9,12 @@ OPTIONS = [("Pracownik", "Pracownik"),
 
 
 class OddzialForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['number'].required = False
+
     name = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "name",
-                                                         'maxlength': "100", 'required': 'true'}))
+                                                         'maxlength': "100"}))
 
     opening_hour = forms.CharField(widget=forms.TextInput(attrs={"type": "time", "class": "form-control",
                                                                  "id": "opening-hour", "required": "true"}))
@@ -21,16 +25,14 @@ class OddzialForm(forms.Form):
     address = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "address",
                                                             'maxlength': "100", 'required': 'true'}))
 
-    number = forms.CharField(widget=forms.TextInput(attrs={'type': "text", "class": "form-control", "id": "number"}), validators=[number_validator], error_messages = {
-                 'number':"Proszę wprowadzić poprawny numer"
-                 })
+    number = forms.CharField(widget=forms.TextInput(attrs={'type': "text", "class": "form-control", "id": "number"}))
 
 
 class DzialForm(forms.Form):
     def __init__(self, oddzial_choices, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['oddzial_select'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
-                                               choices=oddzial_choices)
+                                                                  choices=oddzial_choices)
         self.fields['epoch'].required = False
 
     oddzial_select = forms.MultipleChoiceField()
@@ -49,13 +51,13 @@ class ObrazForm(forms.Form):
     def __init__(self, oddzial_choices, dzial_choices, artysta_choices, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['oddzial_select'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
-                                               choices=oddzial_choices)
+                                                                  choices=oddzial_choices)
 
         self.fields['dzial_select'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
-                                               choices=dzial_choices)
+                                                                choices=dzial_choices)
 
         self.fields['artysta_select'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
-                                                                choices=artysta_choices)
+                                                                  choices=artysta_choices)
 
     oddzial_select = forms.MultipleChoiceField()
     dzial_select = forms.MultipleChoiceField()
@@ -312,8 +314,30 @@ class TableRodzajeBiletowForm(forms.Form):
         widget=forms.CheckboxSelectMultiple,
     )
 
+
 class TableWydarzeniaForm(forms.Form):
     choices = forms.ModelMultipleChoiceField(
         queryset=Wydarzenie.objects.all(),  # not optional, use .all() if unsure
         widget=forms.CheckboxSelectMultiple,
     )
+
+
+class EditOddzialForm(forms.Form):
+    def __init__(self, post_type, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.post_type = post_type
+        self.fields['number'].required = False
+
+    name = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "name",
+                                                         'maxlength': "100"}))
+
+    opening_hour = forms.CharField(widget=forms.TextInput(attrs={"type": "time", "class": "form-control",
+                                                                 "id": "opening-hour", "required": "true"}))
+
+    closing_hour = forms.CharField(widget=forms.TextInput(attrs={"type": "time", "class": "form-control",
+                                                                 "id": "closing-hour", "required": "true"}))
+
+    address = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "address",
+                                                            'maxlength': "100", 'required': 'true'}))
+
+    number = forms.CharField(widget=forms.TextInput(attrs={'type': "text", "class": "form-control", "id": "number"}))
