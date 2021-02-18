@@ -240,13 +240,63 @@ def add_dzial(request):
 
 def add_obraz(request):
     # TODO dynamically fill Działy depending on Oddziały or merge both to one select field
-    form = ObrazForm([(1, 1), (2, 2)], [(1, 1), (2, 2)], [(1, 1), (2, 2)], request.POST)
+    form = ObrazForm([(x.nazwa, x.nazwa) for x in Oddzial.objects.all()], [(x.nazwa, x.nazwa) for x in Dzial.objects.all()], [(x.imie+" "+x.nazwisko, x.imie+" "+x.nazwisko) for x in Artysta.objects.all()], request.POST)
+    if form.is_valid():
+        name = form.cleaned_data['name']
+        width = form.cleaned_data['width']
+        height = form.cleaned_data['height']
+        oddzial_select = form.cleaned_data['oddzial_select'][0]
+        dzial_select = form.cleaned_data['dzial_select'][0]
+        artysta_select = form.cleaned_data['artysta_select'][0]
+
+        dzial_id = -1
+        for x in Dzial.objects.all():
+
+            if x.nazwa == dzial_select and x.oddzial_nazwa.nazwa == oddzial_select:
+                dzial_id = x
+
+        artysta_id = -1
+        for x in Artysta.objects.all():
+            if x.imie == artysta_select.split(" ")[0] and x.nazwisko == artysta_select.split(" ")[1]:
+                artysta_id = x
+
+        Obraz.objects.create(nazwa=name, szerokosc=width, wysokosc=height, dzial_id=dzial_id, artysta_id = artysta_id)
+        return redirect('/table/dziela')
+
     return render(request, 'museum_app/add_obraz.html', {'form': form})
 
 
 def add_rzezba(request):
     # TODO dynamically fill Działy depending on Oddziały or merge both to one select field
-    form = RzezbaForm(request.POST)
+    form = RzezbaForm([(x.nazwa, x.nazwa) for x in Oddzial.objects.all()],
+                     [(x.nazwa, x.nazwa) for x in Dzial.objects.all()],
+                     [(x.imie + " " + x.nazwisko, x.imie + " " + x.nazwisko) for x in Artysta.objects.all()],
+                     request.POST)
+    if form.is_valid():
+        name = form.cleaned_data['name']
+        weight = form.cleaned_data['weight']
+        material = form.cleaned_data['material']
+        oddzial_select = form.cleaned_data['oddzial_select'][0]
+        dzial_select = form.cleaned_data['dzial_select'][0]
+        artysta_select = form.cleaned_data['artysta_select'][0]
+
+        dzial_id = -1
+        for x in Dzial.objects.all():
+            print(x.nazwa, file=sys.stderr)
+            print(dzial_select, file=sys.stderr)
+            print(x.oddzial_nazwa.nazwa, file=sys.stderr)
+            print(oddzial_select, file=sys.stderr)
+            if x.nazwa == dzial_select and x.oddzial_nazwa.nazwa == oddzial_select:
+                dzial_id = x
+
+        artysta_id = -1
+        for x in Artysta.objects.all():
+            if x.imie == artysta_select.split(" ")[0] and x.nazwisko == artysta_select.split(" ")[1]:
+                artysta_id = x
+
+        Rzezba.objects.create(nazwa=name, waga=weight, material=material, dzial_id=dzial_id, artysta_id=artysta_id)
+        return redirect('/table/dziela')
+
     return render(request, 'museum_app/add_rzezba.html', {'form': form})
 
 
