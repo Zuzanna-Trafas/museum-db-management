@@ -50,18 +50,27 @@
 <h1 class="px-5 pt-4">Dodaj oddział</h1>
 
 <div class="px-5">
-    <form class="needs-validation" id="form-name" method="post">
+    <form class="needs-validation" id="form-name" method="post" novalidate>
         <div class="form-group">
             <div class="col-md-4">
                 <label for="name">Nazwa *</label>
-                  {{  form.name }}
+                {{ form.name }}
+                {% if error != "" %}
+                    <div class="text-danger">
+                        {{ error }}
+                    </div>
+                {% endif %}
             </div>
         </div>
         <div class="form-group">
             <div class="col-md-4">
                 <label for="opening-hour">Godzina otwarcia *</label>
-                {{  form.opening_hour }}
-
+                {{ form.opening_hour }}
+                {% if error_time != "" %}
+                    <div class="text-danger">
+                        {{ error_time }}
+                    </div>
+                {% endif %}
             </div>
         </div>
         <div class="form-group">
@@ -80,6 +89,11 @@
             <div class="col-md-4">
                 <label for="number">Numer telefonu</label>
                 {{ form.number }}
+                {% if error_number != "" %}
+                    <div class="text-danger">
+                        {{ error_number }}
+                    </div>
+                {% endif %}
             </div>
         </div>
 
