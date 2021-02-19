@@ -115,10 +115,10 @@ CREATE TABLE `museum_app_dzial` (
 
 INSERT INTO `museum_app_dzial` (`id`, `nazwa`, `pietro`, `epoka`, `oddzial_nazwa_id`) VALUES
 (1, 'sztuka europejska XIV-XIX wieku', 1, NULL, 'muzeum narodowe w poznaniu'),
-(2, 'sztuka nowoczesna', 2, 'wspolczesnosc', 'muzeum narodowe w warszawie'),
-(3, 'sztuka polska I pol. XX wieku', 1, 'mloda polska', 'muzeum narodowe w poznaniu'),
-(4, 'sztuka sredniowieczna', 1, 'sredniowiecze', 'muzeum narodowe w poznaniu'),
-(5, 'sztuka sredniowieczna', 0, 'sredniowiecze', 'muzeum narodowe w warszawie');
+(2, 'sztuka nowoczesna', 2, 'współczesność', 'muzeum narodowe w warszawie'),
+(3, 'sztuka polska I poł. XX wieku', 1, 'mloda polska', 'muzeum narodowe w poznaniu'),
+(4, 'sztuka średniowieczna', 1, 'średniowiecze', 'muzeum narodowe w poznaniu'),
+(5, 'sztuka średniowieczna', 0, 'średniowiecze', 'muzeum narodowe w warszawie');
 
 -- --------------------------------------------------------
 
@@ -162,11 +162,11 @@ CREATE TABLE `museum_app_obraz` (
 --
 
 INSERT INTO `museum_app_obraz` (`id`, `nazwa`, `szerokosc`, `wysokosc`, `artysta_id_id`, `dzial_id_id`) VALUES
-(1, 'drzewo nad stawem', 41, 33, 1, 1),
-(2, 'bledne kolo', 240, 174, 1, 2),
-(3, 'melancholia', 240, 139, 1, 3),
-(4, 'plaza w pourville', 60, 73, 2, 4),
-(5, 'nawiedzenie', 40, 100, NULL, 5);
+(1, 'Drzewo nad stawem', 41, 33, 1, 1),
+(2, 'Błędne koło', 240, 174, 1, 2),
+(3, 'Melancholia', 240, 139, 1, 3),
+(4, 'Plaża w pourville', 60, 73, 2, 4),
+(5, 'Nawiedzenie', 40, 100, NULL, 5);
 
 -- --------------------------------------------------------
 
@@ -212,10 +212,10 @@ CREATE TABLE `museum_app_pracownik` (
 --
 
 INSERT INTO `museum_app_pracownik` (`pesel`, `imie`, `nazwisko`, `placa`, `etat`, `data_zatrudnienia`, `numer_telefonu`, `oddzial_nazwa_id`) VALUES
-(121212345, 'Antoni', 'Nowak', 500, 'stazysta', '2020-11-10', 123123123, 'muzeum narodowe w poznaniu'),
-(65030565926, 'Kazimierz', 'Dudziak', 3000, 'pracownik', '2017-12-16', NULL, 'muzeum narodowe w poznaniu'),
-(78010145673, 'Anna', 'Kowalska', 10000, 'kierownik', '2002-03-10', 501501501, 'muzeum narodowe w poznaniu'),
-(89123185621, 'Nadia', 'Stachowiak', 3500, 'pracownik', '2016-08-11', 802492749, 'muzeum narodowe w warszawie');
+(121212345, 'Antoni', 'Nowak', 500, 'Stażysta', '2020-11-10', 123123123, 'muzeum narodowe w poznaniu'),
+(65030565926, 'Kazimierz', 'Dudziak', 3000, 'Pracownik', '2017-12-16', NULL, 'muzeum narodowe w poznaniu'),
+(78010145673, 'Anna', 'Kowalska', 10000, 'Kierownik', '2002-03-10', 501501501, 'muzeum narodowe w poznaniu'),
+(89123185621, 'Nadia', 'Stachowiak', 3500, 'Pracownik', '2016-08-11', 802492749, 'muzeum narodowe w warszawie');
 
 -- --------------------------------------------------------
 
@@ -265,8 +265,8 @@ CREATE TABLE `museum_app_rzezba` (
 --
 
 INSERT INTO `museum_app_rzezba` (`id`, `nazwa`, `waga`, `material`, `artysta_id_id`, `dzial_id_id`) VALUES
-(1, 'popiersie adama loreta', 48, 'braz', 3, 1),
-(2, 'pieta z lubiaza', 30, 'drewno lipowe', NULL, 2);
+(1, 'Popiersie Adama Loreta', 48, 'brąz', 3, 1),
+(2, 'Pieta z Lubiąża', 30, 'drewno lipowe', NULL, 2);
 
 -- --------------------------------------------------------
 
@@ -286,9 +286,9 @@ CREATE TABLE `museum_app_wydarzenie` (
 --
 
 INSERT INTO `museum_app_wydarzenie` (`id`, `nazwa`, `data_rozpoczecia`, `data_zakonczenia`) VALUES
-(1, 'dzien seniora', '2021-01-30', '2021-01-30'),
-(2, 'noc w muzeum', '2021-02-19', '2021-02-19'),
-(3, 'wystawa prac studentow', '2021-06-01', '2021-06-30');
+(1, 'Dzień seniora', '2021-01-30', '2021-01-30'),
+(2, 'Noc w muzeum', '2021-02-19', '2021-02-19'),
+(3, 'Wystawa prac studentow', '2021-06-01', '2021-06-30');
 
 -- --------------------------------------------------------
 

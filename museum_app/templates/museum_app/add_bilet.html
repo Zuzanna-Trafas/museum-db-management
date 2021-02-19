@@ -61,14 +61,7 @@
         <div class="form-group">
             <div class="col-md-4">
                 <label for="type">Typ biletu *</label>
-                {{ form.type }}
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-md-4">
-                <label for="branch">Oddział *</label>
-                {{ form.oddzial }}
-
+                <div>{{ form.type }}</div>
             </div>
         </div>
         <div class="form-group">
@@ -76,15 +69,24 @@
                 <label for="guide">Czy z przewodnikiem? *</label>
                 <div class='form-check form-check-inline pl-3 pt-1'>
                     <label class='form-check-label' for='guide'></label>
-                    {{ form.przewodnik }}
+                    <div>{{ form.przewodnik }}</div>
                 </div>
+                {% if error != "" %}
+                        <div class="text-danger">
+                            {{ error }}
+                        </div>
+                    {% endif %}
             </div>
         </div>
         <div class="form-group">
             <div class="col-md-4">
                 <label for="tour">Wycieczka *</label>
-                {{ form.wycieczka }}
-
+                <div>{{ form.wycieczka }}</div>
+                {% if error_oddzial != "" %}
+                    <div class="text-danger">
+                        {{ error_oddzial }}
+                    </div>
+                {% endif %}
             </div>
         </div>
         <div>
@@ -97,23 +99,23 @@
 
     <script>
         $(document).ready(function () {
-            $("#yes").click(function () {
+            $("#id_przewodnik_0").click(function () {
                 show();
             });
-            $("#no").click(function () {
+            $("#id_przewodnik_1").click(function () {
                 disable();
             });
         });
 
         function show() {
-            var txt = $('#tours');
+            var txt = $('#wycieczki');
 
             txt.removeAttr("disabled");
             txt.attr("required", "true");
         }
 
         function disable() {
-            var txt = $('#tours');
+            var txt = $('#wycieczki');
 
             txt.removeAttr("required");
             txt.attr("disabled", "true");

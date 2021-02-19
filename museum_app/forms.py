@@ -118,21 +118,17 @@ class ArtystaForm(forms.Form):
 
 
 class BiletForm(forms.Form):
-    def __init__(self, type_choices, oddzial_choices, wycieczka_choices, *args, **kwargs):
+    def __init__(self, type_choices, wycieczka_choices, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['type'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
                                                                   choices=type_choices)
 
-        self.fields['oddzial'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
-                                                                choices=oddzial_choices)
-
-        self.fields['wycieczka'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
+        self.fields['wycieczka'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple, id="wycieczki",
                                                                   choices=wycieczka_choices)
 
         self.fields['przewodnik'] = forms.ChoiceField(required=True, widget=forms.RadioSelect, choices=[("tak", "tak"),("nie", "nie")])
 
     type = forms.MultipleChoiceField()
-    oddzial = forms.MultipleChoiceField()
     wycieczka = forms.MultipleChoiceField()
     przewodnik = forms.ChoiceField()
 
@@ -163,6 +159,8 @@ class PracownikForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.fields['oddzial'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
                                                                   choices=oddzial_choices)
+        self.fields['numer_telefonu'].required = False
+
     pesel = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "pesel",
                                                           "minlength": "11", 'maxlength': "11",
                                                           "required": "true"}))
@@ -184,7 +182,6 @@ class PracownikForm(forms.Form):
                                                               "id": "data_zatrudnienia", "placeholder": "dd-mm-yyyy",
                                                               "required": "true"}))
 
-    # TODO oddzial
     numer_telefonu = forms.CharField(widget=forms.TextInput(attrs={'type': "text", "class": "form-control", "id": "numer_telefonu", "required": "false"}))
 
 

@@ -210,10 +210,6 @@ def rodzaje_biletow(request):
     return render(request, 'museum_app/rodzaje_biletow.html', context)
 
 
-# TODO handle adding for all tables (also wydarzenia)
-# TODO redirect to table view after submit
-
-
 def add_oddzial(request):
     form = OddzialForm(request.POST)
     error = ""
@@ -228,10 +224,14 @@ def add_oddzial(request):
 
         if opening_hour > closing_hour:
             error_time = "Godzina otwarcia musi być przed godziną zamknięcia!"
+            return render(request, 'museum_app/add_oddzial.html',
+                          {'form': form, 'error_time': error_time, 'error_number': error_number, 'error': error})
 
         validator = number_validator(number)
         if validator == -1:
             error_number = "Niepoprawny numer telefonu."
+            return render(request, 'museum_app/add_oddzial.html',
+                          {'form': form, 'error_time': error_time, 'error_number': error_number, 'error': error})
         else:
             number = validator
 
@@ -242,9 +242,9 @@ def add_oddzial(request):
             error = e.args
             if "Duplicate" in e.args[1]:
                 error = "Ta nazwa oddziału już istnieje."
-        if error != "" or error_time != "" or error_number != "":
             return render(request, 'museum_app/add_oddzial.html',
                           {'form': form, 'error_time': error_time, 'error_number': error_number, 'error': error})
+
         else:
             return redirect('/table/oddzialy')
 
@@ -270,7 +270,6 @@ def add_dzial(request):
             error = e.args
             if "Duplicate" in e.args[1]:
                 error = "Dział o tej nazwie już istnieje na wybranym oddziale."
-        if error != "":
             return render(request, 'museum_app/add_dzial.html',
                           {'form': form, 'error': error})
         else:
@@ -280,9 +279,11 @@ def add_dzial(request):
 
 def add_obraz(request):
     # TODO unique? maybe objects.create_or_update
-    form = ObrazForm([(str(x.nazwa)+", "+str(x.oddzial_nazwa.nazwa), str(x.nazwa)+", "+str(x.oddzial_nazwa.nazwa)) for x in Dzial.objects.all()],
-                     [(x.id, x.imie + " " + x.nazwisko) for x in Artysta.objects.all()],
-                     request.POST)
+    form = ObrazForm(
+        [(str(x.nazwa) + ", " + str(x.oddzial_nazwa.nazwa), str(x.nazwa) + ", " + str(x.oddzial_nazwa.nazwa)) for x in
+         Dzial.objects.all()],
+        [(x.id, x.imie + " " + x.nazwisko) for x in Artysta.objects.all()],
+        request.POST)
     if form.is_valid():
         name = form.cleaned_data['name']
         width = form.cleaned_data['width']
@@ -311,9 +312,11 @@ def add_obraz(request):
 
 def add_rzezba(request):
     # TODO unique? maybe objects.create_or_update
-    form = RzezbaForm([(str(x.nazwa)+", "+str(x.oddzial_nazwa.nazwa), str(x.nazwa)+", "+str(x.oddzial_nazwa.nazwa)) for x in Dzial.objects.all()],
-                      [(x.id, x.imie + " " + x.nazwisko) for x in Artysta.objects.all()],
-                      request.POST)
+    form = RzezbaForm(
+        [(str(x.nazwa) + ", " + str(x.oddzial_nazwa.nazwa), str(x.nazwa) + ", " + str(x.oddzial_nazwa.nazwa)) for x in
+         Dzial.objects.all()],
+        [(x.id, x.imie + " " + x.nazwisko) for x in Artysta.objects.all()],
+        request.POST)
     if form.is_valid():
         name = form.cleaned_data['name']
         weight = form.cleaned_data['weight']
@@ -342,6 +345,7 @@ def add_rzezba(request):
 
 def add_artysta(request):
     # TODO unique? maybe objects.create_or_update
+    # TODO data smierci < data_nurodzenia
     form = ArtystaForm(request.POST)
     if form.is_valid():
         name = form.cleaned_data['name']
@@ -356,43 +360,57 @@ def add_artysta(request):
 
 
 def add_bilet(request):
+    error = ""
+    error_oddzial = ""
     typ = []
     for x in Rodzaj_biletu.objects.all():
-        if (x.typ, x.typ) not in typ:
-            typ.append((x.typ, x.typ))
+        if (str(x.typ) + " ; " + str(x.oddzial_nazwa.nazwa), str(x.typ) + ", " + str(x.oddzial_nazwa.nazwa)) not in typ:
+            typ.append(
+                (str(x.typ) + " ; " + str(x.oddzial_nazwa.nazwa), str(x.typ) + ", " + str(x.oddzial_nazwa.nazwa)))
 
-    form = BiletForm(typ, [(x.nazwa, x.nazwa) for x in Oddzial.objects.all()],
-                     [(str(x.data) + " " + str(x.godzina_rozpoczecia) + " " + str(x.pracownik_pesel.pesel),
-                       str(x.data) + " " + str(x.godzina_rozpoczecia) + " " + str(x.pracownik_pesel.pesel)) for x in
-                      Harmonogram_zwiedzania.objects.all()],
+    form = BiletForm(typ, [
+        (x.id, str(x.pracownik_pesel.oddzial_nazwa.nazwa) + ", " + str(x.data) + " " + str(x.godzina_rozpoczecia) +
+         ", " + str(x.pracownik_pesel.imie) + " " + str(x.pracownik_pesel.nazwisko)) for x in
+        Harmonogram_zwiedzania.objects.all()],
                      request.POST)
     if form.is_valid():
         purchase_date = form.cleaned_data['purchase_date']
         przewodnik = form.cleaned_data['przewodnik']
-        oddzial = form.cleaned_data['oddzial'][0]
-        type = form.cleaned_data['type'][0]
+        type = form.cleaned_data['type'][0].split(" ; ")
         wycieczka = form.cleaned_data['wycieczka'][0]
 
-        rodzaj_biletu_id = -1
+        rodzaj_biletu_id = None
         for x in Rodzaj_biletu.objects.all():
-            if x.typ == type and ((przewodnik == "tak" and x.czy_z_przewodnikiem == True) or (
-                    przewodnik == "nie" and x.czy_z_przewodnikiem == False)) and x.oddzial_nazwa.nazwa == oddzial:
+            if x.typ == type[0] and ((przewodnik == "tak" and x.czy_z_przewodnikiem == True) or (
+                    przewodnik == "nie" and x.czy_z_przewodnikiem == False)) and x.oddzial_nazwa.nazwa == type[1]:
                 rodzaj_biletu_id = x
 
-        harmonogram = -1
+        if rodzaj_biletu_id == None:
+            error = "Dla tego typu biletu nie można wybrać wycieczki"
+            return render(request, 'museum_app/add_bilet.html',
+                          {'form': form, 'error': error, 'error_oddzial': error_oddzial})
+
+        harmonogram = None
         for x in Harmonogram_zwiedzania.objects.all():
-            if str(x.data) == wycieczka.split(" ")[0] and str(x.godzina_rozpoczecia) == wycieczka.split(" ")[1] and str(
-                    x.pracownik_pesel.pesel) == wycieczka.split(" ")[2]:
+            if str(x.id) == str(wycieczka):
                 harmonogram = x
+
+        if harmonogram is not None:
+            if harmonogram.pracownik_pesel.oddzial_nazwa.nazwa != type[0]:
+                error_oddzial = "Ta wycieczka odbywa się na innym oddziale!"
+                return render(request, 'museum_app/add_bilet.html',
+                              {'form': form, 'error': error, 'error_oddzial': error_oddzial})
 
         Bilet.objects.create(data_zakupu=purchase_date, rodzaj_biletu_id=rodzaj_biletu_id,
                              harmonogram_zwiedzania_id=harmonogram)
+
         return redirect('/table/bilety')
 
-    return render(request, 'museum_app/add_bilet.html', {'form': form})
+    return render(request, 'museum_app/add_bilet.html', {'form': form, 'error': error})
 
 
 def add_rodzaj_biletu(request):
+    # TODO unique? maybe objects.create_or_update
     form = RodzajBiletuForm([(x.nazwa, x.nazwa) for x in Oddzial.objects.all()], request.POST)
     if form.is_valid():
         przewodnik = form.cleaned_data['przewodnik']
@@ -414,6 +432,8 @@ def add_rodzaj_biletu(request):
 
 
 def add_pracownik(request):
+    error = ""
+    error_number = ""
     form = PracownikForm([(x.nazwa, x.nazwa) for x in Oddzial.objects.all()], request.POST)
     if form.is_valid():
         pesel = form.cleaned_data['pesel']
@@ -429,12 +449,29 @@ def add_pracownik(request):
             if str(x.nazwa) == str(oddzial):
                 oddzial = x
 
-        Pracownik.objects.create(pesel=pesel, imie=imie, nazwisko=nazwisko, etat=etat, placa=placa,
-                                 data_zatrudnienia=data_zatrudnienia, oddzial_nazwa=oddzial,
-                                 numer_telefonu=numer_telefonu)
-        return redirect('/table/pracownicy')
+        validator = number_validator(numer_telefonu)
+        if validator == -1:
+            error_number = "Niepoprawny numer telefonu."
+            return render(request, 'museum_app/add_pracownik.html',
+                          {'form': form, 'error_number': error_number, 'error': error})
+        else:
+            numer_telefonu = validator
 
-    return render(request, 'museum_app/add_pracownik.html', {'form': form})
+        try:
+            Pracownik.objects.create(pesel=pesel, imie=imie, nazwisko=nazwisko, etat=etat, placa=placa,
+                                     data_zatrudnienia=data_zatrudnienia, oddzial_nazwa=oddzial,
+                                     numer_telefonu=numer_telefonu)
+        except Exception as e:
+            error = e.args
+            if "Duplicate" in e.args[1]:
+                error = "Pracownik o tym peselu już istnieje"
+            return render(request, 'museum_app/add_pracownik.html',
+                          {'form': form, 'error_number': error_number, 'error': error})
+        else:
+            return redirect('/table/pracownicy')
+
+    return render(request, 'museum_app/add_pracownik.html',
+                  {'form': form, 'error_number': error_number, 'error': error})
 
 
 def add_harmonogram_zwiedzania(request):
@@ -469,7 +506,7 @@ def add_wydarzenie(request, oddzial_nazwa):
                                                data_zakonczenia=data_zakonczenia)
         print(wydarzenie.id, file=sys.stderr)
         Wydarzenie_oddzial.objects.create(oddzial_nazwa=oddzial, wydarzenie_id=wydarzenie)
-        return redirect('/detailed/'+str(oddzial_nazwa)+'/oddzial')
+        return redirect('/detailed/' + str(oddzial_nazwa) + '/oddzial')
 
     return render(request, 'museum_app/add_wydarzenie.html', {'form': form})
 
@@ -519,10 +556,9 @@ def edit_oddzial(request, oddzial_nazwa):
             error = e.args
             if "Duplicate" in e.args:
                 error = "Ta nazwa oddziału już istnieje."
-
-        if error != "" or error_time != "" or error_number != "":
             return render(request, 'museum_app/add_oddzial.html',
                           {'form': form, 'error_time': error_time, 'error_number': error_number, 'error': error})
+
         else:
             return redirect('/table/oddzialy')
     return render(request, 'museum_app/add_oddzial.html',
