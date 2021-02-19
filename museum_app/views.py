@@ -212,6 +212,7 @@ def rodzaje_biletow(request):
 
 
 def add_oddzial(request):
+    # TODO naprawic walidator godzin
     form = OddzialForm(request.POST)
     error = ""
     error_time = ""
