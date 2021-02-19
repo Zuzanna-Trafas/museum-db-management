@@ -213,7 +213,6 @@ def rodzaje_biletow(request):
 
 
 def add_oddzial(request):
-    # TODO naprawic walidator godzin
     form = OddzialForm(request.POST)
     error = ""
     error_time = ""
@@ -280,7 +279,6 @@ def add_dzial(request):
 
 
 def add_obraz(request):
-    # TODO unique? maybe objects.create_or_update
     form = ObrazForm(
         [(str(x.nazwa) + " ; " + str(x.oddzial_nazwa.nazwa), str(x.nazwa) + ", " + str(x.oddzial_nazwa.nazwa)) for x in
          Dzial.objects.all()],
@@ -313,7 +311,6 @@ def add_obraz(request):
 
 
 def add_rzezba(request):
-    # TODO unique? maybe objects.create_or_update
     form = RzezbaForm(
         [(str(x.nazwa) + " ; " + str(x.oddzial_nazwa.nazwa), str(x.nazwa) + ", " + str(x.oddzial_nazwa.nazwa)) for x in
          Dzial.objects.all()],
@@ -346,8 +343,7 @@ def add_rzezba(request):
 
 
 def add_artysta(request):
-    # TODO unique? maybe objects.create_or_update
-    # TODO data smierci < data_urodzenia
+    error = ""
     form = ArtystaForm(request.POST)
     if form.is_valid():
         name = form.cleaned_data['name']
@@ -355,10 +351,20 @@ def add_artysta(request):
         birth_date = form.cleaned_data['birth_date']
         death_date = form.cleaned_data['death_date']
 
+        print(birth_date, file=sys.stderr)
+        print(death_date, file=sys.stderr)
+
+        if death_date != "":
+            if death_date < birth_date:
+                error = "Data urodzenia musi być wcześniejsza niż data śmierci!"
+                return render(request, 'museum_app/add_artysta.html', {'form': form, 'error': error})
+
+        else:
+            death_date = None
         Artysta.objects.create(imie=name, nazwisko=surname, data_urodzenia=birth_date, data_smierci=death_date)
         return redirect('/table/artysci')
 
-    return render(request, 'museum_app/add_artysta.html', {'form': form})
+    return render(request, 'museum_app/add_artysta.html', {'form': form, 'error': error})
 
 
 def add_bilet(request):
@@ -415,7 +421,6 @@ def add_bilet(request):
 
 
 def add_rodzaj_biletu(request):
-    # TODO unique? maybe objects.create_or_update
     form = RodzajBiletuForm([(x.nazwa, x.nazwa) for x in Oddzial.objects.all()], request.POST)
     if form.is_valid():
         przewodnik = form.cleaned_data['przewodnik']
@@ -519,10 +524,6 @@ def add_wydarzenie(request, oddzial_nazwa):
         return redirect('/detailed/' + str(oddzial_nazwa) + '/oddzial')
 
     return render(request, 'museum_app/add_wydarzenie.html', {'form': form})
-
-
-# TODO handle editing for all tables (also wydarzenia) - fill values with initial, like for detailed
-# TODO disable primary keys after filling them for editing
 
 
 def edit_oddzial(request, oddzial_nazwa):

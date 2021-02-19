@@ -247,7 +247,7 @@ class DetailedDzialForm(forms.Form):
                                                       choices=rzezby_choices)
 
     obrazy = forms.MultipleChoiceField()
-    rzezby = forms.ChoiceField()
+    rzezby = forms.MultipleChoiceField()
     name = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "name",
                                                          'maxlength': "100"}))
 
