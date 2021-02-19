@@ -1,0 +1,9 @@
+#TODO
+
+1. W detailed dziela nie wyswietla listy obrazow i rzezb
+2. Pola nieobowiązkowe w dodawaniach nie dzialaja - potestowac i naprawic
+3. Edity
+4. Walidacje
+5. Ponaprawiać widoki bo zwłaszcza dodawania są porozjeżdżane brzydko
+6. Można zaznaczyć więcej niż jedno pole multiple choice? Bo najwyraźniej? Przetestować
+7. ID DO HARMONOGRAM_ZWIEDZANIA i DO WYDARZENIA SIĘ NIE GENERUJE SAMO!!! Dlaczego z innymi takiego problemu nie ma? @Zuza

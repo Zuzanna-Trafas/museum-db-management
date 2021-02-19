@@ -51,22 +51,23 @@
 
 <div class="px-5">
     <form class="needs-validation" id="form-name" method="post">
+        {% csrf_token %}
         <div class="form-group">
             <div class="col-md-4">
                 <label for="name">Nazwa *</label>
-                {{ form.name }}
+                {{ form.nazwa }}
             </div>
         </div>
         <div class="form-group">
             <div class="col-md-4">
                 <label for="start-date">Data rozpoczęcia *</label>
-                {{ form.start_date }}
+                {{ form.data_rozpoczecia }}
             </div>
         </div>
         <div class="form-group">
             <div class="col-md-4">
                 <label for="end-date">Data zakończenia *</label>
-                {{ form.end_date }}
+                {{ form.data_zakonczenia }}
             </div>
         </div>
 

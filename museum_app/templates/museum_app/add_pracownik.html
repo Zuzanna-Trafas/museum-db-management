@@ -51,6 +51,7 @@
 
 <div class="px-5">
     <form class="needs-validation" id="form-name" method="post">
+        {% csrf_token %}
         <div class="form-group">
             <div class="col-md-4">
                 <label for="pesel">Pesel *</label>
@@ -60,44 +61,43 @@
         <div class="form-group">
             <div class="col-md-4">
                 <label for="name">Imię *</label>
-                {{ form.name }}
+                {{ form.imie }}
             </div>
         </div>
         <div class="form-group">
             <div class="col-md-4">
                 <label for="surname">Nazwisko *</label>
-                {{ form.surname }}
+                {{ form.nazwisko }}
             </div>
         </div>
         <div class="form-group">
             <div class="col-md-4">
                 <label for="position">Etat *</label>
-                {{ form.position }}
+                {{ form.etat }}
             </div>
         </div>
         <div class="form-group">
             <div class="col-md-4">
                 <label for="wage">Płaca *</label>
-                {{ form.wage }}
+                {{ form.placa }}
             </div>
         </div>
         <div class="form-group">
             <div class="col-md-4">
                 <label for="join-date">Data zatrudnienia *</label>
-                {{ form.join_date }}
+                {{ form.data_zatrudnienia }}
             </div>
         </div>
         <div class="form-group">
             <div class="col-md-4">
                 <label for="branch">Oddział *</label>
-                <select multiple class="form-control" id="branch" required>
-                </select>
+                {{ form.oddzial }}
             </div>
         </div>
         <div class="form-group">
             <div class="col-md-4">
                 <label for="number">Numer telefonu</label>
-                {{ form.number }}
+                {{ form.numer_telefonu }}
             </div>
         </div>
         <div>

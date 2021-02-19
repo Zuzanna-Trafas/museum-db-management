@@ -51,6 +51,7 @@
 
 <div class="px-5">
     <form class="needs-validation" id="form-name" method="post">
+        {% csrf_token %}
         <div class="form-group">
             <div class="col-md-4">
                 <label for="purchase-date">Data zakupu *</label>
@@ -60,35 +61,30 @@
         <div class="form-group">
             <div class="col-md-4">
                 <label for="type">Typ biletu *</label>
-                <select multiple class="form-control" id="type" required>
-                </select>
+                {{ form.type }}
             </div>
         </div>
         <div class="form-group">
             <div class="col-md-4">
                 <label for="branch">Oddział *</label>
-                <select multiple class="form-control" id="branch" required>
-                </select>
+                {{ form.oddzial }}
+
             </div>
         </div>
         <div class="form-group">
             <div id="radios" class="col-md-4">
                 <label for="guide">Czy z przewodnikiem? *</label>
                 <div class='form-check form-check-inline pl-3 pt-1'>
-                    <input id="yes" class='form-check-input' type='radio' name='pname' required>
-                    <label class='form-check-label' for='guide'>tak</label>
-                </div>
-                <div class='form-check form-check-inline pt-1'>
-                    <input id="no" class='form-check-input' type='radio' name='pname' required>
-                    <label class='form-check-label' for='guide'>nie</label>
+                    <label class='form-check-label' for='guide'></label>
+                    {{ form.przewodnik }}
                 </div>
             </div>
         </div>
         <div class="form-group">
             <div class="col-md-4">
                 <label for="tour">Wycieczka *</label>
-                <select id="tours" multiple class="form-control" id="tour" disabled>
-                </select>
+                {{ form.wycieczka }}
+
             </div>
         </div>
         <div>

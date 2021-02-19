@@ -332,32 +332,127 @@ def add_rzezba(request):
 
 def add_artysta(request):
     form = ArtystaForm(request.POST)
+    if form.is_valid():
+        name = form.cleaned_data['name']
+        surname = form.cleaned_data['surname']
+        birth_date = form.cleaned_data['birth_date']
+        death_date = form.cleaned_data['death_date']
+
+        Artysta.objects.create(imie=name, nazwisko=surname, data_urodzenia=birth_date, data_smierci=death_date)
+        return redirect('/table/artysci')
 
     return render(request, 'museum_app/add_artysta.html', {'form': form})
 
 
 def add_bilet(request):
-    form = BiletForm(request.POST)
+    typ = []
+    for x in Rodzaj_biletu.objects.all():
+        if (x.typ, x.typ) not in typ:
+            typ.append((x.typ, x.typ))
+
+    form = BiletForm(typ, [(x.nazwa, x.nazwa) for x in Oddzial.objects.all()],
+                     [(str(x.data) + " " + str(x.godzina_rozpoczecia) + " " + str(x.pracownik_pesel.pesel), str(x.data) + " " + str(x.godzina_rozpoczecia) + " " + str(x.pracownik_pesel.pesel)) for x in Harmonogram_zwiedzania.objects.all()],
+                     request.POST)
+    if form.is_valid():
+        purchase_date = form.cleaned_data['purchase_date']
+        przewodnik = form.cleaned_data['przewodnik']
+        oddzial = form.cleaned_data['oddzial'][0]
+        type = form.cleaned_data['type'][0]
+        wycieczka = form.cleaned_data['wycieczka'][0]
+
+
+        rodzaj_biletu_id = -1
+        for x in Rodzaj_biletu.objects.all():
+            if x.typ == type and ((przewodnik == "tak" and x.czy_z_przewodnikiem == True) or (przewodnik== "nie" and x.czy_z_przewodnikiem == False)) and x.oddzial_nazwa.nazwa == oddzial:
+                rodzaj_biletu_id = x
+
+        harmonogram = -1
+        for x in Harmonogram_zwiedzania.objects.all():
+            if str(x.data) == wycieczka.split(" ")[0] and str(x.godzina_rozpoczecia) == wycieczka.split(" ")[1] and str(x.pracownik_pesel.pesel) == wycieczka.split(" ")[2]:
+                harmonogram = x
+
+        Bilet.objects.create(data_zakupu=purchase_date, rodzaj_biletu_id=rodzaj_biletu_id, harmonogram_zwiedzania_id=harmonogram)
+        return redirect('/table/bilety')
+
     return render(request, 'museum_app/add_bilet.html', {'form': form})
 
 
 def add_rodzaj_biletu(request):
-    form = RodzajBiletuForm(request.POST)
+    form = RodzajBiletuForm([(x.nazwa, x.nazwa) for x in Oddzial.objects.all()], request.POST)
+    if form.is_valid():
+        przewodnik = form.cleaned_data['przewodnik']
+        oddzial = form.cleaned_data['oddzial'][0]
+        type = form.cleaned_data['type']
+        price = form.cleaned_data['price']
+        for x in Oddzial.objects.all():
+            if str(x.nazwa) == str(oddzial):
+                oddzial = x
+        if przewodnik == "tak":
+            przewodnik = True
+        else:
+            przewodnik = False
+
+        Rodzaj_biletu.objects.create(typ=type, czy_z_przewodnikiem=przewodnik, cena=price, oddzial_nazwa=oddzial)
+        return redirect('/table/rodzaje_biletow')
+
     return render(request, 'museum_app/add_rodzaj_biletu.html', {'form': form})
 
 
 def add_pracownik(request):
-    form = PracownikForm(request.POST)
+    form = PracownikForm([(x.nazwa, x.nazwa) for x in Oddzial.objects.all()], request.POST)
+    if form.is_valid():
+        pesel = form.cleaned_data['pesel']
+        imie = form.cleaned_data['imie']
+        nazwisko = form.cleaned_data['nazwisko']
+        etat = form.cleaned_data['etat'][0]
+        placa = form.cleaned_data['placa']
+        data_zatrudnienia = form.cleaned_data['data_zatrudnienia']
+        oddzial = form.cleaned_data['oddzial'][0]
+        numer_telefonu = form.cleaned_data['numer_telefonu']
+
+        for x in Oddzial.objects.all():
+            if str(x.nazwa) == str(oddzial):
+                oddzial = x
+
+        Pracownik.objects.create(pesel=pesel, imie=imie, nazwisko=nazwisko, etat=etat, placa=placa, data_zatrudnienia=data_zatrudnienia, oddzial_nazwa=oddzial, numer_telefonu=numer_telefonu)
+        return redirect('/table/pracownicy')
+
     return render(request, 'museum_app/add_pracownik.html', {'form': form})
 
 
 def add_harmonogram_zwiedzania(request):
-    form = HarmonogramZwiedzaniaForm(request.POST)
+    form = HarmonogramZwiedzaniaForm([(x.pesel, x.pesel) for x in Pracownik.objects.all()], request.POST)
+    if form.is_valid():
+        godzina = form.cleaned_data['godzina']
+        data = form.cleaned_data['data']
+        pesel = form.cleaned_data['pesel'][0]
+
+        for x in Pracownik.objects.all():
+            if str(x.pesel) == str(pesel):
+                pracownik = x
+
+        Harmonogram_zwiedzania.objects.create(godzina_rozpoczecia=godzina, data=data, pracownik_pesel=pracownik)
+        return redirect('/table/harmonogram_zwiedzania')
+
     return render(request, 'museum_app/add_harmonogram_zwiedzania.html', {'form': form})
 
 
-def add_wydarzenie(request):
+def add_wydarzenie(request, oddzial_nazwa):
     form = WydarzenieForm(request.POST)
+    if form.is_valid():
+        nazwa = form.cleaned_data['nazwa']
+        data_rozpoczecia = form.cleaned_data['data_rozpoczecia']
+        data_zakonczenia = form.cleaned_data['data_zakonczenia']
+
+        for x in Oddzial.objects.all():
+            if str(x.nazwa) == str(oddzial_nazwa):
+                oddzial = x
+
+        wydarzenie = Wydarzenie.objects.create(nazwa=nazwa, data_rozpoczecia=data_rozpoczecia, data_zakonczenia=data_zakonczenia)
+        print(wydarzenie.id, file=sys.stderr)
+        Wydarzenie_oddzial.objects.create(oddzial_nazwa=oddzial, wydarzenie_id = wydarzenie.id)
+        return redirect('detailed/oddzial_nazwa/oddzial')
+
     return render(request, 'museum_app/add_wydarzenie.html', {'form': form})
 
 
@@ -492,7 +587,7 @@ def detailed_oddzial(request, oddzial_nazwa):
                       'number': oddzial.numer_telefonu}
 
     form = DetailedOddzialForm(initial=initial_values)
-    return render(request, 'museum_app/detailed_oddzial.html', {'form': form, 'wydarzenia': wydarzenia, 'error': error})
+    return render(request, 'museum_app/detailed_oddzial.html', {'form': form, 'wydarzenia': wydarzenia, 'error': error, 'oddzial': oddzial})
 
 
 def detailed_dzial(request, dzial_id):
