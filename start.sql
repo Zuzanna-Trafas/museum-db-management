@@ -150,7 +150,7 @@ INSERT INTO `museum_app_harmonogram_zwiedzania` (`id`, `godzina_rozpoczecia`, `d
 
 CREATE TABLE `museum_app_obraz` (
   `id` int NOT NULL,
-  `nazwa` varchar(100) DEFAULT NULL,
+  `nazwa` varchar(100) NOT NULL,
   `szerokosc` float NOT NULL,
   `wysokosc` float NOT NULL,
   `artysta_id_id` int DEFAULT NULL,
@@ -253,7 +253,7 @@ INSERT INTO `museum_app_rodzaj_biletu` (`id`, `typ`, `czy_z_przewodnikiem`, `cen
 
 CREATE TABLE `museum_app_rzezba` (
   `id` int NOT NULL,
-  `nazwa` varchar(100) DEFAULT NULL,
+  `nazwa` varchar(100) NOT NULL,
   `waga` float NOT NULL,
   `material` varchar(50) NOT NULL,
   `artysta_id_id` int DEFAULT NULL,

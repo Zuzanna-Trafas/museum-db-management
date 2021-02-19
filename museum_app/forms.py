@@ -48,10 +48,8 @@ class DzialForm(forms.Form):
 
 
 class ObrazForm(forms.Form):
-    def __init__(self, oddzial_choices, dzial_choices, artysta_choices, *args, **kwargs):
+    def __init__(self, dzial_choices, artysta_choices, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['oddzial_select'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
-                                                                  choices=oddzial_choices)
 
         self.fields['dzial_select'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
                                                                 choices=dzial_choices)
@@ -59,7 +57,8 @@ class ObrazForm(forms.Form):
         self.fields['artysta_select'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
                                                                   choices=artysta_choices)
 
-    oddzial_select = forms.MultipleChoiceField()
+        self.fields['artysta_select'].required = False
+
     dzial_select = forms.MultipleChoiceField()
     artysta_select = forms.MultipleChoiceField()
 
@@ -76,18 +75,16 @@ class ObrazForm(forms.Form):
 
 
 class RzezbaForm(forms.Form):
-    def __init__(self, oddzial_choices, dzial_choices, artysta_choices, *args, **kwargs):
+    def __init__(self, dzial_choices, artysta_choices, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['oddzial_select'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
-                                                                  choices=oddzial_choices)
-
         self.fields['dzial_select'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
                                                                 choices=dzial_choices)
 
         self.fields['artysta_select'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
                                                                   choices=artysta_choices)
 
-    oddzial_select = forms.MultipleChoiceField()
+        self.fields['artysta_select'].required = False
+
     dzial_select = forms.MultipleChoiceField()
     artysta_select = forms.MultipleChoiceField()
 
@@ -103,6 +100,10 @@ class RzezbaForm(forms.Form):
 
 
 class ArtystaForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['death_date'].required = False
+
     name = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "name",
                                                          'maxlength': "50", "required": "true"}))
 

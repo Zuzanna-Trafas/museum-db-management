@@ -253,6 +253,7 @@ def add_oddzial(request):
 
 
 def add_dzial(request):
+    error = ""
     form = DzialForm([(x.nazwa, x.nazwa) for x in Oddzial.objects.all()], request.POST)
     if form.is_valid():
         name = form.cleaned_data['name']
@@ -262,35 +263,44 @@ def add_dzial(request):
         for x in Oddzial.objects.all():
             if str(x.nazwa) == str(oddzial_select):
                 oddzial = x
-        Dzial.objects.create(nazwa=name, pietro=floor, epoka=epoch,
-                             oddzial_nazwa=oddzial)
-        return redirect('/table/dzialy')
-    return render(request, 'museum_app/add_dzial.html', {'form': form})
+        try:
+            Dzial.objects.create(nazwa=name, pietro=floor, epoka=epoch,
+                                 oddzial_nazwa=oddzial)
+        except Exception as e:
+            error = e.args
+            if "Duplicate" in e.args[1]:
+                error = "Dział o tej nazwie już istnieje na wybranym oddziale."
+        if error != "":
+            return render(request, 'museum_app/add_dzial.html',
+                          {'form': form, 'error': error})
+        else:
+            return redirect('/table/dzialy')
+    return render(request, 'museum_app/add_dzial.html', {'form': form, 'error': error})
 
 
 def add_obraz(request):
-    # TODO dynamically fill Działy depending on Oddziały or merge both to one select field
-    form = ObrazForm([(x.nazwa, x.nazwa) for x in Oddzial.objects.all()],
-                     [(x.nazwa, x.nazwa) for x in Dzial.objects.all()],
-                     [(x.imie + " " + x.nazwisko, x.imie + " " + x.nazwisko) for x in Artysta.objects.all()],
+    # TODO unique? maybe objects.create_or_update
+    form = ObrazForm([(str(x.nazwa)+", "+str(x.oddzial_nazwa.nazwa), str(x.nazwa)+", "+str(x.oddzial_nazwa.nazwa)) for x in Dzial.objects.all()],
+                     [(x.id, x.imie + " " + x.nazwisko) for x in Artysta.objects.all()],
                      request.POST)
     if form.is_valid():
         name = form.cleaned_data['name']
         width = form.cleaned_data['width']
         height = form.cleaned_data['height']
-        oddzial_select = form.cleaned_data['oddzial_select'][0]
-        dzial_select = form.cleaned_data['dzial_select'][0]
-        artysta_select = form.cleaned_data['artysta_select'][0]
+        dzial_select = form.cleaned_data['dzial_select'][0].split(", ")
+        try:
+            artysta_select = form.cleaned_data['artysta_select'][0]
+        except:
+            artysta_select = None
 
-        dzial_id = -1
+        dzial_id = None
         for x in Dzial.objects.all():
-
-            if x.nazwa == dzial_select and x.oddzial_nazwa.nazwa == oddzial_select:
+            if x.nazwa == dzial_select[0] and x.oddzial_nazwa.nazwa == dzial_select[1]:
                 dzial_id = x
 
-        artysta_id = -1
+        artysta_id = None
         for x in Artysta.objects.all():
-            if x.imie == artysta_select.split(" ")[0] and x.nazwisko == artysta_select.split(" ")[1]:
+            if str(x.id) == artysta_select:
                 artysta_id = x
 
         Obraz.objects.create(nazwa=name, szerokosc=width, wysokosc=height, dzial_id=dzial_id, artysta_id=artysta_id)
@@ -300,31 +310,28 @@ def add_obraz(request):
 
 
 def add_rzezba(request):
-    # TODO dynamically fill Działy depending on Oddziały or merge both to one select field
-    form = RzezbaForm([(x.nazwa, x.nazwa) for x in Oddzial.objects.all()],
-                      [(x.nazwa, x.nazwa) for x in Dzial.objects.all()],
-                      [(x.imie + " " + x.nazwisko, x.imie + " " + x.nazwisko) for x in Artysta.objects.all()],
+    # TODO unique? maybe objects.create_or_update
+    form = RzezbaForm([(str(x.nazwa)+", "+str(x.oddzial_nazwa.nazwa), str(x.nazwa)+", "+str(x.oddzial_nazwa.nazwa)) for x in Dzial.objects.all()],
+                      [(x.id, x.imie + " " + x.nazwisko) for x in Artysta.objects.all()],
                       request.POST)
     if form.is_valid():
         name = form.cleaned_data['name']
         weight = form.cleaned_data['weight']
         material = form.cleaned_data['material']
-        oddzial_select = form.cleaned_data['oddzial_select'][0]
-        dzial_select = form.cleaned_data['dzial_select'][0]
-        artysta_select = form.cleaned_data['artysta_select'][0]
+        dzial_select = form.cleaned_data['dzial_select'][0].split(", ")
+        try:
+            artysta_select = form.cleaned_data['artysta_select'][0]
+        except:
+            artysta_select = None
 
-        dzial_id = -1
+        dzial_id = None
         for x in Dzial.objects.all():
-            print(x.nazwa, file=sys.stderr)
-            print(dzial_select, file=sys.stderr)
-            print(x.oddzial_nazwa.nazwa, file=sys.stderr)
-            print(oddzial_select, file=sys.stderr)
-            if x.nazwa == dzial_select and x.oddzial_nazwa.nazwa == oddzial_select:
+            if x.nazwa == dzial_select[0] and x.oddzial_nazwa.nazwa == dzial_select[1]:
                 dzial_id = x
 
-        artysta_id = -1
+        artysta_id = None
         for x in Artysta.objects.all():
-            if x.imie == artysta_select.split(" ")[0] and x.nazwisko == artysta_select.split(" ")[1]:
+            if str(x.id) == artysta_select:
                 artysta_id = x
 
         Rzezba.objects.create(nazwa=name, waga=weight, material=material, dzial_id=dzial_id, artysta_id=artysta_id)
@@ -334,6 +341,7 @@ def add_rzezba(request):
 
 
 def add_artysta(request):
+    # TODO unique? maybe objects.create_or_update
     form = ArtystaForm(request.POST)
     if form.is_valid():
         name = form.cleaned_data['name']
