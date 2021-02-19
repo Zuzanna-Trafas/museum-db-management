@@ -14,7 +14,6 @@ from museum_app.models import Oddzial, Wydarzenie, Wydarzenie_oddzial, Rodzaj_bi
     Bilet, Dzial, Artysta, Obraz, Rzezba
 import sys
 
-# TODO walidacja dat wszędzieeeeeeeeee
 # TODO walidacja pól unique
 
 def number_validator(number):
@@ -343,6 +342,7 @@ def add_rzezba(request):
 
 
 def add_artysta(request):
+    # TODO validate date
     error = ""
     form = ArtystaForm(request.POST)
     if form.is_valid():
@@ -368,6 +368,7 @@ def add_artysta(request):
 
 
 def add_bilet(request):
+    # TODO validate date
     error = ""
     error_oddzial = ""
     typ = []
@@ -421,6 +422,7 @@ def add_bilet(request):
 
 
 def add_rodzaj_biletu(request):
+    # TODO validate UNIQUE KEY (`typ`,`czy_z_przewodnikiem`,`oddzial_nazwa_id`)
     form = RodzajBiletuForm([(x.nazwa, x.nazwa) for x in Oddzial.objects.all()], request.POST)
     if form.is_valid():
         przewodnik = form.cleaned_data['przewodnik']
@@ -442,6 +444,7 @@ def add_rodzaj_biletu(request):
 
 
 def add_pracownik(request):
+    # TODO validate date
     # TODO data zatrudnienia <= today
     # TODO numer still required chuj wie czemu
     error = ""
@@ -487,7 +490,9 @@ def add_pracownik(request):
 
 
 def add_harmonogram_zwiedzania(request):
+    # TODO validate date
     # TODO godzina rozpoczęcia w godzinach otwarcia oddziału
+    # TODO validate (`data`,`godzina_rozpoczecia`,`pracownik_pesel_id`) unique
     form = HarmonogramZwiedzaniaForm([(x.pesel, x.imie + " " + x.nazwisko + " (" + str(x.pesel) + ")") for x in Pracownik.objects.all()], request.POST)
     if form.is_valid():
         godzina = form.cleaned_data['godzina']
@@ -505,8 +510,10 @@ def add_harmonogram_zwiedzania(request):
 
 
 def add_wydarzenie(request, oddzial_nazwa):
+    # TODO  validate date
     # TODO data_rozpoczęcia <= data_zakończenia
     # TODO nazwa i data rozpoczęcia unique
+
     form = WydarzenieForm(request.POST)
     if form.is_valid():
         nazwa = form.cleaned_data['nazwa']
