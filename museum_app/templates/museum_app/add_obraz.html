@@ -51,6 +51,7 @@
 
 <div class="px-5">
     <form class="needs-validation" id="form-name" method="post">
+        {% csrf_token %}
         <div class="form-group">
             <div class="col-md-4">
                 <label for="name">Nazwa</label>

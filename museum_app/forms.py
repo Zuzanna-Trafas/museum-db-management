@@ -76,12 +76,23 @@ class ObrazForm(forms.Form):
 
 
 class RzezbaForm(forms.Form):
+    def __init__(self, oddzial_choices, dzial_choices, artysta_choices, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['oddzial_select'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
+                                                                  choices=oddzial_choices)
+
+        self.fields['dzial_select'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
+                                                                choices=dzial_choices)
+
+        self.fields['artysta_select'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
+                                                                  choices=artysta_choices)
+
+    oddzial_select = forms.MultipleChoiceField()
+    dzial_select = forms.MultipleChoiceField()
+    artysta_select = forms.MultipleChoiceField()
+
     name = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "name",
                                                          'maxlength': "100"}))
-
-    # TODO oddzial
-    # TODO dzial
-    # TODO artysta
 
     weight = forms.CharField(widget=forms.TextInput(attrs={'type': "number", "class": "form-control", "id": "weight",
                                                            "step": "0.01", "min": "0", "max": "1000000",
@@ -106,74 +117,99 @@ class ArtystaForm(forms.Form):
 
 
 class BiletForm(forms.Form):
+    def __init__(self, type_choices, oddzial_choices, wycieczka_choices, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['type'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
+                                                                  choices=type_choices)
+
+        self.fields['oddzial'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
+                                                                choices=oddzial_choices)
+
+        self.fields['wycieczka'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
+                                                                  choices=wycieczka_choices)
+
+        self.fields['przewodnik'] = forms.ChoiceField(required=True, widget=forms.RadioSelect, choices=[("tak", "tak"),("nie", "nie")])
+
+    type = forms.MultipleChoiceField()
+    oddzial = forms.MultipleChoiceField()
+    wycieczka = forms.MultipleChoiceField()
+    przewodnik = forms.ChoiceField()
+
     purchase_date = forms.CharField(widget=forms.TextInput(attrs={"type": "date", "class": "form-control",
                                                                   "id": "purchase-date", "required": "true"}))
 
-    birth_date = forms.CharField(widget=forms.TextInput(attrs={"type": "date", "class": "form-control",
-                                                               "id": "birth-date", "required": "true"}))
-
-    # TODO type
-    # TODO oddzial
-    # TODO guide
-    # TODO tour
 
 
 class RodzajBiletuForm(forms.Form):
+    def __init__(self, oddzial_choices, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['oddzial'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
+                                                                  choices=oddzial_choices)
+        self.fields['przewodnik'] = forms.ChoiceField(required=True, widget=forms.RadioSelect,
+                                                      choices=[("tak", "tak"), ("nie", "nie")])
+
+    oddzial = forms.MultipleChoiceField()
+    przewodnik = forms.ChoiceField()
     type = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "type",
                                                          'maxlength': "100", "required": "true"}))
 
     price = forms.CharField(widget=forms.TextInput(attrs={'type': "number", 'class': "form-control", 'id': "price",
                                                           'min': "0", "max": "1000", "required": "true"}))
 
-    # TODO oddzal
-    # TODO guide
-
 
 class PracownikForm(forms.Form):
+    def __init__(self, oddzial_choices, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['oddzial'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
+                                                                  choices=oddzial_choices)
     pesel = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "pesel",
                                                           "minlength": "11", 'maxlength': "11",
                                                           "required": "true"}))
 
-    name = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "name",
+    imie = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "name",
                                                          'maxlength': "50", "required": "true"}))
 
-    surname = forms.CharField(
+    nazwisko = forms.CharField(
         widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "surname",
                                       'maxlength': "50", "required": "true"}))
 
-    position = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
+    etat = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
                                          choices=OPTIONS)
 
-    wage = forms.CharField(widget=forms.TextInput(attrs={'type': "number", 'class': "form-control", 'id': "wage",
+    placa = forms.CharField(widget=forms.TextInput(attrs={'type': "number", 'class': "form-control", 'id': "placa",
                                                          'min': "0", "max": "1000000", "required": "true"}))
 
-    join_date = forms.CharField(widget=forms.TextInput(attrs={"type": "date", "class": "form-control",
-                                                              "id": "join-date", "placeholder": "dd-mm-yyyy",
+    data_zatrudnienia = forms.CharField(widget=forms.TextInput(attrs={"type": "date", "class": "form-control",
+                                                              "id": "data_zatrudnienia", "placeholder": "dd-mm-yyyy",
                                                               "required": "true"}))
 
     # TODO oddzial
-    number = forms.CharField(widget=forms.TextInput(attrs={'type': "text", "class": "form-control", "id": "number"}))
+    numer_telefonu = forms.CharField(widget=forms.TextInput(attrs={'type': "text", "class": "form-control", "id": "numer_telefonu", "required": "false"}))
 
 
 class HarmonogramZwiedzaniaForm(forms.Form):
-    start_hour = forms.CharField(widget=forms.TextInput(attrs={"type": "time", "class": "form-control",
-                                                               "id": "start-hour", "required": "true"}))
+    def __init__(self, pracownik_choices, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['pesel'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
+                                                                  choices=pracownik_choices)
+    godzina = forms.CharField(widget=forms.TextInput(attrs={"type": "time", "class": "form-control",
+                                                               "id": "godzina", "required": "true"}))
 
-    date = forms.CharField(widget=forms.TextInput(attrs={"type": "date", "class": "form-control",
-                                                         "id": "date", "required": "true"}))
+    data = forms.CharField(widget=forms.TextInput(attrs={"type": "date", "class": "form-control",
+                                                         "id": "data", "required": "true"}))
 
-    # TODO pesel
+
 
 
 class WydarzenieForm(forms.Form):
-    name = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "name",
+    nazwa = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "nazwa",
                                                          'maxlength': "100", "required": "true"}))
 
-    start_date = forms.CharField(widget=forms.TextInput(attrs={"type": "date", "class": "form-control",
-                                                               "id": "start-date", "required": "true"}))
+    data_rozpoczecia = forms.CharField(widget=forms.TextInput(attrs={"type": "date", "class": "form-control",
+                                                               "id": "data_rozpoczecia", "required": "true"}))
 
-    end_date = forms.CharField(widget=forms.TextInput(attrs={"type": "date", "class": "form-control",
-                                                             "id": "end-date", "required": "true"}))
+    data_zakonczenia = forms.CharField(widget=forms.TextInput(attrs={"type": "date", "class": "form-control",
+                                                             "id": "data_zakonczenia", "required": "true"}))
 
 
 class DetailedArtystaForm(forms.Form):

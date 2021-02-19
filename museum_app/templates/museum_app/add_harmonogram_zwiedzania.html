@@ -51,23 +51,23 @@
 
 <div class="px-5">
     <form class="needs-validation" id="form-name" method="post">
+        {% csrf_token %}
         <div class="form-group">
             <div class="col-md-4">
                 <label for="start-hour">Godzina rozpoczęcia *</label>
-                {{ form.start_hour }}
+                {{ form.godzina }}
             </div>
         </div>
         <div class="form-group">
             <div class="col-md-4">
                 <label for="date">Data *</label>
-                {{ form.date }}
+                {{ form.data }}
             </div>
         </div>
         <div class="form-group">
             <div class="col-md-4">
-                <label for="pesel">Pesel przewodnika *</label>
-                <select multiple class="form-control" id="pesel" required>
-                </select>
+                <label for="branch">Pesel pracownika *</label>
+                {{ form.pesel }}
             </div>
         </div>
         <div>
