@@ -215,6 +215,15 @@ class WydarzenieForm(forms.Form):
 
 
 class DetailedArtystaForm(forms.Form):
+    def __init__(self, obrazy_choices, rzezby_choices, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['obrazy'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
+                                                                  choices=obrazy_choices)
+        self.fields['rzezby'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
+                                                      choices=rzezby_choices)
+
+    obrazy = forms.MultipleChoiceField()
+    rzezby = forms.MultipleChoiceField()
     name = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "name",
                                                          'maxlength': "50"}))
 
@@ -226,11 +235,19 @@ class DetailedArtystaForm(forms.Form):
 
     death_date = forms.CharField(widget=forms.TextInput(attrs={"type": "date", "class": "form-control",
                                                                "id": "death-date"}))
-    # TODO painitngs
-    # TODO sculptures
+
 
 
 class DetailedDzialForm(forms.Form):
+    def __init__(self, obrazy_choices, rzezby_choices, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['obrazy'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
+                                                                  choices=obrazy_choices)
+        self.fields['rzezby'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
+                                                      choices=rzezby_choices)
+
+    obrazy = forms.MultipleChoiceField()
+    rzezby = forms.ChoiceField()
     name = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "name",
                                                          'maxlength': "100"}))
 
@@ -244,8 +261,7 @@ class DetailedDzialForm(forms.Form):
                                                           'maxlength': "100"}))
 
     paintings = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple, choices=[])
-    # TODO painitngs
-    # TODO sculptures
+
 
 
 class DetailedDzieloForm(forms.Form):

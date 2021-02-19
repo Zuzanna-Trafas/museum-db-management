@@ -15,6 +15,7 @@ from museum_app.models import Oddzial, Wydarzenie, Wydarzenie_oddzial, Rodzaj_bi
 import sys
 
 # TODO walidacja dat wszędzieeeeeeeeee
+# TODO walidacja pól unique
 
 def number_validator(number):
     if len(number) == 0:
@@ -236,7 +237,6 @@ def add_oddzial(request):
                           {'form': form, 'error_time': error_time, 'error_number': error_number, 'error': error})
         else:
             number = validator
-
         try:
             Oddzial.objects.create(nazwa=name, godzina_otwarcia=opening_hour, godzina_zamkniecia=closing_hour,
                                    adres=address, numer_telefonu=number)
@@ -620,8 +620,6 @@ def edit_wydarzenie(request):
     return render(request, 'museum_app/add_wydarzenie.html', {'form': form})
 
 
-# TODO fill initial values with values from model
-
 def detailed_oddzial(request, oddzial_nazwa):
     form = TableWydarzeniaForm(request.POST)
     error = ""
@@ -631,9 +629,7 @@ def detailed_oddzial(request, oddzial_nazwa):
                 try:
                     item.delete()
                 except Exception as e:
-                    error = "Nie można usunąć"
-                    if "Rzezba" in e.args[0] or "Obraz" in e.args[0]:
-                        error = "Nie można usunąć, gdyż artysta jest powiązany z dziełami"
+                    error = e.args[0]
 
     oddzial = get_object_or_404(Oddzial, pk=oddzial_nazwa)
     wydarzenie_oddzial = []
@@ -655,7 +651,24 @@ def detailed_oddzial(request, oddzial_nazwa):
 
 
 def detailed_dzial(request, dzial_id):
+    # TODO fill obrazy and rzezby - add POST
     dzial = get_object_or_404(Dzial, pk=dzial_id)
+    obrazy = []
+    for x in Obraz.objects.all():
+        try:
+            if x.artysta_id.id == artysta_id:
+                obrazy.append((x.nazwa,x.nazwa))
+        except:
+            continue
+
+    rzezby = []
+    for x in Rzezba.objects.all():
+        try:
+            if x.artysta_id.id == artysta_id:
+                rzezby.append((x.nazwa,x.nazwa))
+        except:
+            continue
+
     if dzial.epoka == None:
         epoka = "Brak informacji"
     else:
@@ -666,21 +679,36 @@ def detailed_dzial(request, dzial_id):
         "floor": dzial.pietro,
         "epoch": epoka,
     }
-    form = DetailedDzialForm(initial=initial_values)
+    form = DetailedDzialForm(obrazy, rzezby, initial=initial_values)
     return render(request, 'museum_app/detailed_dzial.html', {'form': form})
 
 
 def detailed_artysta(request, artysta_id):
+    # TODO fill obrazy and rzezby - add POST somehow
     artysta = get_object_or_404(Artysta, pk=artysta_id)
+    obrazy = []
+    for x in Obraz.objects.all():
+        try:
+            if x.artysta_id.id == artysta_id:
+                obrazy.append((x.nazwa,x.nazwa))
+        except:
+            continue
+
+    rzezby = []
+    for x in Rzezba.objects.all():
+        try:
+            if x.artysta_id.id == artysta_id:
+                rzezby.append((x.nazwa,x.nazwa))
+        except:
+            continue
 
     initial_values = {
         "name": artysta.imie,
         "surname": artysta.nazwisko,
         "birth_date": artysta.data_urodzenia,
         "death_date": artysta.data_smierci,
-
     }
-    form = DetailedArtystaForm(initial=initial_values)
+    form = DetailedArtystaForm(obrazy, rzezby, initial=initial_values)
     return render(request, 'museum_app/detailed_artysta.html', {'form': form})
 
 
