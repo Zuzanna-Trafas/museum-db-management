@@ -270,7 +270,10 @@ def add_dzial(request):
 
 def add_obraz(request):
     # TODO dynamically fill Działy depending on Oddziały or merge both to one select field
-    form = ObrazForm([(x.nazwa, x.nazwa) for x in Oddzial.objects.all()], [(x.nazwa, x.nazwa) for x in Dzial.objects.all()], [(x.imie+" "+x.nazwisko, x.imie+" "+x.nazwisko) for x in Artysta.objects.all()], request.POST)
+    form = ObrazForm([(x.nazwa, x.nazwa) for x in Oddzial.objects.all()],
+                     [(x.nazwa, x.nazwa) for x in Dzial.objects.all()],
+                     [(x.imie + " " + x.nazwisko, x.imie + " " + x.nazwisko) for x in Artysta.objects.all()],
+                     request.POST)
     if form.is_valid():
         name = form.cleaned_data['name']
         width = form.cleaned_data['width']
@@ -290,7 +293,7 @@ def add_obraz(request):
             if x.imie == artysta_select.split(" ")[0] and x.nazwisko == artysta_select.split(" ")[1]:
                 artysta_id = x
 
-        Obraz.objects.create(nazwa=name, szerokosc=width, wysokosc=height, dzial_id=dzial_id, artysta_id = artysta_id)
+        Obraz.objects.create(nazwa=name, szerokosc=width, wysokosc=height, dzial_id=dzial_id, artysta_id=artysta_id)
         return redirect('/table/dziela')
 
     return render(request, 'museum_app/add_obraz.html', {'form': form})
@@ -299,9 +302,9 @@ def add_obraz(request):
 def add_rzezba(request):
     # TODO dynamically fill Działy depending on Oddziały or merge both to one select field
     form = RzezbaForm([(x.nazwa, x.nazwa) for x in Oddzial.objects.all()],
-                     [(x.nazwa, x.nazwa) for x in Dzial.objects.all()],
-                     [(x.imie + " " + x.nazwisko, x.imie + " " + x.nazwisko) for x in Artysta.objects.all()],
-                     request.POST)
+                      [(x.nazwa, x.nazwa) for x in Dzial.objects.all()],
+                      [(x.imie + " " + x.nazwisko, x.imie + " " + x.nazwisko) for x in Artysta.objects.all()],
+                      request.POST)
     if form.is_valid():
         name = form.cleaned_data['name']
         weight = form.cleaned_data['weight']
@@ -351,7 +354,9 @@ def add_bilet(request):
             typ.append((x.typ, x.typ))
 
     form = BiletForm(typ, [(x.nazwa, x.nazwa) for x in Oddzial.objects.all()],
-                     [(str(x.data) + " " + str(x.godzina_rozpoczecia) + " " + str(x.pracownik_pesel.pesel), str(x.data) + " " + str(x.godzina_rozpoczecia) + " " + str(x.pracownik_pesel.pesel)) for x in Harmonogram_zwiedzania.objects.all()],
+                     [(str(x.data) + " " + str(x.godzina_rozpoczecia) + " " + str(x.pracownik_pesel.pesel),
+                       str(x.data) + " " + str(x.godzina_rozpoczecia) + " " + str(x.pracownik_pesel.pesel)) for x in
+                      Harmonogram_zwiedzania.objects.all()],
                      request.POST)
     if form.is_valid():
         purchase_date = form.cleaned_data['purchase_date']
@@ -360,18 +365,20 @@ def add_bilet(request):
         type = form.cleaned_data['type'][0]
         wycieczka = form.cleaned_data['wycieczka'][0]
 
-
         rodzaj_biletu_id = -1
         for x in Rodzaj_biletu.objects.all():
-            if x.typ == type and ((przewodnik == "tak" and x.czy_z_przewodnikiem == True) or (przewodnik== "nie" and x.czy_z_przewodnikiem == False)) and x.oddzial_nazwa.nazwa == oddzial:
+            if x.typ == type and ((przewodnik == "tak" and x.czy_z_przewodnikiem == True) or (
+                    przewodnik == "nie" and x.czy_z_przewodnikiem == False)) and x.oddzial_nazwa.nazwa == oddzial:
                 rodzaj_biletu_id = x
 
         harmonogram = -1
         for x in Harmonogram_zwiedzania.objects.all():
-            if str(x.data) == wycieczka.split(" ")[0] and str(x.godzina_rozpoczecia) == wycieczka.split(" ")[1] and str(x.pracownik_pesel.pesel) == wycieczka.split(" ")[2]:
+            if str(x.data) == wycieczka.split(" ")[0] and str(x.godzina_rozpoczecia) == wycieczka.split(" ")[1] and str(
+                    x.pracownik_pesel.pesel) == wycieczka.split(" ")[2]:
                 harmonogram = x
 
-        Bilet.objects.create(data_zakupu=purchase_date, rodzaj_biletu_id=rodzaj_biletu_id, harmonogram_zwiedzania_id=harmonogram)
+        Bilet.objects.create(data_zakupu=purchase_date, rodzaj_biletu_id=rodzaj_biletu_id,
+                             harmonogram_zwiedzania_id=harmonogram)
         return redirect('/table/bilety')
 
     return render(request, 'museum_app/add_bilet.html', {'form': form})
@@ -414,7 +421,9 @@ def add_pracownik(request):
             if str(x.nazwa) == str(oddzial):
                 oddzial = x
 
-        Pracownik.objects.create(pesel=pesel, imie=imie, nazwisko=nazwisko, etat=etat, placa=placa, data_zatrudnienia=data_zatrudnienia, oddzial_nazwa=oddzial, numer_telefonu=numer_telefonu)
+        Pracownik.objects.create(pesel=pesel, imie=imie, nazwisko=nazwisko, etat=etat, placa=placa,
+                                 data_zatrudnienia=data_zatrudnienia, oddzial_nazwa=oddzial,
+                                 numer_telefonu=numer_telefonu)
         return redirect('/table/pracownicy')
 
     return render(request, 'museum_app/add_pracownik.html', {'form': form})
@@ -448,10 +457,11 @@ def add_wydarzenie(request, oddzial_nazwa):
             if str(x.nazwa) == str(oddzial_nazwa):
                 oddzial = x
 
-        wydarzenie = Wydarzenie.objects.create(nazwa=nazwa, data_rozpoczecia=data_rozpoczecia, data_zakonczenia=data_zakonczenia)
+        wydarzenie = Wydarzenie.objects.create(nazwa=nazwa, data_rozpoczecia=data_rozpoczecia,
+                                               data_zakonczenia=data_zakonczenia)
         print(wydarzenie.id, file=sys.stderr)
-        Wydarzenie_oddzial.objects.create(oddzial_nazwa=oddzial, wydarzenie_id = wydarzenie.id)
-        return redirect('detailed/oddzial_nazwa/oddzial')
+        Wydarzenie_oddzial.objects.create(oddzial_nazwa=oddzial, wydarzenie_id=wydarzenie)
+        return redirect('/detailed/'+str(oddzial_nazwa)+'/oddzial')
 
     return render(request, 'museum_app/add_wydarzenie.html', {'form': form})
 
@@ -588,7 +598,8 @@ def detailed_oddzial(request, oddzial_nazwa):
                       'number': oddzial.numer_telefonu}
 
     form = DetailedOddzialForm(initial=initial_values)
-    return render(request, 'museum_app/detailed_oddzial.html', {'form': form, 'wydarzenia': wydarzenia, 'error': error, 'oddzial': oddzial})
+    return render(request, 'museum_app/detailed_oddzial.html',
+                  {'form': form, 'wydarzenia': wydarzenia, 'error': error, 'oddzial': oddzial})
 
 
 def detailed_dzial(request, dzial_id):

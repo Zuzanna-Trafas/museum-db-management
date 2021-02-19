@@ -404,6 +404,8 @@ ALTER TABLE `museum_app_wydarzenie_oddzial`
 ALTER TABLE `museum_app_wydarzenie`
   MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
+ALTER TABLE `museum_app_harmonogram_zwiedzania`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 ALTER TABLE `museum_app_wydarzenie_oddzial`
   MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
