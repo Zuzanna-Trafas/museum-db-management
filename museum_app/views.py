@@ -317,7 +317,6 @@ def add_wydarzenie(request):
 # TODO redirect to table view after submit
 
 
-# UWAGA NIESPRAWDZONE
 def edit_oddzial(request, oddzial_nazwa):
     oddzial = get_object_or_404(Oddzial, pk=oddzial_nazwa)
     initial_values = {'name': oddzial.nazwa,
@@ -326,7 +325,7 @@ def edit_oddzial(request, oddzial_nazwa):
                       'address': oddzial.adres,
                       'number': oddzial.numer_telefonu}
 
-    form = OddzialForm(initial=initial_values)
+    form = OddzialForm(request.POST)
     error = ""
     error_time = ""
     error_number = ""
@@ -346,23 +345,25 @@ def edit_oddzial(request, oddzial_nazwa):
         else:
             number = validator
 
+        oddzial.nazwa = name
+        oddzial.godzina_otwarcia = opening_hour
+        oddzial.godzina_zamkniecia = closing_hour
+        oddzial.adres = address
+        oddzial.numer_telefonu = number
         try:
-            oddzial.nazwa = name
+            oddzial.save()
         except Exception as e:
             error = e.args
-            if "Duplicate" in e.args[1]:
+            if "Duplicate" in e.args:
                 error = "Ta nazwa oddziału już istnieje."
 
         if error != "" or error_time != "" or error_number != "":
             return render(request, 'museum_app/add_oddzial.html',
                           {'form': form, 'error_time': error_time, 'error_number': error_number, 'error': error})
         else:
-            oddzial.godzina_otwarcia = opening_hour
-            oddzial.godzina_zamkniecia = closing_hour
-            oddzial.adres = adres
-            oddzial.numer_telefonu = number
             return redirect('/table/oddzialy')
-    return render(request, 'museum_app/add_oddzial.html', {'form': form, 'error_time': error_time, 'error_number': error_number, 'error': error})
+    return render(request, 'museum_app/add_oddzial.html',
+                  {'form': form, 'error_time': error_time, 'error_number': error_number, 'error': error})
 
 
 def edit_dzial(request):

@@ -323,7 +323,7 @@ class TableWydarzeniaForm(forms.Form):
 
 
 class EditOddzialForm(forms.Form):
-    def __init__(self, post_type, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.post_type = post_type
         self.fields['number'].required = False
