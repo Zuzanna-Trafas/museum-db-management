@@ -123,10 +123,12 @@ class BiletForm(forms.Form):
         self.fields['type'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
                                                                   choices=type_choices)
 
-        self.fields['wycieczka'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple, id="wycieczki",
+        self.fields['wycieczka'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
                                                                   choices=wycieczka_choices)
 
         self.fields['przewodnik'] = forms.ChoiceField(required=True, widget=forms.RadioSelect, choices=[("tak", "tak"),("nie", "nie")])
+
+        self.fields['wycieczka'].required = False
 
     type = forms.MultipleChoiceField()
     wycieczka = forms.MultipleChoiceField()
@@ -159,6 +161,8 @@ class PracownikForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.fields['oddzial'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
                                                                   choices=oddzial_choices)
+
+
         self.fields['numer_telefonu'].required = False
 
     pesel = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "pesel",

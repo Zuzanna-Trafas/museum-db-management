@@ -14,6 +14,7 @@ from museum_app.models import Oddzial, Wydarzenie, Wydarzenie_oddzial, Rodzaj_bi
     Bilet, Dzial, Artysta, Obraz, Rzezba
 import sys
 
+# TODO walidacja dat wszędzieeeeeeeeee
 
 def number_validator(number):
     if len(number) == 0:
@@ -280,7 +281,7 @@ def add_dzial(request):
 def add_obraz(request):
     # TODO unique? maybe objects.create_or_update
     form = ObrazForm(
-        [(str(x.nazwa) + ", " + str(x.oddzial_nazwa.nazwa), str(x.nazwa) + ", " + str(x.oddzial_nazwa.nazwa)) for x in
+        [(str(x.nazwa) + " ; " + str(x.oddzial_nazwa.nazwa), str(x.nazwa) + ", " + str(x.oddzial_nazwa.nazwa)) for x in
          Dzial.objects.all()],
         [(x.id, x.imie + " " + x.nazwisko) for x in Artysta.objects.all()],
         request.POST)
@@ -288,7 +289,7 @@ def add_obraz(request):
         name = form.cleaned_data['name']
         width = form.cleaned_data['width']
         height = form.cleaned_data['height']
-        dzial_select = form.cleaned_data['dzial_select'][0].split(", ")
+        dzial_select = form.cleaned_data['dzial_select'][0].split(" ; ")
         try:
             artysta_select = form.cleaned_data['artysta_select'][0]
         except:
@@ -313,7 +314,7 @@ def add_obraz(request):
 def add_rzezba(request):
     # TODO unique? maybe objects.create_or_update
     form = RzezbaForm(
-        [(str(x.nazwa) + ", " + str(x.oddzial_nazwa.nazwa), str(x.nazwa) + ", " + str(x.oddzial_nazwa.nazwa)) for x in
+        [(str(x.nazwa) + " ; " + str(x.oddzial_nazwa.nazwa), str(x.nazwa) + ", " + str(x.oddzial_nazwa.nazwa)) for x in
          Dzial.objects.all()],
         [(x.id, x.imie + " " + x.nazwisko) for x in Artysta.objects.all()],
         request.POST)
@@ -321,7 +322,7 @@ def add_rzezba(request):
         name = form.cleaned_data['name']
         weight = form.cleaned_data['weight']
         material = form.cleaned_data['material']
-        dzial_select = form.cleaned_data['dzial_select'][0].split(", ")
+        dzial_select = form.cleaned_data['dzial_select'][0].split(" ; ")
         try:
             artysta_select = form.cleaned_data['artysta_select'][0]
         except:
@@ -345,7 +346,7 @@ def add_rzezba(request):
 
 def add_artysta(request):
     # TODO unique? maybe objects.create_or_update
-    # TODO data smierci < data_nurodzenia
+    # TODO data smierci < data_urodzenia
     form = ArtystaForm(request.POST)
     if form.is_valid():
         name = form.cleaned_data['name']
@@ -377,7 +378,10 @@ def add_bilet(request):
         purchase_date = form.cleaned_data['purchase_date']
         przewodnik = form.cleaned_data['przewodnik']
         type = form.cleaned_data['type'][0].split(" ; ")
-        wycieczka = form.cleaned_data['wycieczka'][0]
+        try:
+            wycieczka = form.cleaned_data['wycieczka'][0]
+        except:
+            wycieczka = None
 
         rodzaj_biletu_id = None
         for x in Rodzaj_biletu.objects.all():
@@ -393,7 +397,7 @@ def add_bilet(request):
         harmonogram = None
         for x in Harmonogram_zwiedzania.objects.all():
             if str(x.id) == str(wycieczka):
-                harmonogram = x
+                harmonogram = xsplit
 
         if harmonogram is not None:
             if harmonogram.pracownik_pesel.oddzial_nazwa.nazwa != type[0]:
@@ -432,6 +436,8 @@ def add_rodzaj_biletu(request):
 
 
 def add_pracownik(request):
+    # TODO data zatrudnienia <= today
+    # TODO numer still required chuj wie czemu
     error = ""
     error_number = ""
     form = PracownikForm([(x.nazwa, x.nazwa) for x in Oddzial.objects.all()], request.POST)
@@ -475,7 +481,8 @@ def add_pracownik(request):
 
 
 def add_harmonogram_zwiedzania(request):
-    form = HarmonogramZwiedzaniaForm([(x.pesel, x.pesel) for x in Pracownik.objects.all()], request.POST)
+    # TODO godzina rozpoczęcia w godzinach otwarcia oddziału
+    form = HarmonogramZwiedzaniaForm([(x.pesel, x.imie + " " + x.nazwisko + " (" + str(x.pesel) + ")") for x in Pracownik.objects.all()], request.POST)
     if form.is_valid():
         godzina = form.cleaned_data['godzina']
         data = form.cleaned_data['data']
@@ -492,6 +499,8 @@ def add_harmonogram_zwiedzania(request):
 
 
 def add_wydarzenie(request, oddzial_nazwa):
+    # TODO data_rozpoczęcia <= data_zakończenia
+    # TODO nazwa i data rozpoczęcia unique
     form = WydarzenieForm(request.POST)
     if form.is_valid():
         nazwa = form.cleaned_data['nazwa']
@@ -513,8 +522,6 @@ def add_wydarzenie(request, oddzial_nazwa):
 
 # TODO handle editing for all tables (also wydarzenia) - fill values with initial, like for detailed
 # TODO disable primary keys after filling them for editing
-# TODO figure out how to fill date and time fields
-# TODO redirect to table view after submit
 
 
 def edit_oddzial(request, oddzial_nazwa):

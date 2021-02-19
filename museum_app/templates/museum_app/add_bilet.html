@@ -79,7 +79,7 @@
             </div>
         </div>
         <div class="form-group">
-            <div class="col-md-4">
+            <div id="wycieczki" class="col-md-4">
                 <label for="tour">Wycieczka *</label>
                 <div>{{ form.wycieczka }}</div>
                 {% if error_oddzial != "" %}
@@ -110,15 +110,16 @@
         function show() {
             var txt = $('#wycieczki');
 
-            txt.removeAttr("disabled");
-            txt.attr("required", "true");
+            txt.show();
+            $('#id_wycieczka').attr("required", "true");
         }
 
         function disable() {
             var txt = $('#wycieczki');
 
-            txt.removeAttr("required");
-            txt.attr("disabled", "true");
+            txt.hide();
+            $('#id_wycieczka').removeAttr("required");
+            //txt.attr("disabled", "true");
         }
 
         // Example starter JavaScript for disabling form submissions if there are invalid fields
