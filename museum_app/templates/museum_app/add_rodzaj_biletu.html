@@ -35,7 +35,8 @@
                 <a class="nav-link" href="/table/bilety">Bilety</a>
             </li>
             <li>
-                <a class="nav-link active" href="/table/rodzaje_biletow">Rodzaje biletów <span class="sr-only">(current)</span></a>
+                <a class="nav-link active" href="/table/rodzaje_biletow">Rodzaje biletów <span
+                        class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/table/pracownicy">Pracownicy</a>
@@ -52,6 +53,11 @@
 <div class="px-5">
     <form class="needs-validation" id="form-name" method="post">
         {% csrf_token %}
+        {% if error != "" %}
+            <div class="text-danger">
+                {{ error }}
+            </div>
+        {% endif %}
         <div class="form-group">
             <div class="col-md-4">
                 <label for="type">Typ *</label>
