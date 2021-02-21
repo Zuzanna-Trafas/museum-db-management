@@ -15,6 +15,7 @@ from museum_app.models import Oddzial, Wydarzenie, Wydarzenie_oddzial, Rodzaj_bi
     Bilet, Dzial, Artysta, Obraz, Rzezba
 import sys
 
+
 # TODO walidacja pól unique
 
 def number_validator(number):
@@ -355,8 +356,9 @@ def add_rzezba(request):
 
 
 def add_artysta(request):
-    # TODO validate date
     error = ""
+    error_birth = ""
+    error_death = ""
     form = ArtystaForm(request.POST)
     if form.is_valid():
         name = form.cleaned_data['name']
@@ -364,26 +366,36 @@ def add_artysta(request):
         birth_date = form.cleaned_data['birth_date']
         death_date = form.cleaned_data['death_date']
 
-        print(birth_date, file=sys.stderr)
-        print(death_date, file=sys.stderr)
+        birth_year = birth_date.split("-")[0]
 
+        if len(birth_year) > 4:
+            error_birth = "Rok nie może być większy od 9999"
+            return render(request, 'museum_app/add_artysta.html',
+                          {'form': form, 'error': error, 'error_birth': error_birth, 'error_death': error_death})
         if death_date != "":
+            death_year = death_date.split("-")[0]
+            if len(death_year) > 4:
+                error_death = "Rok nie może być większy od 9999"
+                return render(request, 'museum_app/add_artysta.html',
+                              {'form': form, 'error': error, 'error_birth': error_birth, 'error_death': error_death})
             if death_date < birth_date:
                 error = "Data urodzenia musi być wcześniejsza niż data śmierci!"
-                return render(request, 'museum_app/add_artysta.html', {'form': form, 'error': error})
+                return render(request, 'museum_app/add_artysta.html',
+                              {'form': form, 'error': error, 'error_birth': error_birth, 'error_death': error_death})
 
         else:
             death_date = None
         Artysta.objects.create(imie=name, nazwisko=surname, data_urodzenia=birth_date, data_smierci=death_date)
         return redirect('/table/artysci')
 
-    return render(request, 'museum_app/add_artysta.html', {'form': form, 'error': error})
+    return render(request, 'museum_app/add_artysta.html',
+                  {'form': form, 'error': error, 'error_birth': error_birth, 'error_death': error_death})
 
 
 def add_bilet(request):
-    # TODO validate date
     error = ""
     error_oddzial = ""
+    error_data = ""
     typ = []
     for x in Rodzaj_biletu.objects.all():
         if (str(x.typ) + " ; " + str(x.oddzial_nazwa.nazwa), str(x.typ) + ", " + str(x.oddzial_nazwa.nazwa)) not in typ:
@@ -404,6 +416,11 @@ def add_bilet(request):
         except:
             wycieczka = None
 
+        if len(purchase_date.split("-")[0]) > 4:
+            error_data = "Rok nie może być większy niż 9999"
+            return render(request, 'museum_app/add_bilet.html',
+                          {'form': form, 'error': error, 'error_oddzial': error_oddzial, 'error_data': error_data})
+
         rodzaj_biletu_id = None
         for x in Rodzaj_biletu.objects.all():
             if x.typ == type[0] and ((przewodnik == "tak" and x.czy_z_przewodnikiem == True) or (
@@ -413,7 +430,7 @@ def add_bilet(request):
         if rodzaj_biletu_id == None:
             error = "Dla tego typu biletu nie można wybrać wycieczki"
             return render(request, 'museum_app/add_bilet.html',
-                          {'form': form, 'error': error, 'error_oddzial': error_oddzial})
+                          {'form': form, 'error': error, 'error_oddzial': error_oddzial, 'error_data': error_data})
 
         harmonogram = None
         for x in Harmonogram_zwiedzania.objects.all():
@@ -424,18 +441,19 @@ def add_bilet(request):
             if harmonogram.pracownik_pesel.oddzial_nazwa.nazwa != type[0]:
                 error_oddzial = "Ta wycieczka odbywa się na innym oddziale!"
                 return render(request, 'museum_app/add_bilet.html',
-                              {'form': form, 'error': error, 'error_oddzial': error_oddzial})
+                              {'form': form, 'error': error, 'error_oddzial': error_oddzial, 'error_data': error_data})
 
         Bilet.objects.create(data_zakupu=purchase_date, rodzaj_biletu_id=rodzaj_biletu_id,
                              harmonogram_zwiedzania_id=harmonogram)
 
         return redirect('/table/bilety')
 
-    return render(request, 'museum_app/add_bilet.html', {'form': form, 'error': error})
+    return render(request, 'museum_app/add_bilet.html',
+                  {'form': form, 'error': error, 'error_oddzial': error_oddzial, 'error_data': error_data})
 
 
 def add_rodzaj_biletu(request):
-    # TODO validate UNIQUE KEY (`typ`,`czy_z_przewodnikiem`,`oddzial_nazwa_id`)
+    error = ""
     form = RodzajBiletuForm([(x.nazwa, x.nazwa) for x in Oddzial.objects.all()], request.POST)
     if form.is_valid():
         przewodnik = form.cleaned_data['przewodnik']
@@ -450,18 +468,23 @@ def add_rodzaj_biletu(request):
         else:
             przewodnik = False
 
-        Rodzaj_biletu.objects.create(typ=type, czy_z_przewodnikiem=przewodnik, cena=price, oddzial_nazwa=oddzial)
+        try:
+            Rodzaj_biletu.objects.create(typ=type, czy_z_przewodnikiem=przewodnik, cena=price, oddzial_nazwa=oddzial)
+        except Exception as e:
+            error = e.args
+            if "Duplicate" in e.args[1]:
+                error = "Taki rodzaj bilet już istnieje."
+            return render(request, 'museum_app/add_rodzaj_biletu.html', {'form': form, 'error': error})
+
         return redirect('/table/rodzaje_biletow')
 
-    return render(request, 'museum_app/add_rodzaj_biletu.html', {'form': form})
+    return render(request, 'museum_app/add_rodzaj_biletu.html', {'form': form, 'error': error})
 
 
 def add_pracownik(request):
-    # TODO validate date
-    # TODO data zatrudnienia <= today
-    # TODO numer still required chuj wie czemu
     error = ""
     error_number = ""
+    error_date = ""
     form = PracownikForm([(x.nazwa, x.nazwa) for x in Oddzial.objects.all()], request.POST)
     if form.is_valid():
         pesel = form.cleaned_data['pesel']
@@ -473,6 +496,11 @@ def add_pracownik(request):
         oddzial = form.cleaned_data['oddzial'][0]
         numer_telefonu = form.cleaned_data['numer_telefonu']
 
+        if len(data_zatrudnienia.split("-")[0]) > 4:
+            error_date = "Rok nie może być większy od 9999"
+            return render(request, 'museum_app/add_pracownik.html',
+                          {'form': form, 'error_number': error_number, 'error': error, 'error_date': error_date})
+
         for x in Oddzial.objects.all():
             if str(x.nazwa) == str(oddzial):
                 oddzial = x
@@ -481,7 +509,7 @@ def add_pracownik(request):
         if validator == -1:
             error_number = "Niepoprawny numer telefonu."
             return render(request, 'museum_app/add_pracownik.html',
-                          {'form': form, 'error_number': error_number, 'error': error})
+                          {'form': form, 'error_number': error_number, 'error': error, 'error_date': error_date})
         else:
             numer_telefonu = validator
 
@@ -494,56 +522,100 @@ def add_pracownik(request):
             if "Duplicate" in e.args[1]:
                 error = "Pracownik o tym peselu już istnieje"
             return render(request, 'museum_app/add_pracownik.html',
-                          {'form': form, 'error_number': error_number, 'error': error})
+                          {'form': form, 'error_number': error_number, 'error': error, 'error_date': error_date})
         else:
             return redirect('/table/pracownicy')
 
     return render(request, 'museum_app/add_pracownik.html',
-                  {'form': form, 'error_number': error_number, 'error': error})
+                  {'form': form, 'error_number': error_number, 'error': error, 'error_date': error_date})
 
 
 def add_harmonogram_zwiedzania(request):
-    # TODO validate date
-    # TODO godzina rozpoczęcia w godzinach otwarcia oddziału
-    # TODO validate (`data`,`godzina_rozpoczecia`,`pracownik_pesel_id`) unique
-    form = HarmonogramZwiedzaniaForm([(x.pesel, x.imie + " " + x.nazwisko + " (" + str(x.pesel) + ")") for x in Pracownik.objects.all()], request.POST)
+    error_date = ""
+    error = ""
+    form = HarmonogramZwiedzaniaForm(
+        [(x.pesel, x.imie + " " + x.nazwisko + " (" + str(x.pesel) + ")") for x in Pracownik.objects.all()],
+        request.POST)
     if form.is_valid():
         godzina = form.cleaned_data['godzina']
         data = form.cleaned_data['data']
         pesel = form.cleaned_data['pesel'][0]
 
+        if len(data.split("-")[0]) > 4:
+            error_date = "Rok nie może być większy od 9999"
+            return render(request, 'museum_app/add_harmonogram_zwiedzania.html',
+                          {'form': form, 'error': error, 'error_date': error_date})
+
         for x in Pracownik.objects.all():
             if str(x.pesel) == str(pesel):
                 pracownik = x
 
-        Harmonogram_zwiedzania.objects.create(godzina_rozpoczecia=godzina, data=data, pracownik_pesel=pracownik)
-        return redirect('/table/harmonogram_zwiedzania')
+        try:
+            Harmonogram_zwiedzania.objects.create(godzina_rozpoczecia=godzina, data=data, pracownik_pesel=pracownik)
+        except Exception as e:
+            error = e.args
+            if "Duplicate" in e.args[1]:
+                error = "Taki harmonogram zwiedzania już istnieje"
+            return render(request, 'museum_app/add_harmonogram_zwiedzania.html',
+                          {'form': form, 'error': error, 'error_date': error_date})
+        else:
+            return redirect('/table/harmonogram_zwiedzania')
 
-    return render(request, 'museum_app/add_harmonogram_zwiedzania.html', {'form': form})
+    return render(request, 'museum_app/add_harmonogram_zwiedzania.html',
+                  {'form': form, 'error': error, 'error_date': error_date})
 
 
 def add_wydarzenie(request, oddzial_nazwa):
-    # TODO  validate date
     # TODO data_rozpoczęcia <= data_zakończenia
-    # TODO nazwa i data rozpoczęcia unique
-
+    error = ""
+    error_data_rozpoczecia = ""
+    error_data_zakonczenia = ""
+    error_dates = ""
     form = WydarzenieForm(request.POST)
     if form.is_valid():
         nazwa = form.cleaned_data['nazwa']
         data_rozpoczecia = form.cleaned_data['data_rozpoczecia']
         data_zakonczenia = form.cleaned_data['data_zakonczenia']
 
+        if len(data_rozpoczecia.split("-")[0]) > 4:
+            error_data_rozpoczecia = "Rok nie może być większy od 9999"
+            return render(request, 'museum_app/add_wydarzenie.html',
+                          {'form': form, 'error': error, 'error_data_rozpoczecia': error_data_rozpoczecia,
+                           'error_data_zakonczenia': error_data_zakonczenia, 'error_dates': error_dates})
+
+        if len(data_zakonczenia.split("-")[0]) > 4:
+            error_data_zakonczenia = "Rok nie może być większy od 9999"
+            return render(request, 'museum_app/add_wydarzenie.html',
+                          {'form': form, 'error': error, 'error_data_rozpoczecia': error_data_rozpoczecia,
+                           'error_data_zakonczenia': error_data_zakonczenia, 'error_dates': error_dates})
+
+        if data_rozpoczecia > data_zakonczenia:
+            error_dates = "Data rozpoczęcia musi być przed datą zakończenia!"
+            return render(request, 'museum_app/add_wydarzenie.html',
+                          {'form': form, 'error': error, 'error_data_rozpoczecia': error_data_rozpoczecia,
+                           'error_data_zakonczenia': error_data_zakonczenia, 'error_dates': error_dates})
+
         for x in Oddzial.objects.all():
             if str(x.nazwa) == str(oddzial_nazwa):
                 oddzial = x
 
-        wydarzenie = Wydarzenie.objects.create(nazwa=nazwa, data_rozpoczecia=data_rozpoczecia,
-                                               data_zakonczenia=data_zakonczenia)
-        print(wydarzenie.id, file=sys.stderr)
+        try:
+            wydarzenie = Wydarzenie.objects.create(nazwa=nazwa, data_rozpoczecia=data_rozpoczecia,
+                                                   data_zakonczenia=data_zakonczenia)
+        except Exception as e:
+            error = e.args
+            if "Duplicate" in e.args[1]:
+                error = "Wydarzenie o takiej nazwie i dacie rozpoczęcia już istnieje"
+            return render(request, 'museum_app/add_wydarzenie.html',
+                          {'form': form, 'error': error, 'error_data_rozpoczecia': error_data_rozpoczecia,
+                           'error_data_zakonczenia': error_data_zakonczenia, 'error_dates': error_dates})
+
         Wydarzenie_oddzial.objects.create(oddzial_nazwa=oddzial, wydarzenie_id=wydarzenie)
         return redirect('/detailed/' + str(oddzial_nazwa) + '/oddzial')
 
-    return render(request, 'museum_app/add_wydarzenie.html', {'form': form})
+    return render(request, 'museum_app/add_wydarzenie.html',
+                  {'form': form, 'error': error, 'error_data_rozpoczecia': error_data_rozpoczecia,
+                   'error_data_zakonczenia': error_data_zakonczenia, 'error_dates': error_dates})
 
 
 def edit_oddzial(request, oddzial_nazwa):
@@ -678,7 +750,7 @@ def detailed_dzial(request, dzial_id):
     for x in Obraz.objects.all():
         try:
             if x.artysta_id.id == artysta_id:
-                obrazy.append((x.nazwa,x.nazwa))
+                obrazy.append((x.nazwa, x.nazwa))
         except:
             continue
 
@@ -686,7 +758,7 @@ def detailed_dzial(request, dzial_id):
     for x in Rzezba.objects.all():
         try:
             if x.artysta_id.id == artysta_id:
-                rzezby.append((x.nazwa,x.nazwa))
+                rzezby.append((x.nazwa, x.nazwa))
         except:
             continue
 
@@ -711,7 +783,7 @@ def detailed_artysta(request, artysta_id):
     for x in Obraz.objects.all():
         try:
             if x.artysta_id.id == artysta_id:
-                obrazy.append((x.nazwa,x.nazwa))
+                obrazy.append((x.nazwa, x.nazwa))
         except:
             continue
 
@@ -719,7 +791,7 @@ def detailed_artysta(request, artysta_id):
     for x in Rzezba.objects.all():
         try:
             if x.artysta_id.id == artysta_id:
-                rzezby.append((x.nazwa,x.nazwa))
+                rzezby.append((x.nazwa, x.nazwa))
         except:
             continue
 

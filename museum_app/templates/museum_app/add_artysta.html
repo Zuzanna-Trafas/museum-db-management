@@ -73,12 +73,22 @@
                         {{ error }}
                     </div>
                 {% endif %}
+                {% if error_birth != "" %}
+                    <div class="text-danger">
+                        {{ error_birth }}
+                    </div>
+                {% endif %}
             </div>
         </div>
         <div class="form-group">
             <div class="col-md-4">
                 <label for="death-date">Data śmierci</label>
                 {{ form.death_date }}
+                {% if error_death != "" %}
+                    <div class="text-danger">
+                        {{ error_death }}
+                    </div>
+                {% endif %}
             </div>
         </div>
         <div>
@@ -98,7 +108,7 @@
                 // Loop over them and prevent submission
                 var validation = Array.prototype.filter.call(forms, function (form) {
                     form.addEventListener('submit', function (event) {
-                        if (form.checkValidity() === false ) {
+                        if (form.checkValidity() === false) {
                             event.preventDefault();
                             event.stopPropagation();
                         }

@@ -202,7 +202,7 @@ class PracownikForm(forms.Form):
                                                               "id": "data_zatrudnienia", "placeholder": "dd-mm-yyyy",
                                                               "required": "true"}))
 
-    numer_telefonu = forms.CharField(widget=forms.TextInput(attrs={'type': "text", "class": "form-control", "id": "numer_telefonu", "required": "false"}))
+    numer_telefonu = forms.CharField(widget=forms.TextInput(attrs={'type': "text", "class": "form-control", "id": "numer_telefonu"}))
 
 
 class HarmonogramZwiedzaniaForm(forms.Form):

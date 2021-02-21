@@ -52,6 +52,11 @@
 <div class="px-5">
     <form class="needs-validation" id="form-name" method="post">
         {% csrf_token %}
+        {% if error != "" %}
+            <div class="text-danger">
+                {{ error }}
+            </div>
+        {% endif %}
         <div class="form-group">
             <div class="col-md-4">
                 <label for="name">Nazwa *</label>
@@ -62,12 +67,27 @@
             <div class="col-md-4">
                 <label for="start-date">Data rozpoczęcia *</label>
                 {{ form.data_rozpoczecia }}
+                {% if error_data_rozpoczecia != "" %}
+                    <div class="text-danger">
+                        {{ error_data_rozpoczecia }}
+                    </div>
+                {% endif %}
+                {% if error_dates != "" %}
+                    <div class="text-danger">
+                        {{ error_dates }}
+                    </div>
+                {% endif %}
             </div>
         </div>
         <div class="form-group">
             <div class="col-md-4">
                 <label for="end-date">Data zakończenia *</label>
                 {{ form.data_zakonczenia }}
+                {% if error_data_zakonczenia != "" %}
+                    <div class="text-danger">
+                        {{ error_data_zakonczenia }}
+                    </div>
+                {% endif %}
             </div>
         </div>
 
