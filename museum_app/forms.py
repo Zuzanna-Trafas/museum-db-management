@@ -7,21 +7,21 @@ OPTIONS = [("Pracownik", "Pracownik"),
            ("Stażysta", "Stażysta"),
            ("Kierownik", "Kierownik")]
 
-CHOICES = [("Odział", "Odział"),
+CHOICES = [("Oddział", "Oddział"),
            ("Wydarzenie", "Wydarzenie"),
            ("Dział", "Dział"),
            ("Dzieło", "Dzieło"),
            ("Artysta", "Artysta"),
            ("Rodzaj biletu", "Rodzaj biletu"),
-           ("Zakupiony bilet", "Zakupiony bilet"),
+           ("Bilet", "Bilet"),
            ("Pracownik", "Pracownik"),
-           ("Wycieczka","Wycieczka")]
+           ("Wycieczka", "Wycieczka")]
 
 class MainForm(forms.Form):
-    options1 = forms.CharField(label='Wybierz typ', widget=forms.Select(choices=CHOICES))
-    options2 = forms.CharField(label='Wybierz typ', widget=forms.Select(choices=[]))
-    options3 = forms.CharField(label='Wybierz typ', widget=forms.Select(choices=[]))
-    options4 = forms.CharField(label='Wybierz typ', widget=forms.Select(choices=[]))
+    options1 = forms.CharField(widget=forms.Select(choices=CHOICES, attrs={"value": 'Wybierz typ'}))
+    options2 = forms.CharField(widget=forms.Select(choices=[]))
+    options3 = forms.CharField(widget=forms.Select(choices=[]))
+    options4 = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'maxlength': "100"}))
 
 
 class OddzialForm(forms.Form):
@@ -47,11 +47,11 @@ class OddzialForm(forms.Form):
 class DzialForm(forms.Form):
     def __init__(self, oddzial_choices, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['oddzial_select'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
+        self.fields['oddzial_select'] = forms.ChoiceField(required=True, widget=forms.Select,
                                                                   choices=oddzial_choices)
         self.fields['epoch'].required = False
 
-    oddzial_select = forms.MultipleChoiceField()
+    oddzial_select = forms.ChoiceField()
 
     name = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "name",
                                                          'maxlength': "100", 'required': 'true'}))
@@ -67,16 +67,16 @@ class ObrazForm(forms.Form):
     def __init__(self, dzial_choices, artysta_choices, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.fields['dzial_select'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
+        self.fields['dzial_select'] = forms.ChoiceField(required=True, widget=forms.Select,
                                                                 choices=dzial_choices)
 
-        self.fields['artysta_select'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
+        self.fields['artysta_select'] = forms.ChoiceField(required=True, widget=forms.Select,
                                                                   choices=artysta_choices)
 
         self.fields['artysta_select'].required = False
 
-    dzial_select = forms.MultipleChoiceField()
-    artysta_select = forms.MultipleChoiceField()
+    dzial_select = forms.ChoiceField()
+    artysta_select = forms.ChoiceField()
 
     name = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "name",
                                                          'maxlength': "100"}))
@@ -93,16 +93,16 @@ class ObrazForm(forms.Form):
 class RzezbaForm(forms.Form):
     def __init__(self, dzial_choices, artysta_choices, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['dzial_select'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
+        self.fields['dzial_select'] = forms.ChoiceField(required=True, widget=forms.Select,
                                                                 choices=dzial_choices)
 
-        self.fields['artysta_select'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
+        self.fields['artysta_select'] = forms.ChoiceField(required=True, widget=forms.Select,
                                                                   choices=artysta_choices)
 
         self.fields['artysta_select'].required = False
 
-    dzial_select = forms.MultipleChoiceField()
-    artysta_select = forms.MultipleChoiceField()
+    dzial_select = forms.ChoiceField()
+    artysta_select = forms.ChoiceField()
 
     name = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "name",
                                                          'maxlength': "100"}))
@@ -136,18 +136,18 @@ class ArtystaForm(forms.Form):
 class BiletForm(forms.Form):
     def __init__(self, type_choices, wycieczka_choices, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['type'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
+        self.fields['type'] = forms.ChoiceField(required=True, widget=forms.Select,
                                                                   choices=type_choices)
 
-        self.fields['wycieczka'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
+        self.fields['wycieczka'] = forms.ChoiceField(required=True, widget=forms.Select,
                                                                   choices=wycieczka_choices)
 
         self.fields['przewodnik'] = forms.ChoiceField(required=True, widget=forms.RadioSelect, choices=[("tak", "tak"),("nie", "nie")])
 
         self.fields['wycieczka'].required = False
 
-    type = forms.MultipleChoiceField()
-    wycieczka = forms.MultipleChoiceField()
+    type = forms.ChoiceField()
+    wycieczka = forms.ChoiceField()
     przewodnik = forms.ChoiceField()
 
     purchase_date = forms.CharField(widget=forms.TextInput(attrs={"type": "date", "class": "form-control",
@@ -158,12 +158,12 @@ class BiletForm(forms.Form):
 class RodzajBiletuForm(forms.Form):
     def __init__(self, oddzial_choices, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['oddzial'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
+        self.fields['oddzial'] = forms.ChoiceField(required=True, widget=forms.Select,
                                                                   choices=oddzial_choices)
         self.fields['przewodnik'] = forms.ChoiceField(required=True, widget=forms.RadioSelect,
                                                       choices=[("tak", "tak"), ("nie", "nie")])
 
-    oddzial = forms.MultipleChoiceField()
+    oddzial = forms.ChoiceField()
     przewodnik = forms.ChoiceField()
     type = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "type",
                                                          'maxlength': "100", "required": "true"}))
@@ -175,7 +175,7 @@ class RodzajBiletuForm(forms.Form):
 class PracownikForm(forms.Form):
     def __init__(self, oddzial_choices, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['oddzial'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
+        self.fields['oddzial'] = forms.ChoiceField(required=True, widget=forms.Select,
                                                                   choices=oddzial_choices)
 
 
@@ -192,7 +192,7 @@ class PracownikForm(forms.Form):
         widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "surname",
                                       'maxlength': "50", "required": "true"}))
 
-    etat = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
+    etat = forms.ChoiceField(required=True, widget=forms.Select,
                                          choices=OPTIONS)
 
     placa = forms.CharField(widget=forms.TextInput(attrs={'type': "number", 'class': "form-control", 'id': "placa",
@@ -208,7 +208,7 @@ class PracownikForm(forms.Form):
 class HarmonogramZwiedzaniaForm(forms.Form):
     def __init__(self, pracownik_choices, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['pesel'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
+        self.fields['pesel'] = forms.ChoiceField(required=True, widget=forms.Select,
                                                                   choices=pracownik_choices)
     godzina = forms.CharField(widget=forms.TextInput(attrs={"type": "time", "class": "form-control",
                                                                "id": "godzina", "required": "true"}))
@@ -233,9 +233,9 @@ class WydarzenieForm(forms.Form):
 class DetailedArtystaForm(forms.Form):
     def __init__(self, obrazy_choices, rzezby_choices, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['obrazy'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
+        self.fields['obrazy'] = forms.MultipleChoiceField(required=True, widget=forms.Select,
                                                                   choices=obrazy_choices)
-        self.fields['rzezby'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
+        self.fields['rzezby'] = forms.MultipleChoiceField(required=True, widget=forms.Select,
                                                       choices=rzezby_choices)
 
     obrazy = forms.MultipleChoiceField()
