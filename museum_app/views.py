@@ -435,7 +435,7 @@ def add_bilet(request):
         harmonogram = None
         for x in Harmonogram_zwiedzania.objects.all():
             if str(x.id) == str(wycieczka):
-                harmonogram = xsplit
+                harmonogram = x
 
         if harmonogram is not None:
             if harmonogram.pracownik_pesel.oddzial_nazwa.nazwa != type[0]:
