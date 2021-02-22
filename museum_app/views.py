@@ -9,7 +9,7 @@ from plotly.graph_objs import Bar
 from museum_app.forms import OddzialForm, DzialForm, ObrazForm, RzezbaForm, ArtystaForm, BiletForm, RodzajBiletuForm, \
     PracownikForm, HarmonogramZwiedzaniaForm, WydarzenieForm, DetailedArtystaForm, DetailedDzialForm, \
     DetailedDzieloForm, DetailedOddzialForm, TableOddzialForm, TableDzialForm, TableArtystaForm, TableBiletyForm, \
-    TableHarmonogramZwiedzaniaForm, TableDzieloForm, TablePracownikForm, TableRodzajeBiletowForm, TableWydarzeniaForm,\
+    TableHarmonogramZwiedzaniaForm, TableDzieloForm, TablePracownikForm, TableRodzajeBiletowForm, TableWydarzeniaForm, \
     MainForm
 from museum_app.models import Oddzial, Wydarzenie, Wydarzenie_oddzial, Rodzaj_biletu, Pracownik, Harmonogram_zwiedzania, \
     Bilet, Dzial, Artysta, Obraz, Rzezba
@@ -66,11 +66,11 @@ def main(request):
                "wydarzenie": ["Nazwa", "Data rozpoczęcia", "Data zakończenia"],
                "dzial": ["Nazwa", "Nazwa oddziału", "Piętro", "Epoka"],
                "dzielo": ["Nazwa", "Artysta", "Dział"],
-                "artysta" : ["Imię", "Nazwisko", "Data urodzenia", "Data śmierci"],
-                "rodzaj_biletu" : ["Typ", "Oddział", "Czy z przewodnikiem", "Cena"],
-                "bilet": ["Data zakupu", "Oddział", "Typ biletu", "Cena", "Czy z przewodnikiem"],
-                "pracownik": ["Pesel", "Imię", "Nazwisko", "Płaca", "Etat", "Data zatrudnienia", "Numer telefonu"],
-                "harmonogram_zwiedzania": ["Data", "Godzina rozpoczęcia", "Przewodnik", "Ilość kupionych biletów"]}
+               "artysta": ["Imię", "Nazwisko", "Data urodzenia", "Data śmierci"],
+               "rodzaj_biletu": ["Typ", "Oddział", "Czy z przewodnikiem", "Cena"],
+               "bilet": ["Data zakupu", "Oddział", "Typ biletu", "Cena", "Czy z przewodnikiem"],
+               "pracownik": ["Pesel", "Imię", "Nazwisko", "Płaca", "Etat", "Data zatrudnienia", "Numer telefonu"],
+               "harmonogram_zwiedzania": ["Data", "Godzina rozpoczęcia", "Przewodnik", "Ilość kupionych biletów"]}
     wyniki = []
     print(request.POST, file=sys.stderr)
     if form.is_valid():
@@ -82,9 +82,9 @@ def main(request):
         return render(request, 'museum_app/main.html',
                       context={'form': form, 'plot_div': plot_div, 'kolumny': kolumny[options1], 'wyniki': wyniki})
 
-
-    #TODO jaki format wyników tho = for (obiektow) a w nim for (atrybutow)
-    return render(request, 'museum_app/main.html', context={'form': form, 'plot_div': plot_div, 'kolumny': [], 'wyniki': wyniki})
+    # TODO jaki format wyników tho = for (obiektow) a w nim for (atrybutow)
+    return render(request, 'museum_app/main.html',
+                  context={'form': form, 'plot_div': plot_div, 'kolumny': [], 'wyniki': wyniki})
 
 
 def oddzialy(request):
@@ -259,13 +259,15 @@ def add_oddzial(request):
         if opening_hour > closing_hour:
             error_time = "Godzina otwarcia musi być przed godziną zamknięcia!"
             return render(request, 'museum_app/add_oddzial.html',
-                          {'form': form, 'error_time': error_time, 'error_number': error_number, 'error': error})
+                          {'form': form, 'error_time': error_time, 'error_number': error_number, 'error': error,
+                           'tag': "Dodaj"})
 
         validator = number_validator(number)
         if validator == -1:
             error_number = "Niepoprawny numer telefonu."
             return render(request, 'museum_app/add_oddzial.html',
-                          {'form': form, 'error_time': error_time, 'error_number': error_number, 'error': error})
+                          {'form': form, 'error_time': error_time, 'error_number': error_number, 'error': error,
+                           'tag': "Dodaj"})
         else:
             number = validator
         try:
@@ -276,13 +278,15 @@ def add_oddzial(request):
             if "Duplicate" in e.args[1]:
                 error = "Ta nazwa oddziału już istnieje."
             return render(request, 'museum_app/add_oddzial.html',
-                          {'form': form, 'error_time': error_time, 'error_number': error_number, 'error': error})
+                          {'form': form, 'error_time': error_time, 'error_number': error_number, 'error': error,
+                           'tag': "Dodaj"})
 
         else:
             return redirect('/table/oddzialy')
 
     return render(request, 'museum_app/add_oddzial.html',
-                  {'form': form, 'error_time': error_time, 'error_number': error_number, 'error': error})
+                  {'form': form, 'error_time': error_time, 'error_number': error_number, 'error': error,
+                   'tag': "Dodaj"})
 
 
 def add_dzial(request):
@@ -304,10 +308,10 @@ def add_dzial(request):
             if "Duplicate" in e.args[1]:
                 error = "Dział o tej nazwie już istnieje na wybranym oddziale."
             return render(request, 'museum_app/add_dzial.html',
-                          {'form': form, 'error': error})
+                          {'form': form, 'error': error, 'tag': "Dodaj"})
         else:
             return redirect('/table/dzialy')
-    return render(request, 'museum_app/add_dzial.html', {'form': form, 'error': error})
+    return render(request, 'museum_app/add_dzial.html', {'form': form, 'error': error, 'tag': "Dodaj"})
 
 
 def add_obraz(request):
@@ -341,7 +345,7 @@ def add_obraz(request):
         Obraz.objects.create(nazwa=name, szerokosc=width, wysokosc=height, dzial_id=dzial_id, artysta_id=artysta_id)
         return redirect('/table/dziela')
 
-    return render(request, 'museum_app/add_obraz.html', {'form': form})
+    return render(request, 'museum_app/add_obraz.html', {'form': form, 'tag': "Dodaj"})
 
 
 def add_rzezba(request):
@@ -375,7 +379,7 @@ def add_rzezba(request):
         Rzezba.objects.create(nazwa=name, waga=weight, material=material, dzial_id=dzial_id, artysta_id=artysta_id)
         return redirect('/table/dziela')
 
-    return render(request, 'museum_app/add_rzezba.html', {'form': form})
+    return render(request, 'museum_app/add_rzezba.html', {'form': form, 'tag': "Dodaj"})
 
 
 def add_artysta(request):
@@ -394,17 +398,20 @@ def add_artysta(request):
         if len(birth_year) > 4:
             error_birth = "Rok nie może być większy od 9999"
             return render(request, 'museum_app/add_artysta.html',
-                          {'form': form, 'error': error, 'error_birth': error_birth, 'error_death': error_death})
+                          {'form': form, 'error': error, 'error_birth': error_birth, 'error_death': error_death,
+                           'tag': "Dodaj"})
         if death_date != "":
             death_year = death_date.split("-")[0]
             if len(death_year) > 4:
                 error_death = "Rok nie może być większy od 9999"
                 return render(request, 'museum_app/add_artysta.html',
-                              {'form': form, 'error': error, 'error_birth': error_birth, 'error_death': error_death})
+                              {'form': form, 'error': error, 'error_birth': error_birth, 'error_death': error_death,
+                               'tag': "Dodaj"})
             if death_date < birth_date:
                 error = "Data urodzenia musi być wcześniejsza niż data śmierci!"
                 return render(request, 'museum_app/add_artysta.html',
-                              {'form': form, 'error': error, 'error_birth': error_birth, 'error_death': error_death})
+                              {'form': form, 'error': error, 'error_birth': error_birth, 'error_death': error_death,
+                               'tag': "Dodaj"})
 
         else:
             death_date = None
@@ -412,7 +419,8 @@ def add_artysta(request):
         return redirect('/table/artysci')
 
     return render(request, 'museum_app/add_artysta.html',
-                  {'form': form, 'error': error, 'error_birth': error_birth, 'error_death': error_death})
+                  {'form': form, 'error': error, 'error_birth': error_birth, 'error_death': error_death,
+                   'tag': "Dodaj"})
 
 
 def add_bilet(request):
@@ -439,7 +447,8 @@ def add_bilet(request):
         if len(purchase_date.split("-")[0]) > 4:
             error_data = "Rok nie może być większy niż 9999"
             return render(request, 'museum_app/add_bilet.html',
-                          {'form': form, 'error': error, 'error_oddzial': error_oddzial, 'error_data': error_data})
+                          {'form': form, 'error': error, 'error_oddzial': error_oddzial, 'error_data': error_data,
+                           'tag': "Dodaj"})
 
         rodzaj_biletu_id = None
         for x in Rodzaj_biletu.objects.all():
@@ -450,7 +459,8 @@ def add_bilet(request):
         if rodzaj_biletu_id == None:
             error = "Dla tego typu biletu nie można wybrać wycieczki"
             return render(request, 'museum_app/add_bilet.html',
-                          {'form': form, 'error': error, 'error_oddzial': error_oddzial, 'error_data': error_data})
+                          {'form': form, 'error': error, 'error_oddzial': error_oddzial, 'error_data': error_data,
+                           'tag': "Dodaj"})
 
         harmonogram = None
         for x in Harmonogram_zwiedzania.objects.all():
@@ -461,7 +471,8 @@ def add_bilet(request):
             if harmonogram.pracownik_pesel.oddzial_nazwa.nazwa != type[0]:
                 error_oddzial = "Ta wycieczka odbywa się na innym oddziale!"
                 return render(request, 'museum_app/add_bilet.html',
-                              {'form': form, 'error': error, 'error_oddzial': error_oddzial, 'error_data': error_data})
+                              {'form': form, 'error': error, 'error_oddzial': error_oddzial, 'error_data': error_data,
+                               'tag': "Dodaj"})
 
         Bilet.objects.create(data_zakupu=purchase_date, rodzaj_biletu_id=rodzaj_biletu_id,
                              harmonogram_zwiedzania_id=harmonogram)
@@ -469,7 +480,8 @@ def add_bilet(request):
         return redirect('/table/bilety')
 
     return render(request, 'museum_app/add_bilet.html',
-                  {'form': form, 'error': error, 'error_oddzial': error_oddzial, 'error_data': error_data})
+                  {'form': form, 'error': error, 'error_oddzial': error_oddzial, 'error_data': error_data,
+                   'tag': "Dodaj"})
 
 
 def add_rodzaj_biletu(request):
@@ -494,11 +506,11 @@ def add_rodzaj_biletu(request):
             error = e.args
             if "Duplicate" in e.args[1]:
                 error = "Taki rodzaj bilet już istnieje."
-            return render(request, 'museum_app/add_rodzaj_biletu.html', {'form': form, 'error': error})
+            return render(request, 'museum_app/add_rodzaj_biletu.html', {'form': form, 'error': error, 'tag': "Dodaj"})
 
         return redirect('/table/rodzaje_biletow')
 
-    return render(request, 'museum_app/add_rodzaj_biletu.html', {'form': form, 'error': error})
+    return render(request, 'museum_app/add_rodzaj_biletu.html', {'form': form, 'error': error, 'tag': "Dodaj"})
 
 
 def add_pracownik(request):
@@ -519,7 +531,8 @@ def add_pracownik(request):
         if len(data_zatrudnienia.split("-")[0]) > 4:
             error_date = "Rok nie może być większy od 9999"
             return render(request, 'museum_app/add_pracownik.html',
-                          {'form': form, 'error_number': error_number, 'error': error, 'error_date': error_date})
+                          {'form': form, 'error_number': error_number, 'error': error, 'error_date': error_date,
+                           'tag': "Dodaj"})
 
         for x in Oddzial.objects.all():
             if str(x.nazwa) == str(oddzial):
@@ -529,7 +542,8 @@ def add_pracownik(request):
         if validator == -1:
             error_number = "Niepoprawny numer telefonu."
             return render(request, 'museum_app/add_pracownik.html',
-                          {'form': form, 'error_number': error_number, 'error': error, 'error_date': error_date})
+                          {'form': form, 'error_number': error_number, 'error': error, 'error_date': error_date,
+                           'tag': "Dodaj"})
         else:
             numer_telefonu = validator
 
@@ -542,12 +556,14 @@ def add_pracownik(request):
             if "Duplicate" in e.args[1]:
                 error = "Pracownik o tym peselu już istnieje"
             return render(request, 'museum_app/add_pracownik.html',
-                          {'form': form, 'error_number': error_number, 'error': error, 'error_date': error_date})
+                          {'form': form, 'error_number': error_number, 'error': error, 'error_date': error_date,
+                           'tag': "Dodaj"})
         else:
             return redirect('/table/pracownicy')
 
     return render(request, 'museum_app/add_pracownik.html',
-                  {'form': form, 'error_number': error_number, 'error': error, 'error_date': error_date})
+                  {'form': form, 'error_number': error_number, 'error': error, 'error_date': error_date,
+                   'tag': "Dodaj"})
 
 
 def add_harmonogram_zwiedzania(request):
@@ -564,7 +580,7 @@ def add_harmonogram_zwiedzania(request):
         if len(data.split("-")[0]) > 4:
             error_date = "Rok nie może być większy od 9999"
             return render(request, 'museum_app/add_harmonogram_zwiedzania.html',
-                          {'form': form, 'error': error, 'error_date': error_date})
+                          {'form': form, 'error': error, 'error_date': error_date, 'tag': "Dodaj"})
 
         for x in Pracownik.objects.all():
             if str(x.pesel) == str(pesel):
@@ -577,12 +593,12 @@ def add_harmonogram_zwiedzania(request):
             if "Duplicate" in e.args[1]:
                 error = "Taki harmonogram zwiedzania już istnieje"
             return render(request, 'museum_app/add_harmonogram_zwiedzania.html',
-                          {'form': form, 'error': error, 'error_date': error_date})
+                          {'form': form, 'error': error, 'error_date': error_date, 'tag': "Dodaj"})
         else:
             return redirect('/table/harmonogram_zwiedzania')
 
     return render(request, 'museum_app/add_harmonogram_zwiedzania.html',
-                  {'form': form, 'error': error, 'error_date': error_date})
+                  {'form': form, 'error': error, 'error_date': error_date, 'tag': "Dodaj"})
 
 
 def add_wydarzenie(request, oddzial_nazwa):
@@ -601,19 +617,22 @@ def add_wydarzenie(request, oddzial_nazwa):
             error_data_rozpoczecia = "Rok nie może być większy od 9999"
             return render(request, 'museum_app/add_wydarzenie.html',
                           {'form': form, 'error': error, 'error_data_rozpoczecia': error_data_rozpoczecia,
-                           'error_data_zakonczenia': error_data_zakonczenia, 'error_dates': error_dates})
+                           'error_data_zakonczenia': error_data_zakonczenia, 'error_dates': error_dates,
+                           'tag': "Dodaj"})
 
         if len(data_zakonczenia.split("-")[0]) > 4:
             error_data_zakonczenia = "Rok nie może być większy od 9999"
             return render(request, 'museum_app/add_wydarzenie.html',
                           {'form': form, 'error': error, 'error_data_rozpoczecia': error_data_rozpoczecia,
-                           'error_data_zakonczenia': error_data_zakonczenia, 'error_dates': error_dates})
+                           'error_data_zakonczenia': error_data_zakonczenia, 'error_dates': error_dates,
+                           'tag': "Dodaj"})
 
         if data_rozpoczecia > data_zakonczenia:
             error_dates = "Data rozpoczęcia musi być przed datą zakończenia!"
             return render(request, 'museum_app/add_wydarzenie.html',
                           {'form': form, 'error': error, 'error_data_rozpoczecia': error_data_rozpoczecia,
-                           'error_data_zakonczenia': error_data_zakonczenia, 'error_dates': error_dates})
+                           'error_data_zakonczenia': error_data_zakonczenia, 'error_dates': error_dates,
+                           'tag': "Dodaj"})
 
         oddzialy = []
         for x in Oddzial.objects.all():
@@ -629,7 +648,8 @@ def add_wydarzenie(request, oddzial_nazwa):
                 error = "Wydarzenie o takiej nazwie i dacie rozpoczęcia już istnieje"
             return render(request, 'museum_app/add_wydarzenie.html',
                           {'form': form, 'error': error, 'error_data_rozpoczecia': error_data_rozpoczecia,
-                           'error_data_zakonczenia': error_data_zakonczenia, 'error_dates': error_dates})
+                           'error_data_zakonczenia': error_data_zakonczenia, 'error_dates': error_dates,
+                           'tag': "Dodaj"})
 
         for oddzial in oddzialy:
             Wydarzenie_oddzial.objects.create(oddzial_nazwa=oddzial, wydarzenie_id=wydarzenie)
@@ -638,7 +658,7 @@ def add_wydarzenie(request, oddzial_nazwa):
 
     return render(request, 'museum_app/add_wydarzenie.html',
                   {'form': form, 'error': error, 'error_data_rozpoczecia': error_data_rozpoczecia,
-                   'error_data_zakonczenia': error_data_zakonczenia, 'error_dates': error_dates})
+                   'error_data_zakonczenia': error_data_zakonczenia, 'error_dates': error_dates, 'tag': "Dodaj"})
 
 
 def edit_oddzial(request, oddzial_nazwa):
