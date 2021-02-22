@@ -580,7 +580,7 @@ def add_wydarzenie(request, oddzial_nazwa):
     form = WydarzenieForm([(x.nazwa, x.nazwa) for x in Oddzial.objects.all()], request.POST)
     if form.is_valid():
         nazwa = form.cleaned_data['nazwa']
-        oddzial = form.cleaned_data['oddzial_select']
+        oddzialy_select = form.cleaned_data['oddzial_select']
         data_rozpoczecia = form.cleaned_data['data_rozpoczecia']
         data_zakonczenia = form.cleaned_data['data_zakonczenia']
 
@@ -602,9 +602,10 @@ def add_wydarzenie(request, oddzial_nazwa):
                           {'form': form, 'error': error, 'error_data_rozpoczecia': error_data_rozpoczecia,
                            'error_data_zakonczenia': error_data_zakonczenia, 'error_dates': error_dates})
 
+        oddzialy = []
         for x in Oddzial.objects.all():
-            if str(x.nazwa) == str(oddzial_nazwa):
-                oddzial = x
+            if str(x.nazwa) in oddzialy_select:
+                oddzialy.append(x)
 
         try:
             wydarzenie = Wydarzenie.objects.create(nazwa=nazwa, data_rozpoczecia=data_rozpoczecia,
@@ -617,7 +618,9 @@ def add_wydarzenie(request, oddzial_nazwa):
                           {'form': form, 'error': error, 'error_data_rozpoczecia': error_data_rozpoczecia,
                            'error_data_zakonczenia': error_data_zakonczenia, 'error_dates': error_dates})
 
-        Wydarzenie_oddzial.objects.create(oddzial_nazwa=oddzial, wydarzenie_id=wydarzenie)
+        for oddzial in oddzialy:
+            Wydarzenie_oddzial.objects.create(oddzial_nazwa=oddzial, wydarzenie_id=wydarzenie)
+
         return redirect('/detailed/' + str(oddzial_nazwa) + '/oddzial')
 
     return render(request, 'museum_app/add_wydarzenie.html',
