@@ -79,7 +79,7 @@
                     <td><a type="button" class="btn btn-secondary float-right" role="button" href="{% url 'detailed_artysta' artysta.id %}">Widok
                         szczegółowy</a></td>
                     <td><a type="button" class="btn btn-secondary float-right" role="button"
-                           href="/edit/artysta">Edytuj</a></td>
+                           href="{% url 'edit_artysta' artysta.id %}">Edytuj</a></td>
                 </tr>
             {% endfor %}
             </tbody>

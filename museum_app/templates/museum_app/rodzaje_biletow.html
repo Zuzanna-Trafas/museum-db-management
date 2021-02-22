@@ -77,7 +77,7 @@
                     <td>{{ rodzaj.oddzial_nazwa_id }}</td>
                     <td>{% if rodzaj.czy_z_przewodnikiem == True %}Tak{% else %}Nie{% endif %}</td>
                     <td>{{ rodzaj.cena|floatformat:2 }} PLN</td>
-                    <td><a type="button" class="btn btn-secondary float-right" role="button" href="/edit/rodzaj_biletu">Edytuj</a>
+                    <td><a type="button" class="btn btn-secondary float-right" role="button" href="{% url 'edit_rodzaj_biletu' rodzaj.id %}">Edytuj</a>
                     </td>
                 </tr>
             {% endfor %}

@@ -79,7 +79,7 @@
                     <td>{{ x.2 }} {{ x.3 }}</td>
                     <td>{{ x.4 }}</td>
                     <td><a type="button" class="btn btn-secondary float-right" role="button"
-                           href="/edit/harmonogram_zwiedzania">Edytuj</a></td>
+                           href="{% url 'edit_harmonogram_zwiedzania' x.5 %}">Edytuj</a></td>
                 </tr>
             {% endfor %}
             </tbody>
