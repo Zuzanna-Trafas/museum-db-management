@@ -80,6 +80,7 @@ class DzialForm(forms.Form):
 
 class ObrazForm(forms.Form):
     def __init__(self, dzial_choices, artysta_choices, *args, **kwargs):
+        instance = kwargs.pop('instance', None)
         super().__init__(*args, **kwargs)
 
         self.fields['dzial_select'] = forms.ChoiceField(required=True, widget=forms.Select,
@@ -89,6 +90,10 @@ class ObrazForm(forms.Form):
                                                                   choices=artysta_choices)
 
         self.fields['artysta_select'].required = False
+        if instance:
+             self.fields['name'].initial = instance['name']
+             self.fields['width'].initial = instance['width']
+             self.fields['height'].initial = instance['height']
 
     dzial_select = forms.ChoiceField()
     artysta_select = forms.ChoiceField()
@@ -157,13 +162,10 @@ class BiletForm(forms.Form):
         self.fields['wycieczka'] = forms.ChoiceField(required=True, widget=forms.Select,
                                                                   choices=wycieczka_choices)
 
-        self.fields['przewodnik'] = forms.ChoiceField(required=True, widget=forms.RadioSelect, choices=[("tak", "tak"),("nie", "nie")])
-
         self.fields['wycieczka'].required = False
 
     type = forms.ChoiceField()
     wycieczka = forms.ChoiceField()
-    przewodnik = forms.ChoiceField()
 
     purchase_date = forms.CharField(widget=forms.TextInput(attrs={"type": "date", "class": "form-control",
                                                                   "id": "purchase-date", "required": "true"}))

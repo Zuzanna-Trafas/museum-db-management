@@ -14,6 +14,7 @@ from museum_app.forms import OddzialForm, DzialForm, ObrazForm, RzezbaForm, Arty
 from museum_app.models import Oddzial, Wydarzenie, Wydarzenie_oddzial, Rodzaj_biletu, Pracownik, Harmonogram_zwiedzania, \
     Bilet, Dzial, Artysta, Obraz, Rzezba
 import sys
+import json
 
 
 # TODO walidacja pól unique
@@ -428,11 +429,15 @@ def add_bilet(request):
     error_oddzial = ""
     error_data = ""
     typ = []
+    is_przewodnik = []
     for x in Rodzaj_biletu.objects.all():
-        if (str(x.typ) + " ; " + str(x.oddzial_nazwa.nazwa), str(x.typ) + ", " + str(x.oddzial_nazwa.nazwa)) not in typ:
-            typ.append(
-                (str(x.typ) + " ; " + str(x.oddzial_nazwa.nazwa), str(x.typ) + ", " + str(x.oddzial_nazwa.nazwa)))
-
+        if x.czy_z_przewodnikiem == 0:
+            typ.append((x.id, str(x.typ) + " bez przewodnika, " + str(x.oddzial_nazwa.nazwa)))
+            is_przewodnik.append((x.id, 0))
+        else:
+            typ.append((x.id, str(x.typ) + " z przewodnikiem, " + str(x.oddzial_nazwa.nazwa)))
+            is_przewodnik.append((x.id, 1))
+    json_przewodnik = json.dumps(is_przewodnik)
     form = BiletForm(typ, [
         (x.id, str(x.pracownik_pesel.oddzial_nazwa.nazwa) + ", " + str(x.data) + " " + str(x.godzina_rozpoczecia) +
          ", " + str(x.pracownik_pesel.imie) + " " + str(x.pracownik_pesel.nazwisko)) for x in
@@ -440,27 +445,19 @@ def add_bilet(request):
                      request.POST)
     if form.is_valid():
         purchase_date = form.cleaned_data['purchase_date']
-        przewodnik = form.cleaned_data['przewodnik']
-        type = form.cleaned_data['type'].split(" ; ")
+        type = form.cleaned_data['type']
         wycieczka = form.cleaned_data['wycieczka']
 
         if len(purchase_date.split("-")[0]) > 4:
             error_data = "Rok nie może być większy niż 9999"
             return render(request, 'museum_app/add_bilet.html',
                           {'form': form, 'error': error, 'error_oddzial': error_oddzial, 'error_data': error_data,
-                           'tag': "Dodaj"})
+                           'tag': "Dodaj", "json_przewodnik": json_przewodnik})
 
         rodzaj_biletu_id = None
         for x in Rodzaj_biletu.objects.all():
-            if x.typ == type[0] and ((przewodnik == "tak" and x.czy_z_przewodnikiem == True) or (
-                    przewodnik == "nie" and x.czy_z_przewodnikiem == False)) and x.oddzial_nazwa.nazwa == type[1]:
+            if str(x.id) == str(type):
                 rodzaj_biletu_id = x
-
-        if rodzaj_biletu_id == None:
-            error = "Dla tego typu biletu nie można wybrać wycieczki"
-            return render(request, 'museum_app/add_bilet.html',
-                          {'form': form, 'error': error, 'error_oddzial': error_oddzial, 'error_data': error_data,
-                           'tag': "Dodaj"})
 
         harmonogram = None
         for x in Harmonogram_zwiedzania.objects.all():
@@ -468,11 +465,11 @@ def add_bilet(request):
                 harmonogram = x
 
         if harmonogram is not None:
-            if harmonogram.pracownik_pesel.oddzial_nazwa.nazwa != type[0]:
+            if harmonogram.pracownik_pesel.oddzial_nazwa.nazwa != rodzaj_biletu_id.oddzial_nazwa.nazwa:
                 error_oddzial = "Ta wycieczka odbywa się na innym oddziale!"
                 return render(request, 'museum_app/add_bilet.html',
                               {'form': form, 'error': error, 'error_oddzial': error_oddzial, 'error_data': error_data,
-                               'tag': "Dodaj"})
+                               'tag': "Dodaj", "json_przewodnik": json_przewodnik})
 
         Bilet.objects.create(data_zakupu=purchase_date, rodzaj_biletu_id=rodzaj_biletu_id,
                              harmonogram_zwiedzania_id=harmonogram)
@@ -481,7 +478,7 @@ def add_bilet(request):
 
     return render(request, 'museum_app/add_bilet.html',
                   {'form': form, 'error': error, 'error_oddzial': error_oddzial, 'error_data': error_data,
-                   'tag': "Dodaj"})
+                   'tag': "Dodaj", "json_przewodnik": json_przewodnik})
 
 
 def add_rodzaj_biletu(request):
@@ -692,6 +689,10 @@ def edit_oddzial(request, oddzial_nazwa):
         else:
             number = validator
 
+        if oddzial_nazwa != name:
+            cursor = connection.cursor()
+            cursor.execute("UPDATE museum_app_oddzial SET nazwa = %s WHERE nazwa = %s;", [name, oddzial_nazwa])
+            cursor.close()
         oddzial.nazwa = name
         oddzial.godzina_otwarcia = opening_hour
         oddzial.godzina_zamkniecia = closing_hour
@@ -751,10 +752,51 @@ def edit_dzial(request, dzial_id):
     return render(request, 'museum_app/add_dzial.html', {'form': form, 'error': error})
 
 
-def edit_obraz(request):
+def edit_obraz(request, obraz_id):
+    obraz = get_object_or_404(Obraz, pk=obraz_id)
+    initial_values = {'name': obraz.nazwa,
+                      'width': obraz.szerokosc,
+                      'height': obraz.wysokosc}
+    artysta_choices = [("-", "-")]
+    for x in Artysta.objects.all():
+        artysta_choices.append((x.id, x.imie + " " + x.nazwisko))
+    dzial_choices = [(str(x.nazwa) + " ; " + str(x.oddzial_nazwa.nazwa), str(x.nazwa) + ", " + str(x.oddzial_nazwa.nazwa)) for x in
+         Dzial.objects.all()],
 
-    form = ObrazForm(request.POST)
-    return render(request, 'museum_app/add_obraz.html', {'form': form})
+    if request.POST:
+        form = ObrazForm(dzial_choices, artysta_choices, request.POST)
+    else:
+        form = ObrazForm(dzial_choices, artysta_choices, instance=initial_values)
+
+    if form.is_valid():
+        name = form.cleaned_data['name']
+        width = form.cleaned_data['width']
+        height = form.cleaned_data['height']
+        dzial_select = form.cleaned_data['dzial_select'].split(" ; ")
+        artysta_select = form.cleaned_data['artysta_select']
+        if artysta_select == "-":
+            artysta_select = None
+
+        dzial_id = None
+        for x in Dzial.objects.all():
+            if x.nazwa == dzial_select[0] and x.oddzial_nazwa.nazwa == dzial_select[1]:
+                dzial_id = x
+
+        artysta_id = None
+        for x in Artysta.objects.all():
+            if str(x.id) == artysta_select:
+                artysta_id = x
+
+        obraz.nazwa = name
+        obraz.szerokosc = width
+        obraz.wysokosc = height
+        obraz.dzial_id = dzial_id
+        obraz.artysta_id = artysta_id
+
+        obraz.save(force_update=True)
+        return redirect('/table/dziela')
+
+    return render(request, 'museum_app/add_obraz.html', {'form': form, 'tag': "Edytuj"})
 
 
 def edit_rzezba(request):

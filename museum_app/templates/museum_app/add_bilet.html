@@ -70,20 +70,6 @@
             </div>
         </div>
         <div class="form-group">
-            <div id="radios" class="col-md-4">
-                <label for="guide">Czy z przewodnikiem? *</label>
-                <div class='form-check form-check-inline pl-3 pt-1'>
-                    <label class='form-check-label' for='guide'></label>
-                    <div>{{ form.przewodnik }}</div>
-                </div>
-                {% if error != "" %}
-                    <div class="text-danger">
-                        {{ error }}
-                    </div>
-                {% endif %}
-            </div>
-        </div>
-        <div class="form-group">
             <div id="wycieczki" class="col-md-4">
                 <label for="tour">Wycieczka *</label>
                 <div>{{ form.wycieczka }}</div>
@@ -96,7 +82,7 @@
         </div>
         <div>
             <div class="ml-auto p-2 pb-5">
-                <button type="submit" class="btn btn-secondary">Dodaj</button>
+                <button type="submit" class="btn btn-secondary">{{ tag }}</button>
             </div>
         </div>
     </form>
@@ -104,34 +90,35 @@
 
     <script>
         window.onload = function () {
-            var txt = $('#wycieczki');
-
-            txt.hide();
-            $('#id_wycieczka').removeAttr("required");
+            var przewodnik = {{ json_przewodnik|safe }};
+            var e = document.getElementById("id_type");
+            var strUser = e.options[e.selectedIndex].value;
+            show(strUser, przewodnik);
         };
 
         $(document).ready(function () {
-            $("#id_przewodnik_0").click(function () {
-                show();
-            });
-            $("#id_przewodnik_1").click(function () {
-                disable();
+            var przewodnik = {{ json_przewodnik|safe }};
+            $("#id_type").click(function () {
+                var e = document.getElementById("id_type");
+                var strUser = e.options[e.selectedIndex].value;
+                show(strUser, przewodnik);
             });
         });
 
-        function show() {
+        function show(val, przewodnik) {
             var txt = $('#wycieczki');
-
-            txt.show();
-            $('#id_wycieczka').attr("required", "true");
-        }
-
-        function disable() {
-            var txt = $('#wycieczki');
-
-            txt.hide();
-            $('#id_wycieczka').removeAttr("required");
-            //txt.attr("disabled", "true");
+            for (var i = 0; i < przewodnik.length; i++) {
+                console.log(val);
+                if (przewodnik[i][0] === parseInt(val) && przewodnik[i][1] === 1) {
+                    console.log("SHOW");
+                    txt.show();
+                    $('#id_wycieczka').attr("required", "true");
+                } else if (przewodnik[i][0] === parseInt(val) && przewodnik[i][1] === 0) {
+                    console.log("HIDE");
+                    txt.hide();
+                    $('#id_wycieczka').removeAttr("required");
+                }
+            }
         }
 
         // Example starter JavaScript for disabling form submissions if there are invalid fields

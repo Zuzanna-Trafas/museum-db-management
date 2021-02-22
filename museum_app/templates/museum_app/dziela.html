@@ -78,7 +78,7 @@
                     <td><a type="button" class="btn btn-secondary float-right" role="button" href="{% url 'detailed_obraz' obraz.id %}">Widok
                         szczegółowy</a></td>
                     <td><a type="button" class="btn btn-secondary float-right" role="button"
-                           href="/edit/dzielo">Edytuj</a></td>
+                           href="{% url 'edit_obraz' obraz.id %}">Edytuj</a></td>
                 </tr>
             {% endfor %}
             {% for rzezba in rzezby %}
@@ -93,7 +93,7 @@
                     <td><a type="button" class="btn btn-secondary float-right" role="button" href="{% url 'detailed_rzezba' rzezba.id %}">Widok
                         szczegółowy</a></td>
                     <td><a type="button" class="btn btn-secondary float-right" role="button"
-                           href="/edit/dzielo">Edytuj</a></td>
+                           href="{% url 'edit_rzezba' rzezba.id %}">Edytuj</a></td>
                 </tr>
             {% endfor %}
             </tbody>
