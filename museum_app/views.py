@@ -40,11 +40,11 @@ def main(request):
     form = MainForm(request.POST)
 
     cursor = connection.cursor()
-    cursor.execute("SET NAMES 'UTF8';")  # or utf8 or any other charset you want to handle
+    cursor.execute("SET NAMES 'utf8mb3';")  # or utf8 or any other charset you want to handle
 
-    cursor.execute("SET CHARACTER SET 'UTF8';")  # same as above
+    cursor.execute("SET CHARACTER SET 'utf8mb3';")  # same as above
 
-    cursor.execute("SET character_set_connection='UTF8';")  # same as above
+    cursor.execute("SET character_set_connection='utf8mb3';")  # same as above
 
     rodzaj_biletu = Rodzaj_biletu.objects.all()
     x = []
@@ -752,13 +752,12 @@ def edit_dzial(request, dzial_id):
 
 
 def edit_obraz(request):
-    # TODO dynamically fill Działy depending on Oddziały or merge both to one select field
+
     form = ObrazForm(request.POST)
     return render(request, 'museum_app/add_obraz.html', {'form': form})
 
 
 def edit_rzezba(request):
-    # TODO dynamically fill Działy depending on Oddziały or merge both to one select field
     form = RzezbaForm(request.POST)
     return render(request, 'museum_app/add_rzezba.html', {'form': form})
 
