@@ -703,7 +703,7 @@ def edit_dzial(request, dzial_id):
         dzial.nazwa = name
         dzial.pietro = floor
         dzial.epoka = epoch
-        dzial.oddzial_nazwa = x
+        dzial.oddzial_nazwa = oddzial
 
         try:
             dzial.save(force_update=True)
