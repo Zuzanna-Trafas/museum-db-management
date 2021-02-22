@@ -6,6 +6,8 @@ from django.http import Http404
 from django.db import connection
 from plotly.offline import plot
 from plotly.graph_objs import Bar
+import datetime
+import unicodedata
 from museum_app.forms import OddzialForm, DzialForm, ObrazForm, RzezbaForm, ArtystaForm, BiletForm, RodzajBiletuForm, \
     PracownikForm, HarmonogramZwiedzaniaForm, WydarzenieForm, DetailedArtystaForm, DetailedDzialForm, \
     DetailedDzieloForm, DetailedOddzialForm, TableOddzialForm, TableDzialForm, TableArtystaForm, TableBiletyForm, \
@@ -17,6 +19,8 @@ import sys
 
 
 # TODO walidacja pól unique
+def strip_accents(text):
+    return ''.join(c for c in unicodedata.normalize('NFKD', text) if unicodedata.category(c) != 'Mn')
 
 def number_validator(number):
     if len(number) == 0:
@@ -62,29 +66,305 @@ def main(request):
     cursor.close()
 
     # TODO searching
-    kolumny = {"oddzial": ["Nazwa", "Godzina otwarcia", "Godzina zamknięcia", "Adres", "Numer telefonu"],
-               "wydarzenie": ["Nazwa", "Data rozpoczęcia", "Data zakończenia"],
-               "dzial": ["Nazwa", "Nazwa oddziału", "Piętro", "Epoka"],
-               "dzielo": ["Nazwa", "Artysta", "Dział"],
-               "artysta": ["Imię", "Nazwisko", "Data urodzenia", "Data śmierci"],
-               "rodzaj_biletu": ["Typ", "Oddział", "Czy z przewodnikiem", "Cena"],
-               "bilet": ["Data zakupu", "Oddział", "Typ biletu", "Cena", "Czy z przewodnikiem"],
-               "pracownik": ["Pesel", "Imię", "Nazwisko", "Płaca", "Etat", "Data zatrudnienia", "Numer telefonu"],
-               "harmonogram_zwiedzania": ["Data", "Godzina rozpoczęcia", "Przewodnik", "Ilość kupionych biletów"]}
+    kolumny = {"Oddział": ["Nazwa", "Godzina otwarcia", "Godzina zamknięcia", "Adres", "Numer telefonu"],
+               "Wydarzenie": ["Nazwa", "Data rozpoczęcia", "Data zakończenia"],
+               "Dział": ["Nazwa", "Piętro", "Epoka", "Nazwa oddziału"],
+               "Dzieło": ["Nazwa", "Artysta", "Dział"],
+               "Artysta": ["Imię", "Nazwisko", "Data urodzenia", "Data śmierci"],
+               "Rodzaj biletu": ["Typ", "Oddział", "Czy z przewodnikiem", "Cena"],
+               "Bilet": ["Data zakupu", "Oddział", "Typ biletu", "Cena", "Czy z przewodnikiem"],
+               "Pracownik": ["Pesel", "Imię", "Nazwisko", "Płaca", "Etat", "Data zatrudnienia", "Numer telefonu"],
+               "Wycieczka": ["Data", "Godzina rozpoczęcia", "Przewodnik", "Ilość kupionych biletów"]}
+    modele = {"Oddział": [Oddzial, {"Nazwa": "nazwa", "Godzina otwarcia": "godzina_otwarcia", "Godzina zamknięcia": "godzina_zamkniecia"}],
+               "Wydarzenie": [Wydarzenie, {"Nazwa": "nazwa", "Oddział": "oddzial_nazwa_id", "Data rozpoczęcia": "data_rozpoczecia", "Data zakończenia":"data_zakonczenia"}],
+               "Dział": [Dzial, {"Nazwa": "nazwa", "Epoka": "epoka", "Oddział": "oddzial_nazwa_id"}],
+               "Dzieło": [Obraz, Rzezba, {"Nazwa": "nazwa", "Nazwisko artysty": "artysta_id", "Epoka": "epoka"}],
+               "Artysta": [Artysta, {"Imię": "imie", "Nazwisko": "nazwisko", "Data urodzenia": "data_uroczenia", "Data śmierci": "data_smierci"}],
+               "Rodzaj biletu": [Rodzaj_biletu, {"Typ": "typ", "Cena": "cena"}],
+               "Bilet": [Bilet, {"Data zakupu": "data_zakupu", "Typ":"rodzaj_biletu_id"}],
+               "Pracownik": [Pracownik, {"Imię":"imie", "Nazwisko":"nazwisko", "Pesel":"pesel", "Płaca": "placa", "Etat":"etat", "Data zatrudniania":"data_zatrudnienia"}],
+               "Wycieczka": [Harmonogram_zwiedzania, {"Data": "data", "Godzina rozpoczęcia": "godzina_rozpoczecia", "Nazwisko przewodnika":"pracownik_pesel_id"}]}
+
     wyniki = []
-    print(request.POST, file=sys.stderr)
     if form.is_valid():
-        print("WALIDACJA", file=sys.stderr)
         options1 = form.cleaned_data['options1']
         options2 = form.cleaned_data['options2']
         options3 = form.cleaned_data['options3']
         options4 = form.cleaned_data['options4']
+
+        if options1 == "Oddział":
+            if options2 == "Nazwa":
+                for i in Oddzial.objects.values():
+                    if i["nazwa"] == options4:
+                        wyniki.append([i[x] for x in i.keys() if x != 'id'])
+            elif options2 == "Godzina otwarcia":
+                if options3 == "Później niż":
+                    for i in Oddzial.objects.values():
+                        print(options4, file=sys.stderr)
+                        if i["godzina_otwarcia"] >= options4:
+                            wyniki.append([i[x] for x in i.keys() if x != 'id'])
+                elif options3 == "Wcześniej niż":
+                    for i in Oddzial.objects.values():
+                        if i["godzina_otwarcia"] <= options4:
+                            wyniki.append([i[x] for x in i.keys() if x != 'id'])
+                elif options3 == "Równa":
+                    for i in Oddzial.objects.values():
+                        if i["godzina_otwarcia"] == options4:
+                            wyniki.append([i[x] for x in i.keys() if x != 'id'])
+            elif options2 == "Godzina zamknięcia":
+                if options3 == "Później niż":
+                    for i in Oddzial.objects.values():
+                        print(options4, file=sys.stderr)
+                        if i["godzina_zamkniecia"] >= options4:
+                            wyniki.append([i[x] for x in i.keys() if x != 'id'])
+                elif options3 == "Wcześniej niż":
+                    for i in Oddzial.objects.values():
+                        if i["godzina_zamkniecia"] <= options4:
+                            wyniki.append([i[x] for x in i.keys() if x != 'id'])
+                elif options3 == "Równa":
+                    for i in Oddzial.objects.values():
+                        if i["godzina_zamkniecia"] == options4:
+                            wyniki.append([i[x] for x in i.keys() if x != 'id'])
+        elif options1 == "Wydarzenie":
+            if options2 == "Nazwa":
+                for i in Wydarzenie.objects.values():
+                    if i["nazwa"] == options4:
+                        print(i.values(), file=sys.stderr)
+                        wyniki.append([i[x] for x in i.keys() if x != 'id'])
+            elif options2 == "Oddział":
+                for i in Wydarzenie.objects.values():
+                    for j in Wydarzenie_oddzial.objects.values():
+                        if j["oddzial_nazwa_id"] == options4 and j["wydarzenie_id_id"] == i["id"]:
+                            wyniki.append([i[x] for x in i.keys() if x != 'id'])
+            elif options2 == "Data rozpoczęcia":
+                if options3 == "Później niż":
+                    for i in Wydarzenie.objects.values():
+                        if i["data_rozpoczecia"] >= options4:
+                                    wyniki.append([i[x] for x in i.keys() if x != 'id'])
+                elif options3 == "Wcześniej niż":
+                    for i in Wydarzenie.objects.values():
+                        if i["data_rozpoczecia"] <= options4:
+                            wyniki.append([i[x] for x in i.keys() if x != 'id'])
+                elif options3 == "Równa":
+                    for i in Wydarzenie.objects.values():
+                        if i["data_rozpoczecia"] == options4:
+                                    wyniki.append([i[x] for x in i.keys() if x != 'id'])
+            elif options2 == "Data zakończenia":
+                if options3 == "Później niż":
+                    for i in Wydarzenie.objects.values():
+                        if i["data_zakonczenia"] >= options4:
+                            wyniki.append([i[x] for x in i.keys() if x != 'id'])
+                elif options3 == "Wcześniej niż":
+                    for i in Wydarzenie.objects.values():
+                        if i["data_zakonczenia"] <= options4:
+                            wyniki.append([i[x] for x in i.keys() if x != 'id'])
+                elif options3 == "Równa":
+                    for i in Wydarzenie.objects.values():
+                        if i["data_zakonczenia"] == options4:
+                            wyniki.append([i[x] for x in i.keys() if x != 'id'])
+        elif options1 == "Dział":
+            if options2 == "Nazwa":
+                for i in Dzial.objects.values():
+                    if i["nazwa"] == options4:
+                        wyniki.append([i[x] for x in i.keys() if x != 'id'])
+            elif options2 == "Epoka":
+                for i in Dzial.objects.values():
+                    if i["epoka"] == options4:
+                        wyniki.append([i[x] for x in i.keys() if x != 'id'])
+            elif options2 == "Oddział":
+                for i in Dzial.objects.values():
+                    if i["oddzial_nazwa_id"].nazwa == options4:
+                        wyniki.append([i[x] for x in i.keys() if x != 'id'])
+        elif options1 == "Dzieło":
+            if options2 == "Nazwa":
+                for i in Obraz.objects.values():
+                    if i["nazwa"] == options4:
+                        wyniki.append([i[x] for x in i.keys() if x != 'id'])
+                for i in Rzezba.objects.values():
+                    if i["nazwa"] == options4:
+                        wyniki.append([i[x] for x in i.keys() if x != 'id'])
+            elif options2 == "Epoka":
+                for i in Obraz.objects.values():
+                    if i["epoka"] == options4:
+                        wyniki.append([i[x] for x in i.keys() if x != 'id'])
+                for i in Rzezba.objects.values():
+                    if i["epoka"] == options4:
+                        wyniki.append([i[x] for x in i.keys() if x != 'id'])
+            elif options2 == "Nazwisko artysty":
+                for i in Obraz.objects.values():
+                    if i["artysta_id"].nazwisko == options4:
+                        wyniki.append([i[x] for x in i.keys() if x != 'id'])
+                for i in Rzezba.objects.values():
+                    if i["artysta_id"].nazwisko == options4:
+                        wyniki.append([i[x] for x in i.keys() if x != 'id'])
+        elif options1 == "Artysta":
+            if options2 == "Imię":
+                for i in Artysta.objects.values():
+                    if i["imie"] == options4:
+                        wyniki.append([i[x] for x in i.keys() if x != 'id'])
+            elif options2 == "Nazwisko":
+                for i in Artysta.objects.values():
+                    if i["nazwisko"] == options4:
+                        wyniki.append([i[x] for x in i.keys() if x != 'id'])
+            elif options2 == "Data urodzenia":
+                if options3 == "Później niż":
+                    for i in Artysta.objects.values():
+                        if i["data_urodzenia"] >= options4:
+                            wyniki.append([i[x] for x in i.keys() if x != 'id'])
+                elif options3 == "Wcześniej niż":
+                    for i in Artysta.objects.values():
+                        if i["data_urodzenia"] <= options4:
+                            wyniki.append([i[x] for x in i.keys() if x != 'id'])
+                elif options3 == "Równa":
+                    for i in Artysta.objects.values():
+                        if i["data_urodzenia"] == options4:
+                            wyniki.append([i[x] for x in i.keys() if x != 'id'])
+            elif options2 == "Data śmierci":
+                if options3 == "Później niż":
+                    for i in Artysta.objects.values():
+                        if i["data_smierci"] >= options4:
+                            wyniki.append([i[x] for x in i.keys() if x != 'id'])
+                elif options3 == "Wcześniej niż":
+                    for i in Artysta.objects.values():
+                        if i["data_smierci"] <= options4:
+                            wyniki.append([i[x] for x in i.keys() if x != 'id'])
+                elif options3 == "Równa":
+                    for i in Artysta.objects.values():
+                        if i["data_smierci"] == options4:
+                            wyniki.append([i[x] for x in i.keys() if x != 'id'])
+        elif options1 == "Rodzaj biletu":
+            if options2 == "Typ":
+                for i in Rodzaj_biletu.objects.values():
+                    if i["typ"] == options4:
+                        wyniki.append([i[x] for x in i.keys() if x != 'id'])
+            elif options2 == "Cena":
+                for i in Rodzaj_biletu.objects.values():
+                    if i["cena"] == options4:
+                        wyniki.append([i[x] for x in i.keys() if x != 'id'])
+        elif options1 == "Bilet":
+            if options2 == "Data_zakupu":
+                if options3 == "Później niż":
+                    for i in Bilet.objects.values():
+                        if i["data_zakupu"] >= options4:
+                            wyniki.append([i[x] for x in i.keys() if x != 'id'])
+                elif options3 == "Wcześniej niż":
+                    for i in Bilet.objects.values():
+                        if i["data_zakupu"] <= options4:
+                            wyniki.append([i[x] for x in i.keys() if x != 'id'])
+                elif options3 == "Równa":
+                    for i in Bilet.objects.values():
+                        if i["data_zakupu"] == options4:
+                            wyniki.append([i[x] for x in i.keys() if x != 'id'])
+            elif options2 == "Typ":
+                for i in Bilet.objects.values():
+                    for j in Rodzaj_biletu.objects.values():
+                        if j["typ"] == options4 and i["rodzaj_biletu_id"] == j["id"]:
+                            wyniki.append([i[x] for x in i.keys() if x != 'id'])
+        elif options1 == "Pracownik":
+            if options2 == "Imię":
+                for i in Pracownik.objects.values():
+                    if i["imie"] == options4:
+                        wyniki.append([i[x] for x in i.keys() if x != 'id'])
+            elif options2 == "Nazwisko":
+                for i in Pracownik.objects.values():
+                    if i["nazwisko"] == options4:
+                        wyniki.append([i[x] for x in i.keys() if x != 'id'])
+            elif options2 == "Pesel":
+                for i in Pracownik.objects.values():
+                    if i["pesel"] == options4:
+                        wyniki.append([i[x] for x in i.keys() if x != 'id'])
+            elif options2 == "Etat":
+                for i in Pracownik.objects.values():
+                    if i["etat"] == options4:
+                        wyniki.append([i[x] for x in i.keys() if x != 'id'])
+            elif options2 == "Płaca":
+                if options3 == "<":
+                    for i in Pracownik.objects.values():
+                        if i["placa"] < options4:
+                            wyniki.append([i[x] for x in i.keys() if x != 'id'])
+                elif options3 == "<=":
+                    for i in Pracownik.objects.values():
+                        if i["placa"] <= options4:
+                            wyniki.append([i[x] for x in i.keys() if x != 'id'])
+                elif options3 == "=":
+                    for i in Pracownik.objects.values():
+                        if i["placa"] == options4:
+                            wyniki.append([i[x] for x in i.keys() if x != 'id'])
+                elif options3 == ">=":
+                    for i in Pracownik.objects.values():
+                        if i["placa"] >= options4:
+                            wyniki.append([i[x] for x in i.keys() if x != 'id'])
+                elif options3 == ">":
+                    for i in Pracownik.objects.values():
+                        if i["placa"] > options4:
+                            wyniki.append([i[x] for x in i.keys() if x != 'id'])
+            elif options2 == "Data zatrudnienia":
+                if options3 == "Później niż":
+                    for i in Pracownik.objects.values():
+                        if i["data_zatrudnienia"] >= options4:
+                            wyniki.append([i[x] for x in i.keys() if x != 'id'])
+                elif options3 == "Wcześniej niż":
+                    for i in Pracownik.objects.values():
+                        if i["data_zatrudnienia"] <= options4:
+                            wyniki.append([i[x] for x in i.keys() if x != 'id'])
+                elif options3 == "Równa":
+                    for i in Pracownik.objects.values():
+                        if i["data_zatrudnienia"] == options4:
+                            wyniki.append([i[x] for x in i.keys() if x != 'id'])
+
+        elif options1 == "Wycieczka":
+            if options2 == "Data":
+                if options3 == "Później niż":
+                    for i in Harmonogram_zwiedzania.objects.values():
+                        if i["data"] >= options4:
+                            wyniki.append([i[x] for x in i.keys() if x != 'id'])
+                elif options3 == "Wcześniej niż":
+                    for i in Harmonogram_zwiedzania.objects.values():
+                        if i["dataa"] <= options4:
+                            wyniki.append([i[x] for x in i.keys() if x != 'id'])
+                elif options3 == "Równa":
+                    for i in Harmonogram_zwiedzania.objects.values():
+                        if i["data"] == options4:
+                            wyniki.append([i[x] for x in i.keys() if x != 'id'])
+            elif options2 == "Godzina rozpoczęcia":
+                if options3 == "Później niż":
+                    for i in Harmonogram_zwiedzania.objects.values():
+                        if i["godzina_rozpoczecia"] >= options4:
+                            wyniki.append([i[x] for x in i.keys() if x != 'id'])
+                elif options3 == "Wcześniej niż":
+                    for i in Harmonogram_zwiedzania.objects.values():
+                        if i["godzina_rozpoczecia"] <= options4:
+                            wyniki.append([i[x] for x in i.keys() if x != 'id'])
+                elif options3 == "Równa":
+                    for i in Harmonogram_zwiedzania.objects.values():
+                        if i["godzina_rozpoczecia"] == options4:
+                            wyniki.append([i[x] for x in i.keys() if x != 'id'])
+            elif options2 == "Nazwisko przewodnika":
+                for i in Pracownik.objects.values():
+                    for j in Harmonogram_zwiedzania.objects.values():
+                        if i["nazwisko"] == options4 and j["pracownik_pesel_id"] == i["pesel"]:
+                            wyniki.append([i[x] for x in i.keys() if x != 'id'])
+
+        """        
+        for model in modele[options1]:
+            for j in model.objects.values():
+                print(j, file=sys.stderr)
+                if options2 in keys.keys():
+                    if j[keys[options2]] == options4:
+                        tmp.append(j)
+                elif j[strip_accents(options2.lower().replace(" ", "_").replace("ł", "l"))] == options4:
+                    tmp.append(j)
+        for i in tmp:
+            wyniki.append([i[x] for x in i.keys() if x != 'id'])
+        """
+
+        print(wyniki, file=sys.stderr)
         return render(request, 'museum_app/main.html',
                       context={'form': form, 'plot_div': plot_div, 'kolumny': kolumny[options1], 'wyniki': wyniki})
 
     # TODO jaki format wyników tho = for (obiektow) a w nim for (atrybutow)
     return render(request, 'museum_app/main.html',
-                  context={'form': form, 'plot_div': plot_div, 'kolumny': [], 'wyniki': wyniki})
+                  context={'form': form, 'plot_div': plot_div, 'kolumny': [], 'wyniki': []})
 
 
 def oddzialy(request):
@@ -828,7 +1108,7 @@ def detailed_dzial(request, dzial_id):
     obrazy = []
     for x in Obraz.objects.all():
         try:
-            if x.artysta_id.id == artysta_id:
+            if x.dzial_id.id == dzial.id:
                 obrazy.append((x.nazwa, x.nazwa))
         except:
             continue
@@ -836,7 +1116,7 @@ def detailed_dzial(request, dzial_id):
     rzezby = []
     for x in Rzezba.objects.all():
         try:
-            if x.artysta_id.id == artysta_id:
+            if x.dzial_id.id == dzial.id:
                 rzezby.append((x.nazwa, x.nazwa))
         except:
             continue
@@ -851,6 +1131,7 @@ def detailed_dzial(request, dzial_id):
         "floor": dzial.pietro,
         "epoch": epoka,
     }
+
     form = DetailedDzialForm(obrazy, rzezby, initial=initial_values)
     return render(request, 'museum_app/detailed_dzial.html', {'form': form})
 
