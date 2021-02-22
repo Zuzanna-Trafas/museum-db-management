@@ -38,7 +38,7 @@ END$$
 --
 -- Funkcje
 --
-CREATE DEFINER=`admin`@`%` FUNCTION `policz_dochod` (`typ_biletu` VARCHAR(100), `czy_z_przewodnikiem` TINYINT(1), `oddzial` VARCHAR(100)) RETURNS FLOAT DETERMINISTIC BEGIN
+CREATE DEFINER=`admin`@`%` FUNCTION `policz_dochod` (`typ_biletu` VARCHAR(100) charset utf8, `czy_z_przewodnikiem` TINYINT(1), `oddzial` VARCHAR(100) charset utf8) RETURNS FLOAT DETERMINISTIC BEGIN
 	DECLARE suma FLOAT DEFAULT 0;
 	SELECT SUM(r.cena) INTO suma FROM museum_app_bilet b LEFT JOIN museum_app_rodzaj_biletu r ON (b.rodzaj_biletu_id_id = r.id)
     WHERE r.typ=typ_biletu AND r.czy_z_przewodnikiem=czy_z_przewodnikiem AND r.oddzial_nazwa_id=oddzial;

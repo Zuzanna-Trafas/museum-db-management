@@ -7,21 +7,21 @@ OPTIONS = [("Pracownik", "Pracownik"),
            ("Stażysta", "Stażysta"),
            ("Kierownik", "Kierownik")]
 
-CHOICES = [("Odział", "Odział"),
+CHOICES = [("Oddział", "Oddział"),
            ("Wydarzenie", "Wydarzenie"),
            ("Dział", "Dział"),
            ("Dzieło", "Dzieło"),
            ("Artysta", "Artysta"),
            ("Rodzaj biletu", "Rodzaj biletu"),
-           ("Zakupiony bilet", "Zakupiony bilet"),
+           ("Bilet", "Bilet"),
            ("Pracownik", "Pracownik"),
-           ("Wycieczka","Wycieczka")]
+           ("Wycieczka", "Wycieczka")]
 
 class MainForm(forms.Form):
-    options1 = forms.CharField(label='Wybierz typ', widget=forms.Select(choices=CHOICES))
-    options2 = forms.CharField(label='Wybierz typ', widget=forms.Select(choices=[]))
-    options3 = forms.CharField(label='Wybierz typ', widget=forms.Select(choices=[]))
-    options4 = forms.CharField(label='Wybierz typ', widget=forms.Select(choices=[]))
+    options1 = forms.CharField(widget=forms.Select(choices=CHOICES, attrs={"value": 'Wybierz typ'}))
+    options2 = forms.CharField(widget=forms.Select(choices=[]))
+    options3 = forms.CharField(widget=forms.Select(choices=[]))
+    options4 = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'maxlength': "100"}))
 
 
 class OddzialForm(forms.Form):
@@ -254,9 +254,9 @@ class WydarzenieForm(forms.Form):
 class DetailedArtystaForm(forms.Form):
     def __init__(self, obrazy_choices, rzezby_choices, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['obrazy'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
+        self.fields['obrazy'] = forms.MultipleChoiceField(required=True, widget=forms.Select,
                                                                   choices=obrazy_choices)
-        self.fields['rzezby'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
+        self.fields['rzezby'] = forms.MultipleChoiceField(required=True, widget=forms.Select,
                                                       choices=rzezby_choices)
 
     obrazy = forms.MultipleChoiceField()

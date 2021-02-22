@@ -8,7 +8,7 @@
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
-    <title>Dodaj</title>
+    <title>{{ tag }}</title>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -17,7 +17,7 @@
     <div class="collapse navbar-collapse pl-3" id="navbarNav">
         <ul class="navbar-nav">
             <li class="nav-item">
-                <a class="nav-link" href="/main">Strona główna</a>
+                <a class="nav-link" href="/">Strona główna</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/table/oddzialy">Oddziały</a>
@@ -47,9 +47,9 @@
     </div>
 </nav>
 
-<h1 class="px-5 pt-4">Dodaj wydarzenie</h1>
+<h1 class="px-5 pt-4">{{ tag }} wydarzenie</h1>
 
-<div class="px-5">
+<div class="px-5">Dodaj
     <form class="needs-validation" id="form-name" method="post">
         {% csrf_token %}
         {% if error != "" %}
