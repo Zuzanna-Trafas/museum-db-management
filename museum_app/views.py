@@ -698,7 +698,7 @@ def edit_oddzial(request, oddzial_nazwa):
         oddzial.adres = address
         oddzial.numer_telefonu = number
         try:
-            oddzial.save()
+            oddzial.save(force_update=True)
         except Exception as e:
             error = e.args
             if "Duplicate" in e.args:
@@ -712,9 +712,43 @@ def edit_oddzial(request, oddzial_nazwa):
                   {'form': form, 'error_time': error_time, 'error_number': error_number, 'error': error})
 
 
-def edit_dzial(request):
-    form = DzialForm([(1, 1), (2, 2)], request.POST)
-    return render(request, 'museum_app/add_dzial.html', {'form': form})
+def edit_dzial(request, dzial_id):
+    dzial = get_object_or_404(Dzial, pk=dzial_id)
+    error = ""
+    initial_values = {'name': dzial.nazwa,
+                      'floor': dzial.pietro,
+                      'epoch': dzial.epoka,
+                      'oddzial_select': dzial.oddzial_nazwa.nazwa}
+
+    if request.POST:
+        form = DzialForm([(x.nazwa, x.nazwa) for x in Oddzial.objects.all()], request.POST)
+    else:
+        form = DzialForm([(x.nazwa, x.nazwa) for x in Oddzial.objects.all()], instance=initial_values)
+    if form.is_valid():
+        name = form.cleaned_data['name']
+        floor = form.cleaned_data['floor']
+        epoch = form.cleaned_data['epoch']
+        oddzial_select = form.cleaned_data['oddzial_select']
+        for x in Oddzial.objects.all():
+            if str(x.nazwa) == str(oddzial_select):
+                oddzial = x
+
+        dzial.nazwa = name
+        dzial.pietro = floor
+        dzial.epoka = epoch
+        dzial.oddzial_nazwa = x
+
+        try:
+            dzial.save(force_update=True)
+        except Exception as e:
+            error = e.args
+            if "Duplicate" in e.args[1]:
+                error = "Dział o tej nazwie już istnieje na wybranym oddziale."
+            return render(request, 'museum_app/add_dzial.html',
+                          {'form': form, 'error': error})
+        else:
+            return redirect('/table/dzialy')
+    return render(request, 'museum_app/add_dzial.html', {'form': form, 'error': error})
 
 
 def edit_obraz(request):

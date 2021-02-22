@@ -26,17 +26,17 @@ class MainForm(forms.Form):
 
 class OddzialForm(forms.Form):
     def __init__(self, *args, **kwargs):
-        # instance = kwargs.pop('instance', None)
-        # super().init(*args, **kwargs)
-        # self.fields['number'].required = False
-        # if instance:
-        #     self.fields['name'].initial = instance['name']
-        #     self.fields['opening_hour'].initial = instance['opening_hour']
-        #     self.fields['closing_hour'].initial = instance['closing_hour']
-        #     self.fields['address'].initial = instance['address']
-        #     self.fields['number'].initial = instance['number']
+        instance = kwargs.pop('instance', None)
         super().__init__(*args, **kwargs)
         self.fields['number'].required = False
+        if instance:
+             self.fields['name'].initial = instance['name']
+             self.fields['opening_hour'].initial = instance['opening_hour']
+             self.fields['closing_hour'].initial = instance['closing_hour']
+             self.fields['address'].initial = instance['address']
+             self.fields['number'].initial = instance['number']
+        #super().__init__(*args, **kwargs)
+        #self.fields['number'].required = False
 
     name = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "name",
                                                          'maxlength': "100"}))
@@ -55,10 +55,16 @@ class OddzialForm(forms.Form):
 
 class DzialForm(forms.Form):
     def __init__(self, oddzial_choices, *args, **kwargs):
+        instance = kwargs.pop('instance', None)
         super().__init__(*args, **kwargs)
         self.fields['oddzial_select'] = forms.ChoiceField(required=True, widget=forms.Select,
                                                                   choices=oddzial_choices)
         self.fields['epoch'].required = False
+        if instance:
+             self.fields['name'].initial = instance['name']
+             self.fields['floor'].initial = instance['floor']
+             self.fields['epoch'].initial = instance['epoch']
+             self.fields['oddzial_select'].initial = instance['oddzial_select']
 
     oddzial_select = forms.ChoiceField()
 
