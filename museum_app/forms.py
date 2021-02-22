@@ -96,6 +96,8 @@ class ObrazForm(forms.Form):
             self.fields['name'].initial = instance['name']
             self.fields['width'].initial = instance['width']
             self.fields['height'].initial = instance['height']
+            self.fields['artysta_select'].initial = instance['artysta_select']
+            self.fields['dzial_select'].initial = instance['dzial_select']
 
     dzial_select = forms.ChoiceField()
     artysta_select = forms.ChoiceField()
@@ -127,6 +129,8 @@ class RzezbaForm(forms.Form):
             self.fields['name'].initial = instance['name']
             self.fields['weight'].initial = instance['weight']
             self.fields['material'].initial = instance['material']
+            self.fields['artysta_select'].initial = instance['artysta_select']
+            self.fields['dzial_select'].initial = instance['dzial_select']
 
     dzial_select = forms.ChoiceField()
     artysta_select = forms.ChoiceField()
@@ -230,6 +234,7 @@ class PracownikForm(forms.Form):
             self.fields['placa'].initial = instance['placa']
             self.fields['data_zatrudnienia'].initial = instance['data_zatrudnienia']
             self.fields['numer_telefonu'].initial = instance['numer_telefonu']
+            self.fields['oddzial'].initial = instance['oddzial']
 
     pesel = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "pesel",
                                                           "minlength": "11", 'maxlength': "11",
@@ -267,6 +272,7 @@ class HarmonogramZwiedzaniaForm(forms.Form):
         if instance:
             self.fields['godzina'].initial = instance['godzina']
             self.fields['data'].initial = instance['data']
+            self.fields['pesel'].initial = instance['pesel']
 
     godzina = forms.CharField(widget=forms.TextInput(attrs={"type": "time", "class": "form-control",
                                                             "id": "godzina", "required": "true"}))

@@ -763,7 +763,9 @@ def edit_obraz(request, obraz_id):
     obraz = get_object_or_404(Obraz, pk=obraz_id)
     initial_values = {'name': obraz.nazwa,
                       'width': obraz.szerokosc,
-                      'height': obraz.wysokosc}
+                      'height': obraz.wysokosc,
+                      'artysta_select': obraz.artysta_id.id,
+                      'dzial_select': str(obraz.dzial_id.nazwa) + " ; " + str(obraz.dzial_id.oddzial_nazwa.nazwa)}
     artysta_choices = [("-", "-")]
     for x in Artysta.objects.all():
         artysta_choices.append((x.id, x.imie + " " + x.nazwisko))
@@ -811,7 +813,9 @@ def edit_rzezba(request, rzezba_id):
     rzezba = get_object_or_404(Rzezba, pk=rzezba_id)
     initial_values = {'name': rzezba.nazwa,
                       'weight': rzezba.waga,
-                      'material': rzezba.material}
+                      'material': rzezba.material,
+                      'artysta_select': rzezba.artysta_id.id,
+                      'dzial_select': str(rzezba.dzial_id.nazwa) + " ; " + str(rzezba.dzial_id.oddzial_nazwa.nazwa)}
     artysta_choices = [("-", "-")]
     for x in Artysta.objects.all():
         artysta_choices.append((x.id, x.imie + " " + x.nazwisko))
@@ -927,11 +931,11 @@ def edit_bilet(request, bilet_id):
     json_przewodnik = json.dumps(is_przewodnik)
 
     try:
-        harmonogram_zwiedzania_id = bilet.harmonogram_zwiedzania_id
+        harmonogram_zwiedzania_id = bilet.harmonogram_zwiedzania_id.id
     except:
         harmonogram_zwiedzania_id = None
     bilet = get_object_or_404(Bilet, pk=bilet_id)
-    initial_values = {'type': bilet.rodzaj_biletu_id,
+    initial_values = {'type': bilet.rodzaj_biletu_id.id,
                       'wycieczka': harmonogram_zwiedzania_id,
                       'purchase_date': bilet.data_zakupu}
     if request.POST:
@@ -987,7 +991,7 @@ def edit_bilet(request, bilet_id):
 
 def edit_rodzaj_biletu(request, rodzaj_biletu_id):
     rodzaj_biletu = get_object_or_404(Rodzaj_biletu, pk=rodzaj_biletu_id)
-    initial_values = {'oddzial': rodzaj_biletu.oddzial_nazwa,
+    initial_values = {'oddzial': rodzaj_biletu.oddzial_nazwa.nazwa,
                       'przewodnik': rodzaj_biletu.czy_z_przewodnikiem,
                       'type': rodzaj_biletu.typ,
                       'price': rodzaj_biletu.cena}
@@ -1034,7 +1038,8 @@ def edit_pracownik(request, pracownik_pesel):
                       'etat': pracownik.etat,
                       'placa': pracownik.placa,
                       'data_zatrudnienia': pracownik.data_zatrudnienia,
-                      'numer_telefonu': pracownik.numer_telefonu}
+                      'numer_telefonu': pracownik.numer_telefonu,
+                      'oddzial': pracownik.oddzial_nazwa.nazwa}
     if request.POST:
         form = PracownikForm([(x.nazwa, x.nazwa) for x in Oddzial.objects.all()], request.POST)
     else:
@@ -1102,11 +1107,12 @@ def edit_pracownik(request, pracownik_pesel):
 def edit_harmonogram_zwiedzania(request, harmonogram_zwiedzania_id):
     harmonogram_zwiedzania = get_object_or_404(Harmonogram_zwiedzania, pk=harmonogram_zwiedzania_id)
     initial_values = {'godzina': harmonogram_zwiedzania.godzina_rozpoczecia,
-                      'imie': harmonogram_zwiedzania.pracownik_pesel.imie}
+                      'data': harmonogram_zwiedzania.data,
+                      'pesel': harmonogram_zwiedzania.pracownik_pesel.pesel}
     if request.POST:
-        form = Harmonogram_zwiedzania([(x.pesel, x.imie + " " + x.nazwisko + " (" + str(x.pesel) + ")") for x in Pracownik.objects.all()], request.POST)
+        form = HarmonogramZwiedzaniaForm([(x.pesel, x.imie + " " + x.nazwisko + " (" + str(x.pesel) + ")") for x in Pracownik.objects.all()], request.POST)
     else:
-        form = Harmonogram_zwiedzania([(x.pesel, x.imie + " " + x.nazwisko + " (" + str(x.pesel) + ")") for x in Pracownik.objects.all()], instance=initial_values)
+        form = HarmonogramZwiedzaniaForm([(x.pesel, x.imie + " " + x.nazwisko + " (" + str(x.pesel) + ")") for x in Pracownik.objects.all()], instance=initial_values)
     error_date = ""
     error = ""
     if form.is_valid():
@@ -1117,14 +1123,14 @@ def edit_harmonogram_zwiedzania(request, harmonogram_zwiedzania_id):
         if len(data.split("-")[0]) > 4:
             error_date = "Rok nie może być większy od 9999"
             return render(request, 'museum_app/add_harmonogram_zwiedzania.html',
-                          {'form': form, 'error': error, 'error_date': error_date, 'tag': "Dodaj"})
+                          {'form': form, 'error': error, 'error_date': error_date, 'tag': "Edytuj"})
 
         for x in Pracownik.objects.all():
             if str(x.pesel) == str(pesel):
                 pracownik = x
 
 
-        harmonogram_zwiedzania.pracownik_pesel = pesel
+        harmonogram_zwiedzania.pracownik_pesel = pracownik
         harmonogram_zwiedzania.data = data
         harmonogram_zwiedzania.godzina_rozpoczecia = godzina
 
@@ -1154,10 +1160,12 @@ def detailed_oddzial(request, oddzial_nazwa):
     if request.method == 'POST' and form.is_valid():
         if 'delete' in request.POST:
             for item in form.cleaned_data['choices']:
-                try:
-                    item.delete()
-                except Exception as e:
-                    error = e.args[0]
+                for x in Wydarzenie_oddzial.objects.all():
+                    if str(x.wydarzenie_id_id) == str(item.id) and str(x.oddzial_nazwa.nazwa) == str(oddzial_nazwa):
+                        try:
+                            x.delete()
+                        except Exception as e:
+                            error = e.args[0]
 
     oddzial = get_object_or_404(Oddzial, pk=oddzial_nazwa)
     wydarzenie_oddzial = []

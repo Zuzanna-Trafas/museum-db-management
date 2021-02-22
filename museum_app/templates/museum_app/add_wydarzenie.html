@@ -49,7 +49,7 @@
 
 <h1 class="px-5 pt-4">{{ tag }} wydarzenie</h1>
 
-<div class="px-5">Dodaj
+<div class="px-5">
     <form class="needs-validation" id="form-name" method="post">
         {% csrf_token %}
         {% if error != "" %}
@@ -99,7 +99,7 @@
 
         <div>
             <div class="ml-auto p-2 pb-5">
-                <button type="submit" class="btn btn-secondary">{{ tag }}/button>
+                <button type="submit" class="btn btn-secondary">{{ tag }}</button>
             </div>
         </div>
     </form>
