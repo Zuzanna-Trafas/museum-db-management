@@ -29,8 +29,8 @@ DELIMITER $$
 -- Procedury
 --
 CREATE DEFINER=`admin`@`%` PROCEDURE `podsumowanie_zwiedzania` ()  BEGIN
-SELECT j.data, j.godzina_rozpoczecia, p.imie, p.nazwisko, j.liczba_uczestnikow FROM
-   (SELECT h.data, h.godzina_rozpoczecia, h.pracownik_pesel_id, COUNT(b.id) AS liczba_uczestnikow FROM
+SELECT j.data, j.godzina_rozpoczecia, p.imie, p.nazwisko, j.liczba_uczestnikow, j.id FROM
+   (SELECT h.id, h.data, h.godzina_rozpoczecia, h.pracownik_pesel_id, COUNT(b.id) AS liczba_uczestnikow FROM
     museum_app_bilet b RIGHT JOIN museum_app_harmonogram_zwiedzania h ON (b.harmonogram_zwiedzania_id_id=h.id)
     GROUP BY h.data, h.godzina_rozpoczecia, h.pracownik_pesel_id) j LEFT JOIN museum_app_pracownik p ON j.pracownik_pesel_id=p.pesel;
 END$$

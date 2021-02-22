@@ -17,11 +17,13 @@ CHOICES = [("Oddział", "Oddział"),
            ("Pracownik", "Pracownik"),
            ("Wycieczka", "Wycieczka")]
 
+
 class MainForm(forms.Form):
     options1 = forms.CharField(widget=forms.Select(choices=CHOICES, attrs={"value": 'Wybierz typ'}))
     options2 = forms.CharField(widget=forms.Select(choices=[]))
     options3 = forms.CharField(widget=forms.Select(choices=[]))
-    options4 = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'maxlength': "100"}))
+    options4 = forms.CharField(
+        widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'maxlength': "100"}))
 
 
 class OddzialForm(forms.Form):
@@ -30,13 +32,13 @@ class OddzialForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.fields['number'].required = False
         if instance:
-             self.fields['name'].initial = instance['name']
-             self.fields['opening_hour'].initial = instance['opening_hour']
-             self.fields['closing_hour'].initial = instance['closing_hour']
-             self.fields['address'].initial = instance['address']
-             self.fields['number'].initial = instance['number']
-        #super().__init__(*args, **kwargs)
-        #self.fields['number'].required = False
+            self.fields['name'].initial = instance['name']
+            self.fields['opening_hour'].initial = instance['opening_hour']
+            self.fields['closing_hour'].initial = instance['closing_hour']
+            self.fields['address'].initial = instance['address']
+            self.fields['number'].initial = instance['number']
+        # super().__init__(*args, **kwargs)
+        # self.fields['number'].required = False
 
     name = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "name",
                                                          'maxlength': "100"}))
@@ -58,13 +60,13 @@ class DzialForm(forms.Form):
         instance = kwargs.pop('instance', None)
         super().__init__(*args, **kwargs)
         self.fields['oddzial_select'] = forms.ChoiceField(required=True, widget=forms.Select,
-                                                                  choices=oddzial_choices)
+                                                          choices=oddzial_choices)
         self.fields['epoch'].required = False
         if instance:
-             self.fields['name'].initial = instance['name']
-             self.fields['floor'].initial = instance['floor']
-             self.fields['epoch'].initial = instance['epoch']
-             self.fields['oddzial_select'].initial = instance['oddzial_select']
+            self.fields['name'].initial = instance['name']
+            self.fields['floor'].initial = instance['floor']
+            self.fields['epoch'].initial = instance['epoch']
+            self.fields['oddzial_select'].initial = instance['oddzial_select']
 
     oddzial_select = forms.ChoiceField()
 
@@ -80,15 +82,22 @@ class DzialForm(forms.Form):
 
 class ObrazForm(forms.Form):
     def __init__(self, dzial_choices, artysta_choices, *args, **kwargs):
+        instance = kwargs.pop('instance', None)
         super().__init__(*args, **kwargs)
 
         self.fields['dzial_select'] = forms.ChoiceField(required=True, widget=forms.Select,
-                                                                choices=dzial_choices)
+                                                        choices=dzial_choices)
 
         self.fields['artysta_select'] = forms.ChoiceField(required=True, widget=forms.Select,
-                                                                  choices=artysta_choices)
+                                                          choices=artysta_choices)
 
         self.fields['artysta_select'].required = False
+        if instance:
+            self.fields['name'].initial = instance['name']
+            self.fields['width'].initial = instance['width']
+            self.fields['height'].initial = instance['height']
+            self.fields['artysta_select'].initial = instance['artysta_select']
+            self.fields['dzial_select'].initial = instance['dzial_select']
 
     dzial_select = forms.ChoiceField()
     artysta_select = forms.ChoiceField()
@@ -107,14 +116,21 @@ class ObrazForm(forms.Form):
 
 class RzezbaForm(forms.Form):
     def __init__(self, dzial_choices, artysta_choices, *args, **kwargs):
+        instance = kwargs.pop('instance', None)
         super().__init__(*args, **kwargs)
         self.fields['dzial_select'] = forms.ChoiceField(required=True, widget=forms.Select,
-                                                                choices=dzial_choices)
+                                                        choices=dzial_choices)
 
         self.fields['artysta_select'] = forms.ChoiceField(required=True, widget=forms.Select,
-                                                                  choices=artysta_choices)
+                                                          choices=artysta_choices)
 
         self.fields['artysta_select'].required = False
+        if instance:
+            self.fields['name'].initial = instance['name']
+            self.fields['weight'].initial = instance['weight']
+            self.fields['material'].initial = instance['material']
+            self.fields['artysta_select'].initial = instance['artysta_select']
+            self.fields['dzial_select'].initial = instance['dzial_select']
 
     dzial_select = forms.ChoiceField()
     artysta_select = forms.ChoiceField()
@@ -132,8 +148,14 @@ class RzezbaForm(forms.Form):
 
 class ArtystaForm(forms.Form):
     def __init__(self, *args, **kwargs):
+        instance = kwargs.pop('instance', None)
         super().__init__(*args, **kwargs)
         self.fields['death_date'].required = False
+        if instance:
+            self.fields['name'].initial = instance['name']
+            self.fields['surname'].initial = instance['surname']
+            self.fields['birth_date'].initial = instance['birth_date']
+            self.fields['death_date'].initial = instance['death_date']
 
     name = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "name",
                                                          'maxlength': "50", "required": "true"}))
@@ -150,33 +172,41 @@ class ArtystaForm(forms.Form):
 
 class BiletForm(forms.Form):
     def __init__(self, type_choices, wycieczka_choices, *args, **kwargs):
+        instance = kwargs.pop('instance', None)
         super().__init__(*args, **kwargs)
         self.fields['type'] = forms.ChoiceField(required=True, widget=forms.Select,
-                                                                  choices=type_choices)
+                                                choices=type_choices)
 
         self.fields['wycieczka'] = forms.ChoiceField(required=True, widget=forms.Select,
-                                                                  choices=wycieczka_choices)
-
-        self.fields['przewodnik'] = forms.ChoiceField(required=True, widget=forms.RadioSelect, choices=[("tak", "tak"),("nie", "nie")])
+                                                     choices=wycieczka_choices)
 
         self.fields['wycieczka'].required = False
 
+        if instance:
+            self.fields['type'].initial = instance['type']
+            self.fields['wycieczka'].initial = instance['wycieczka']
+            self.fields['purchase_date'].initial = instance['purchase_date']
+
     type = forms.ChoiceField()
     wycieczka = forms.ChoiceField()
-    przewodnik = forms.ChoiceField()
 
     purchase_date = forms.CharField(widget=forms.TextInput(attrs={"type": "date", "class": "form-control",
                                                                   "id": "purchase-date", "required": "true"}))
 
 
-
 class RodzajBiletuForm(forms.Form):
     def __init__(self, oddzial_choices, *args, **kwargs):
+        instance = kwargs.pop('instance', None)
         super().__init__(*args, **kwargs)
         self.fields['oddzial'] = forms.ChoiceField(required=True, widget=forms.Select,
-                                                                  choices=oddzial_choices)
+                                                   choices=oddzial_choices)
         self.fields['przewodnik'] = forms.ChoiceField(required=True, widget=forms.RadioSelect,
                                                       choices=[("tak", "tak"), ("nie", "nie")])
+        if instance:
+            self.fields['oddzial'].initial = instance['oddzial']
+            self.fields['przewodnik'].initial = instance['przewodnik']
+            self.fields['type'].initial = instance['type']
+            self.fields['price'].initial = instance['price']
 
     oddzial = forms.ChoiceField()
     przewodnik = forms.ChoiceField()
@@ -184,17 +214,27 @@ class RodzajBiletuForm(forms.Form):
                                                          'maxlength': "100", "required": "true"}))
 
     price = forms.CharField(widget=forms.TextInput(attrs={'type': "number", 'class': "form-control", 'id': "price",
-                                                          'min': "0", "max": "1000", "step": "0.01", "required": "true"}))
+                                                          'min': "0", "max": "1000", "step": "0.01",
+                                                          "required": "true"}))
 
 
 class PracownikForm(forms.Form):
     def __init__(self, oddzial_choices, *args, **kwargs):
+        instance = kwargs.pop('instance', None)
         super().__init__(*args, **kwargs)
         self.fields['oddzial'] = forms.ChoiceField(required=True, widget=forms.Select,
-                                                                  choices=oddzial_choices)
-
+                                                   choices=oddzial_choices)
 
         self.fields['numer_telefonu'].required = False
+        if instance:
+            self.fields['pesel'].initial = instance['pesel']
+            self.fields['imie'].initial = instance['imie']
+            self.fields['nazwisko'].initial = instance['nazwisko']
+            self.fields['etat'].initial = instance['etat']
+            self.fields['placa'].initial = instance['placa']
+            self.fields['data_zatrudnienia'].initial = instance['data_zatrudnienia']
+            self.fields['numer_telefonu'].initial = instance['numer_telefonu']
+            self.fields['oddzial'].initial = instance['oddzial']
 
     pesel = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "pesel",
                                                           "minlength": "11", 'maxlength': "11",
@@ -208,30 +248,37 @@ class PracownikForm(forms.Form):
                                       'maxlength': "50", "required": "true"}))
 
     etat = forms.ChoiceField(required=True, widget=forms.Select,
-                                         choices=OPTIONS)
+                             choices=OPTIONS)
 
     placa = forms.CharField(widget=forms.TextInput(attrs={'type': "number", 'class': "form-control", 'id': "placa",
-                                                         'min': "0", "max": "1000000", "step": "0.01", "required": "true"}))
+                                                          'min': "0", "max": "1000000", "step": "0.01",
+                                                          "required": "true"}))
 
     data_zatrudnienia = forms.CharField(widget=forms.TextInput(attrs={"type": "date", "class": "form-control",
-                                                              "id": "data_zatrudnienia", "placeholder": "dd-mm-yyyy",
-                                                              "required": "true"}))
+                                                                      "id": "data_zatrudnienia",
+                                                                      "placeholder": "dd-mm-yyyy",
+                                                                      "required": "true"}))
 
-    numer_telefonu = forms.CharField(widget=forms.TextInput(attrs={'type': "text", "class": "form-control", "id": "numer_telefonu"}))
+    numer_telefonu = forms.CharField(
+        widget=forms.TextInput(attrs={'type': "text", "class": "form-control", "id": "numer_telefonu"}))
 
 
 class HarmonogramZwiedzaniaForm(forms.Form):
     def __init__(self, pracownik_choices, *args, **kwargs):
+        instance = kwargs.pop('instance', None)
         super().__init__(*args, **kwargs)
         self.fields['pesel'] = forms.ChoiceField(required=True, widget=forms.Select,
-                                                                  choices=pracownik_choices)
+                                                 choices=pracownik_choices)
+        if instance:
+            self.fields['godzina'].initial = instance['godzina']
+            self.fields['data'].initial = instance['data']
+            self.fields['pesel'].initial = instance['pesel']
+
     godzina = forms.CharField(widget=forms.TextInput(attrs={"type": "time", "class": "form-control",
-                                                               "id": "godzina", "required": "true"}))
+                                                            "id": "godzina", "required": "true"}))
 
     data = forms.CharField(widget=forms.TextInput(attrs={"type": "date", "class": "form-control",
                                                          "id": "data", "required": "true"}))
-
-
 
 
 class WydarzenieForm(forms.Form):
@@ -242,22 +289,22 @@ class WydarzenieForm(forms.Form):
 
     oddzial_select = forms.MultipleChoiceField()
     nazwa = forms.CharField(widget=forms.TextInput(attrs={'type': "text", 'class': "form-control", 'id': "nazwa",
-                                                         'maxlength': "100", "required": "true"}))
+                                                          'maxlength': "100", "required": "true"}))
 
     data_rozpoczecia = forms.CharField(widget=forms.TextInput(attrs={"type": "date", "class": "form-control",
-                                                               "id": "data_rozpoczecia", "required": "true"}))
+                                                                     "id": "data_rozpoczecia", "required": "true"}))
 
     data_zakonczenia = forms.CharField(widget=forms.TextInput(attrs={"type": "date", "class": "form-control",
-                                                             "id": "data_zakonczenia", "required": "true"}))
+                                                                     "id": "data_zakonczenia", "required": "true"}))
 
 
 class DetailedArtystaForm(forms.Form):
     def __init__(self, obrazy_choices, rzezby_choices, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['obrazy'] = forms.MultipleChoiceField(required=True, widget=forms.Select,
-                                                                  choices=obrazy_choices)
+                                                          choices=obrazy_choices)
         self.fields['rzezby'] = forms.MultipleChoiceField(required=True, widget=forms.Select,
-                                                      choices=rzezby_choices)
+                                                          choices=rzezby_choices)
 
     obrazy = forms.MultipleChoiceField()
     rzezby = forms.MultipleChoiceField()
@@ -274,14 +321,13 @@ class DetailedArtystaForm(forms.Form):
                                                                "id": "death-date"}))
 
 
-
 class DetailedDzialForm(forms.Form):
     def __init__(self, obrazy_choices, rzezby_choices, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['obrazy'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
-                                                                  choices=obrazy_choices)
+                                                          choices=obrazy_choices)
         self.fields['rzezby'] = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple,
-                                                      choices=rzezby_choices)
+                                                          choices=rzezby_choices)
 
     obrazy = forms.MultipleChoiceField()
     rzezby = forms.MultipleChoiceField()
@@ -298,7 +344,6 @@ class DetailedDzialForm(forms.Form):
                                                           'maxlength': "100"}))
 
     paintings = forms.MultipleChoiceField(required=True, widget=forms.SelectMultiple, choices=[])
-
 
 
 class DetailedDzieloForm(forms.Form):

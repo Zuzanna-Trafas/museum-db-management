@@ -85,7 +85,7 @@
                     <td>{{ pracownik.data_zatrudnienia }}</td>
                     <td>{% if pracownik.numer_telefonu == None %}-{% else %}
                         {{ pracownik.numer_telefonu }}{% endif %}</td>
-                    <td><a type="button" class="btn btn-secondary float-right" role="button" href="/edit/pracownik">Edytuj</a>
+                    <td><a type="button" class="btn btn-secondary float-right" role="button" href="{% url 'edit_pracownik' pracownik.pesel %}">Edytuj</a>
                     </td>
                 </tr>
             {% endfor %}

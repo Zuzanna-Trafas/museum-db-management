@@ -115,7 +115,7 @@
                             <td>{{ wydarzenie.data_rozpoczecia }}</td>
                             <td>{{ wydarzenie.data_zakonczenia }}</td>
                             <td><a type="button" class="btn btn-secondary float-right" role="button"
-                                   href="/edit/wydarzenie">Edytuj</a></td>
+                                   href="{% url 'edit_wydarzenie' wydarzenie.id %}">Edytuj</a></td>
                         </tr>
                         </tbody>
                     {% endfor %}
