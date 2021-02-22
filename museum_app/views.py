@@ -38,6 +38,12 @@ def get_profit(cursor, typ, czy_z_przewodnikiem, oddzial):
 def main(request):
     # TODO searching
     cursor = connection.cursor()
+    cursor.execute("SET NAMES 'UTF8';")  # or utf8 or any other charset you want to handle
+
+    cursor.execute("SET CHARACTER SET 'UTF8';")  # same as above
+
+    cursor.execute("SET character_set_connection='UTF8';")  # same as above
+
     rodzaj_biletu = Rodzaj_biletu.objects.all()
     x = []
     y = []
@@ -260,7 +266,7 @@ def add_dzial(request):
         name = form.cleaned_data['name']
         floor = form.cleaned_data['floor']
         epoch = form.cleaned_data['epoch']
-        oddzial_select = form.cleaned_data['oddzial_select'][0]
+        oddzial_select = form.cleaned_data['oddzial_select']
         for x in Oddzial.objects.all():
             if str(x.nazwa) == str(oddzial_select):
                 oddzial = x
@@ -279,19 +285,21 @@ def add_dzial(request):
 
 
 def add_obraz(request):
+    artysta_choices = [("-", "-")]
+    for x in Artysta.objects.all():
+        artysta_choices.append((x.id, x.imie + " " + x.nazwisko))
     form = ObrazForm(
         [(str(x.nazwa) + " ; " + str(x.oddzial_nazwa.nazwa), str(x.nazwa) + ", " + str(x.oddzial_nazwa.nazwa)) for x in
          Dzial.objects.all()],
-        [(x.id, x.imie + " " + x.nazwisko) for x in Artysta.objects.all()],
+        artysta_choices,
         request.POST)
     if form.is_valid():
         name = form.cleaned_data['name']
         width = form.cleaned_data['width']
         height = form.cleaned_data['height']
-        dzial_select = form.cleaned_data['dzial_select'][0].split(" ; ")
-        try:
-            artysta_select = form.cleaned_data['artysta_select'][0]
-        except:
+        dzial_select = form.cleaned_data['dzial_select'].split(" ; ")
+        artysta_select = form.cleaned_data['artysta_select']
+        if artysta_select == "-":
             artysta_select = None
 
         dzial_id = None
@@ -311,19 +319,21 @@ def add_obraz(request):
 
 
 def add_rzezba(request):
+    artysta_choices = [("-", "-")]
+    for x in Artysta.objects.all():
+        artysta_choices.append((x.id, x.imie + " " + x.nazwisko))
     form = RzezbaForm(
         [(str(x.nazwa) + " ; " + str(x.oddzial_nazwa.nazwa), str(x.nazwa) + ", " + str(x.oddzial_nazwa.nazwa)) for x in
          Dzial.objects.all()],
-        [(x.id, x.imie + " " + x.nazwisko) for x in Artysta.objects.all()],
+        artysta_choices,
         request.POST)
     if form.is_valid():
         name = form.cleaned_data['name']
         weight = form.cleaned_data['weight']
         material = form.cleaned_data['material']
-        dzial_select = form.cleaned_data['dzial_select'][0].split(" ; ")
-        try:
-            artysta_select = form.cleaned_data['artysta_select'][0]
-        except:
+        dzial_select = form.cleaned_data['dzial_select'].split(" ; ")
+        artysta_select = form.cleaned_data['artysta_select']
+        if artysta_select == "-":
             artysta_select = None
 
         dzial_id = None
@@ -397,11 +407,8 @@ def add_bilet(request):
     if form.is_valid():
         purchase_date = form.cleaned_data['purchase_date']
         przewodnik = form.cleaned_data['przewodnik']
-        type = form.cleaned_data['type'][0].split(" ; ")
-        try:
-            wycieczka = form.cleaned_data['wycieczka'][0]
-        except:
-            wycieczka = None
+        type = form.cleaned_data['type'].split(" ; ")
+        wycieczka = form.cleaned_data['wycieczka']
 
         if len(purchase_date.split("-")[0]) > 4:
             error_data = "Rok nie może być większy niż 9999"
@@ -422,7 +429,7 @@ def add_bilet(request):
         harmonogram = None
         for x in Harmonogram_zwiedzania.objects.all():
             if str(x.id) == str(wycieczka):
-                harmonogram = xsplit
+                harmonogram = x
 
         if harmonogram is not None:
             if harmonogram.pracownik_pesel.oddzial_nazwa.nazwa != type[0]:
@@ -444,7 +451,7 @@ def add_rodzaj_biletu(request):
     form = RodzajBiletuForm([(x.nazwa, x.nazwa) for x in Oddzial.objects.all()], request.POST)
     if form.is_valid():
         przewodnik = form.cleaned_data['przewodnik']
-        oddzial = form.cleaned_data['oddzial'][0]
+        oddzial = form.cleaned_data['oddzial']
         type = form.cleaned_data['type']
         price = form.cleaned_data['price']
         for x in Oddzial.objects.all():
@@ -477,10 +484,10 @@ def add_pracownik(request):
         pesel = form.cleaned_data['pesel']
         imie = form.cleaned_data['imie']
         nazwisko = form.cleaned_data['nazwisko']
-        etat = form.cleaned_data['etat'][0]
+        etat = form.cleaned_data['etat']
         placa = form.cleaned_data['placa']
         data_zatrudnienia = form.cleaned_data['data_zatrudnienia']
-        oddzial = form.cleaned_data['oddzial'][0]
+        oddzial = form.cleaned_data['oddzial']
         numer_telefonu = form.cleaned_data['numer_telefonu']
 
         if len(data_zatrudnienia.split("-")[0]) > 4:
@@ -526,7 +533,7 @@ def add_harmonogram_zwiedzania(request):
     if form.is_valid():
         godzina = form.cleaned_data['godzina']
         data = form.cleaned_data['data']
-        pesel = form.cleaned_data['pesel'][0]
+        pesel = form.cleaned_data['pesel']
 
         if len(data.split("-")[0]) > 4:
             error_date = "Rok nie może być większy od 9999"
@@ -553,14 +560,14 @@ def add_harmonogram_zwiedzania(request):
 
 
 def add_wydarzenie(request, oddzial_nazwa):
-    # TODO data_rozpoczęcia <= data_zakończenia
     error = ""
     error_data_rozpoczecia = ""
     error_data_zakonczenia = ""
     error_dates = ""
-    form = WydarzenieForm(request.POST)
+    form = WydarzenieForm([(x.nazwa, x.nazwa) for x in Oddzial.objects.all()], request.POST)
     if form.is_valid():
         nazwa = form.cleaned_data['nazwa']
+        oddzial = form.cleaned_data['oddzial_select']
         data_rozpoczecia = form.cleaned_data['data_rozpoczecia']
         data_zakonczenia = form.cleaned_data['data_zakonczenia']
 
@@ -613,7 +620,10 @@ def edit_oddzial(request, oddzial_nazwa):
                       'address': oddzial.adres,
                       'number': oddzial.numer_telefonu}
 
-    form = OddzialForm(request.POST)
+    if request.POST:
+        form = OddzialForm(request.POST)
+    else:
+        form = OddzialForm(instance=initial_values)
     error = ""
     error_time = ""
     error_number = ""

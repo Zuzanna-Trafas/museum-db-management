@@ -65,6 +65,12 @@
         </div>
         <div class="form-group">
             <div class="col-md-4">
+                <label for="name">Oddziały *</label>
+                <div>{{ form.oddzial_select }}</div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-4">
                 <label for="start-date">Data rozpoczęcia *</label>
                 {{ form.data_rozpoczecia }}
                 {% if error_data_rozpoczecia != "" %}
