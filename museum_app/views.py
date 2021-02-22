@@ -9,7 +9,8 @@ from plotly.graph_objs import Bar
 from museum_app.forms import OddzialForm, DzialForm, ObrazForm, RzezbaForm, ArtystaForm, BiletForm, RodzajBiletuForm, \
     PracownikForm, HarmonogramZwiedzaniaForm, WydarzenieForm, DetailedArtystaForm, DetailedDzialForm, \
     DetailedDzieloForm, DetailedOddzialForm, TableOddzialForm, TableDzialForm, TableArtystaForm, TableBiletyForm, \
-    TableHarmonogramZwiedzaniaForm, TableDzieloForm, TablePracownikForm, TableRodzajeBiletowForm, TableWydarzeniaForm
+    TableHarmonogramZwiedzaniaForm, TableDzieloForm, TablePracownikForm, TableRodzajeBiletowForm, TableWydarzeniaForm,\
+    MainForm
 from museum_app.models import Oddzial, Wydarzenie, Wydarzenie_oddzial, Rodzaj_biletu, Pracownik, Harmonogram_zwiedzania, \
     Bilet, Dzial, Artysta, Obraz, Rzezba
 import sys
@@ -36,7 +37,19 @@ def get_profit(cursor, typ, czy_z_przewodnikiem, oddzial):
 
 
 def main(request):
+    form = MainForm(request.POST)
     # TODO searching
+    kolumny = {"oddzial": ["Nazwa", "Godzina otwarcia", "Godzina zamknięcia", "Adres", "Numer telefonu"],
+               "wydarzenie": ["Nazwa", "Data rozpoczęcia", "Data zakończenia"],
+               "dzial": ["Nazwa", "Nazwa oddziału", "Piętro", "Epoka"],
+               "dzielo": ["Nazwa", "Artysta", "Dział"],
+                "artysta" : ["Imię", "Nazwisko", "Data urodzenia", "Data śmierci"],
+                "rodzaj_biletu" : ["Typ", "Oddział", "Czy z przewodnikiem", "Cena"],
+                "bilet": ["Data zakupu", "Oddział", "Typ biletu", "Cena", "Czy z przewodnikiem"],
+                "pracownik": ["Pesel", "Imię", "Nazwisko", "Płaca", "Etat", "Data zatrudnienia", "Numer telefonu"],
+                "harmonogram_zwiedzania": ["Data", "Godzina rozpoczęcia", "Przewodnik", "Ilość kupionych biletów"]}
+    wyniki = []
+    #TODO jaki format wyników tho = for (obiektow) a w nim for (atrybutow)
     cursor = connection.cursor()
     cursor.execute("SET NAMES 'UTF8';")  # or utf8 or any other charset you want to handle
 
@@ -58,7 +71,7 @@ def main(request):
 
     plot_div = plot([Bar(x=x, y=y, marker=dict(color='rgb( 255, 223, 65 )'))], output_type='div')
     cursor.close()
-    return render(request, 'museum_app/main.html', context={'plot_div': plot_div})
+    return render(request, 'museum_app/main.html', context={'form': form, 'plot_div': plot_div, 'kolumny': kolumny["pracownik"], 'wyniki': wyniki})
 
 
 def oddzialy(request):

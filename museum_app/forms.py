@@ -7,6 +7,22 @@ OPTIONS = [("Pracownik", "Pracownik"),
            ("Stażysta", "Stażysta"),
            ("Kierownik", "Kierownik")]
 
+CHOICES = [("Odział", "Odział"),
+           ("Wydarzenie", "Wydarzenie"),
+           ("Dział", "Dział"),
+           ("Dzieło", "Dzieło"),
+           ("Artysta", "Artysta"),
+           ("Rodzaj biletu", "Rodzaj biletu"),
+           ("Zakupiony bilet", "Zakupiony bilet"),
+           ("Pracownik", "Pracownik"),
+           ("Wycieczka","Wycieczka")]
+
+class MainForm(forms.Form):
+    options1 = forms.CharField(label='Wybierz typ', widget=forms.Select(choices=CHOICES))
+    options2 = forms.CharField(label='Wybierz typ', widget=forms.Select(choices=[]))
+    options3 = forms.CharField(label='Wybierz typ', widget=forms.Select(choices=[]))
+    options4 = forms.CharField(label='Wybierz typ', widget=forms.Select(choices=[]))
+
 
 class OddzialForm(forms.Form):
     def __init__(self, *args, **kwargs):
