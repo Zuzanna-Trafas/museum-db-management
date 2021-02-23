@@ -97,47 +97,47 @@
             if (val === "Oddział") {
                 $('#id_options2').html('');
                 for (var i in oddzial) {
-                    $('#id_options2').append("<option value=" + oddzial[i] + ">" + oddzial[i] + "</option>");
+                    $('#id_options2').append("<option value='" + oddzial[i] + "'>" + oddzial[i] + "</option>");
                 }
             } else if (val === "Wydarzenie") {
                 $('#id_options2').html('');
                 for (var i in wydarzenie) {
-                    $('#id_options2').append("<option value=" + wydarzenie[i] + ">" + wydarzenie[i] + "</option>");
+                    $('#id_options2').append("<option value='" + wydarzenie[i] + "'>" + wydarzenie[i] + "</option>");
                 }
             } else if (val === "Dział") {
                 $('#id_options2').html('');
                 for (var i in dzial) {
-                    $('#id_options2').append("<option value=" + dzial[i] + ">" + dzial[i] + "</option>");
+                    $('#id_options2').append("<option value='" + dzial[i] + "'>" + dzial[i] + "</option>");
                 }
             } else if (val === "Dzieło") {
                 $('#id_options2').html('');
                 for (var i in dzielo) {
-                    $('#id_options2').append("<option value=" + dzielo[i] + ">" + dzielo[i] + "</option>");
+                    $('#id_options2').append("<option value='" + dzielo[i] + "'>" + dzielo[i] + "</option>");
                 }
             } else if (val === "Artysta") {
                 $('#id_options2').html('');
                 for (var i in artysta) {
-                    $('#id_options2').append("<option value=" + artysta[i] + ">" + artysta[i] + "</option>");
+                    $('#id_options2').append("<option value='" + artysta[i] + "'>" + artysta[i] + "</option>");
                 }
             } else if (val === "Rodzaj biletu") {
                 $('#id_options2').html('');
                 for (var i in rodzaj) {
-                    $('#id_options2').append("<option value=" + rodzaj[i] + ">" + rodzaj[i] + "</option>");
+                    $('#id_options2').append("<option value='" + rodzaj[i] + "'>" + rodzaj[i] + "</option>");
                 }
             } else if (val === "Bilet") {
                 $('#id_options2').html('');
                 for (var i in bilet) {
-                    $('#id_options2').append("<option value=" + bilet[i] + ">" + bilet[i] + "</option>");
+                    $('#id_options2').append("<option value='" + bilet[i] + "'>" + bilet[i] + "</option>");
                 }
             } else if (val === "Pracownik") {
                 $('#id_options2').html('');
                 for (var i in pracownik) {
-                    $('#id_options2').append("<option value=" + pracownik[i] + ">" + pracownik[i] + "</option>");
+                    $('#id_options2').append("<option value='" + pracownik[i] + "'>" + pracownik[i] + "</option>");
                 }
             } else if (val === "Wycieczka") {
                 $('#id_options2').html('');
                 for (var i in wycieczka) {
-                    $('#id_options2').append("<option value=" + wycieczka[i] + ">" + wycieczka[i] + "</option>");
+                    $('#id_options2').append("<option value='" + wycieczka[i] + "'>" + wycieczka[i] + "</option>");
                 }
             }
         }
@@ -268,7 +268,7 @@
                     {% for x in wyniki %}
                         <tr>
                         {% for i in x %}
-                        <td>{{ i }}</td>
+                        <td>{% if i == True %}Tak{% elif i == False %}Nie{% elif i == None or i == "None" %}-{% else %}{{ i }}{% endif %}</td>
                         {% endfor %}
                         </tr>
                     {% endfor %}
